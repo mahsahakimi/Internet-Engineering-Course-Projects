@@ -1,0 +1,46 @@
+{
+  "customers": [
+    {
+      "ssn": 12345,
+      "name": "Example Name",
+      "phone": "09101231212",
+      "age": 18
+    },
+    {
+      "ssn": 67890,
+      "name": "Another Name",
+      "phone": "09123456789",
+      "age": 25
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "capacity": 3
+    },
+    {
+      "id": 2,
+      "capacity": 2
+    },
+    {
+      "id": 3,
+      "capacity": 4
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "room_id": 1,
+      "customer_id": 67890,
+      "check_in": "2024-01-01 08:00:00",
+      "check_out": "2024-01-02 16:00:00"
+    },
+    {
+      "id": 2,
+      "room_id": 2,
+      "customer_id": 12345,
+      "check_in": "2024-01-05 10:00:00",
+      "check_out": "2024-01-07 12:00:00"
+    }
+  ]
+}
