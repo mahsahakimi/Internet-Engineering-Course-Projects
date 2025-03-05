@@ -31,4 +31,29 @@ public class MainTest {
         String expectedOutput = "{\"success\": true, \"message\": \"User added successfully.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
     }
+
+    @Test
+    public void testAddCreditSuccess() throws IOException {
+        String addUserInput = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";
+        InputStream addUserIn = new ByteArrayInputStream(addUserInput.getBytes());
+        System.setIn(addUserIn);
+
+        ByteArrayOutputStream addUserOutContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(addUserOutContent));
+
+        Main.main(new String[]{});
+
+        String addCreditInput = "add_credit {\"username\": \"test-name\", \"credit\": 8200}";
+//        add_credit {"username": "test-name", "credit": 8200}
+        InputStream addCreditIn = new ByteArrayInputStream(addCreditInput.getBytes());
+        System.setIn(addCreditIn);
+
+        ByteArrayOutputStream addCreditOutContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(addCreditOutContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": true, \"message\": \"Credit added successfully.\"}\n";
+        assertEquals(expectedOutput, addCreditOutContent.toString());
+    }
 }

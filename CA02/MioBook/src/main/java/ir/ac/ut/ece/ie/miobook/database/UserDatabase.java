@@ -33,6 +33,15 @@ public class UserDatabase {
         users.add(user);
     }
 
+    public User findUserByUsername(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     private boolean isUsernameUnique(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {
