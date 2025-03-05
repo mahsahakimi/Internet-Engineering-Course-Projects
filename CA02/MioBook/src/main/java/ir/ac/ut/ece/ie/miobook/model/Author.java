@@ -15,32 +15,19 @@ public class Author {
 
     public Author(@JsonProperty("name") String name,
                   @JsonProperty("penName") String penName, @JsonProperty("nationality") String nationality,
-                  @JsonProperty("born") String born, @JsonProperty("died") String died) {
+                  @JsonProperty("born") LocalDate born, @JsonProperty("died") LocalDate died) {
         this.name = name;
         this.penName = penName;
         this.nationality = nationality;
-        this.born = StrToLocalDate(born, "born");
-        if(died == null){
-            this.died = null;
-        }
-        else{
-            this.died = StrToLocalDate(died, "died");
-        }
+        this.born = born;
+        this.died = died;
+
         if (!BornDiedValidator.validateBornDied(this.born, this.died)) {
             throw new IllegalArgumentException("Invalid dates!");
         }
 
     }
-    private LocalDate StrToLocalDate(String dateStr,  String name) {
-        if (dateStr == null || dateStr.isEmpty()) {
-            throw new java.time.DateTimeException( name + " date is not valid...");
-        }
-        try {
-            return LocalDate.parse(dateStr);
-        } catch (DateTimeParseException  e) {
-            throw new DateTimeParseException(name + " date is not valid...", "invalid-date", 0);
-        }
-    }
+
     public String GetName(){
         return this.name;
     }

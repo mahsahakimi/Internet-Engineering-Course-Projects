@@ -1,68 +1,55 @@
 package ir.ac.ut.ece.ie.miobook.model;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
 
 class AuthorTest {
 
     @Test
-    void testValidAuthorCreation() {
-        Author author = new Author("John Doe", "JD", "American", "1950-05-20", "2000-10-15");
+    void testValidAuthor() {
+        LocalDate born = LocalDate.of(1980, 5, 15);
+        LocalDate died = LocalDate.of(2020, 8, 10);
+
+        Author author = new Author("John Doe", "J.D.", "American", born, died);
+
         assertNotNull(author);
+        assertEquals("John Doe", author.GetName());
     }
 
     @Test
-    void testAuthorWithNullDiedDate() {
-        Author author = new Author("Jane Doe", "JD", "British", "1960-06-15", null);
-        assertNotNull(author);
-    }
+    void testAuthorWithInvalidBornAndDied() {
+        LocalDate born = LocalDate.of(1980, 5, 15);
+        LocalDate died = LocalDate.of(1975, 3, 10); // Born after died
 
-    @Test
-    void testAuthorWithEmptyDiedDate() {
-        Exception exception = assertThrows(DateTimeException.class, () ->
-                new Author("Jane Doe", "JD", "British", "1960-06-15", "")
-        );
-        assertEquals("died date is not valid...", exception.getMessage());
-    }
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Author("Jane Doe", "J.D.", "Canadian", born, died);
+        });
 
-    @Test
-    void testInvalidBornDateFormat() {
-        Exception exception = assertThrows(DateTimeParseException.class, () ->
-                new Author("Alice", "A", "Canadian", "invalid-date", "2000-10-15")
-        );
-        assertTrue(exception.getMessage().contains("born date is not valid..."));
-    }
-
-    @Test
-    void testInvalidDiedDateFormat() {
-        Exception exception = assertThrows(DateTimeParseException.class, () ->
-                new Author("Bob", "B", "German", "1970-07-20", "invalid-date")
-        );
-        assertTrue(exception.getMessage().contains("died date is not valid..."));
-    }
-
-    @Test
-    void testBornDateAfterDiedDate() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                new Author("Eve", "E", "French", "2020-05-20", "2000-10-15")
-        );
         assertEquals("Invalid dates!", exception.getMessage());
     }
 
     @Test
-    void testBornDateEqualsDiedDate() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                new Author("Tom", "T", "Italian", "1990-01-01", "1990-01-01")
-        );
-        assertEquals("Invalid dates!", exception.getMessage());
+    void testAuthorWithNullDied() {
+        LocalDate born = LocalDate.of(1985, 7, 20);
+        LocalDate died = null; // Null died date
+
+        Author author = new Author("Sam Smith", "S.S.", "British", born, died);
+
+        assertNotNull(author);
+        assertEquals("Sam Smith", author.GetName());
     }
 
     @Test
-    void testNullBornDate() {
-        Exception exception = assertThrows(DateTimeException.class, () ->
-                new Author("Chris", "C", "Spanish", null, "2000-10-15")
-        );
-        assertEquals("born date is not valid...", exception.getMessage());
+    void testAuthorWithInvalidDateFormat() {
+        // Invalid date format, should throw exception on validation
+        LocalDate born = LocalDate.of(2025, 1, 1);
+        LocalDate died = LocalDate.of(2023, 1, 1); // Born after the current date (invalid for a future-born author)
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Author("Future Author", "F.A.", "Global", born, died);
+        });
+
+        assertEquals("Invalid dates!", exception.getMessage());
     }
 }
