@@ -22,56 +22,31 @@ public class Book {
             @JsonProperty("publisher") String publisher,
             @JsonProperty("year") int year,
             @JsonProperty("genres") List<String> genres,
-            @JsonProperty("price") double price,
+            @JsonProperty("price") Object price,
             @JsonProperty("synopsis") String synopsis,
             @JsonProperty("content") String content) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
 
-        if (year > 0) {
-            this.year = year;
-        } else {
-            throw new IllegalArgumentException("Year must be a natural number.");
+        if (year <= 0) {
+            throw new IllegalArgumentException("Year must be a positive number.");
         }
+        this.year = year;
 
         if (genres == null || genres.isEmpty()) {
             throw new IllegalArgumentException("Book must have at least one genre.");
+        }
+        this.genres = genres;
+
+        if (price instanceof Double) {
+            this.price = (int) Math.round((Double) price * 100);
+        } else if (price instanceof Integer) {
+            this.price = (Integer) price;
         } else {
-            this.genres = genres;
+            throw new IllegalArgumentException("Price must be a number.");
         }
 
-        this.price = (int) Math.round(price * 100);
-        this.synopsis = synopsis;
-        this.content = content;
-    }
-
-    public Book(
-            @JsonProperty("title") String title,
-            @JsonProperty("author") Author author,
-            @JsonProperty("publisher") String publisher,
-            @JsonProperty("year") int year,
-            @JsonProperty("genres") List<String> genres,
-            @JsonProperty("price") int price,
-            @JsonProperty("synopsis") String synopsis,
-            @JsonProperty("content") String content) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-
-        if (year > 0) {
-            this.year = year;
-        } else {
-            throw new IllegalArgumentException("Year must be a natural number.");
-        }
-
-        if (genres == null || genres.isEmpty()) {
-            throw new IllegalArgumentException("Book must have at least one genre.");
-        } else {
-            this.genres = genres;
-        }
-
-        this.price = price;
         this.synopsis = synopsis;
         this.content = content;
     }

@@ -21,7 +21,6 @@ public class AddUserCommand {
 
             User user = mapper.treeToValue(node, User.class);
             UserDatabase.getInstance().addUser(user);
-//            System.out.println(user);
 
             System.out.println("{\"success\": true, \"message\": \"User added successfully.\"}");
         } catch (IllegalArgumentException e) {
