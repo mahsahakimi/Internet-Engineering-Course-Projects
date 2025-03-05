@@ -8,6 +8,9 @@ import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class User {
@@ -17,6 +20,7 @@ public class User {
     String email;
     Address address;
     int balance;
+    List<Book> cart;
 
     public User(@JsonProperty("role") String role, @JsonProperty("username") String username,
                 @JsonProperty("password") String password, @JsonProperty("email") String email,
@@ -52,6 +56,7 @@ public class User {
         }
 
         this.balance = 0;
+        this.cart = new ArrayList<>();
     }
 
     @Override
@@ -63,6 +68,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", address=" + address +
                 ", balance=" + balance +
+                ", cart=" + cart +
                 '}';
     }
 }

@@ -3,10 +3,7 @@ package ir.ac.ut.ece.ie.miobook;
 import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Address;
-import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.Role;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainTest {
 
@@ -24,6 +23,8 @@ public class MainTest {
     private AuthorDatabase authorDatabase;
     private User adminUser;
     private Author author;
+    private Book book;
+    private User normalUser;
 
     @BeforeEach
     public void setUp() {
@@ -34,6 +35,7 @@ public class MainTest {
         adminUser = new User("admin", "admin_user", "1234", "admin@mail.com", address);
         adminUser.setRole(Role.admin);
         userDatabase.addUser(adminUser);
+
         author = new Author(
                 "sample name",
                 "Pen Name",
@@ -42,6 +44,14 @@ public class MainTest {
                 LocalDate.of(1980, 1, 1)
         );
         authorDatabase.addAuthor(author);
+
+        List<String> genres = new ArrayList<>();
+        genres.add("Fantasy");
+        book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 19.99, "Synopsis", "Content");
+        bookDatabase.addBook(book);
+
+        normalUser = new User("customer", "normal_user", "1234", "normal@mail.com", address);
+        userDatabase.addUser(normalUser);
     }
 
     @AfterEach
@@ -147,6 +157,40 @@ public class MainTest {
 
         String expectedOutput = "{\"success\": true, \"message\": \"Book added successfully.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
-        assertEquals(1, bookDatabase.getBooks().size());
+        assertEquals(2, bookDatabase.getBooks().size());
+    }
+
+    @Test
+    public void testAddCartSuccess() throws IOException {
+        String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+//        add_cart {"username": "normal_user", "title": "The Magical Adventure"}
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": true, \"message\": \"Added book to cart.\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(1, normalUser.getCart().size());
+    }
+
+    @Test
+    public void testRemoveCartSuccess() throws IOException {
+        normalUser.getCart().add(book);
+        String input = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertTrue(normalUser.getCart().isEmpty());
     }
 }
