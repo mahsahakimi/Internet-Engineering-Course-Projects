@@ -25,6 +25,8 @@ public class Main {
             AddCreditCommand.execute(inputJson);
         } else if (command.equals("show_user_details")) {
             ShowUserDetailsCommand.execute(inputJson);
+        } else if (command.equals("show_author_details")) {
+            ShowAuthorDetailsCommand.execute(inputJson);
         } else {
             System.out.println("Invalid command.");
         }
