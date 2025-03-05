@@ -2,6 +2,7 @@ package ir.ac.ut.ece.ie.miobook;
 
 import ir.ac.ut.ece.ie.miobook.command.AddCreditCommand;
 import ir.ac.ut.ece.ie.miobook.command.AddUserCommand;
+import ir.ac.ut.ece.ie.miobook.command.ShowUserDetailsCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +21,8 @@ public class Main {
             AddUserCommand.execute(inputJson);
         } else if (command.equals("add_credit")) {
             AddCreditCommand.execute(inputJson);
+        } else if (command.equals("show_user_details")) {
+            ShowUserDetailsCommand.execute(inputJson);
         } else {
             System.out.println("Invalid command.");
         }
