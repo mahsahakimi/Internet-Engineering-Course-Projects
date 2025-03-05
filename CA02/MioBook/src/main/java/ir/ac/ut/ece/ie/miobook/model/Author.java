@@ -1,6 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
+import java.time.format.DateTimeParseException;
 
 import java.time.LocalDate;
 
@@ -11,7 +12,6 @@ public class Author {
     String nationality;
     LocalDate born;
     LocalDate died;
-    boolean successful;
 
     public Author(@JsonProperty("name") String name,
                   @JsonProperty("penName") String penName, @JsonProperty("nationality") String nationality,
@@ -19,23 +19,26 @@ public class Author {
         this.name = name;
         this.penName = penName;
         this.nationality = nationality;
-        try {
-            this.born = LocalDate.parse(born);
-        }catch (Exception e) {
-            successful = false;
-        }
-        if (died == null || died.isEmpty()) {
+        this.born = StrToLocalDate(born, "born");
+        if(died == null){
             this.died = null;
-        } else {
-            try {
-                this.died = LocalDate.parse(died);
-            }catch (Exception e) {
-                successful = false;
-            }
+        }
+        else{
+            this.died = StrToLocalDate(died, "died");
         }
         if (!BornDiedValidator.validateBornDied(this.born, this.died)) {
             throw new IllegalArgumentException("Invalid dates!");
         }
 
+    }
+    private LocalDate StrToLocalDate(String dateStr,  String name) {
+        if (dateStr == null || dateStr.isEmpty()) {
+            throw new java.time.DateTimeException( name + " date is not valid...");
+        }
+        try {
+            return LocalDate.parse(dateStr);
+        } catch (DateTimeParseException  e) {
+            throw new DateTimeParseException(name + " date is not valid...", "invalid-date", 0);
+        }
     }
 }
