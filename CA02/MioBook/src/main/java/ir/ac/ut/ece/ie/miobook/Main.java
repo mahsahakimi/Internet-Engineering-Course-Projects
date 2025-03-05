@@ -1,9 +1,6 @@
 package ir.ac.ut.ece.ie.miobook;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.command.AddUserCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,29 +16,9 @@ public class Main {
         String inputJson = parts.length > 1 ? parts[1] : null;
 
         if (command.equals("add_user")) {
-            addUser(inputJson);
+            AddUserCommand.execute(inputJson);
         } else {
             System.out.println("Invalid command.");
-        }
-    }
-
-    private static void addUser(String inputJson) throws IOException {
-        if (inputJson == null) {
-            System.out.println("Input data for add_user command is missing.");
-            return;
-        }
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(inputJson);
-
-            User user = mapper.treeToValue(node, User.class);
-            UserDatabase.getInstance().addUser(user);
-//            System.out.println(user);
-
-            System.out.println("{\"success\": true, \"message\": \"User added successfully.\"}");
-        } catch (IllegalArgumentException e) {
-            System.out.println("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
         }
     }
 }
