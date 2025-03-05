@@ -22,7 +22,7 @@ public class AuthorDatabase {
     }
 
     public void addAuthor(Author author) {
-        String name = author.GetName();
+        String name = author.getName();
         if (findAuthorByName(name) == null) {
             authors.add(author);
         } else {
@@ -32,7 +32,7 @@ public class AuthorDatabase {
 
     public Author findAuthorByName(String name) {
         for (Author author : authors) {
-            if(author.GetName().equals(name)) {
+            if(author.getName().equals(name)) {
                 return author;
             }
         }

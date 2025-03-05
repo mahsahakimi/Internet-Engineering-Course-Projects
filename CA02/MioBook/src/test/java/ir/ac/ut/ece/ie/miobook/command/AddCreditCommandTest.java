@@ -63,14 +63,14 @@ public class AddCreditCommandTest {
 
     @Test
     public void testAddCreditLessThanMinimum() throws IOException {
-        String inputJson = "{\"username\": \"test-name\", \"credit\": 999}";
+        String inputJson = "{\"username\": \"test-name\", \"credit\": 99}";
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
         AddCreditCommand.execute(inputJson);
 
-        String expectedOutput = "{\"success\": false, \"message\": \"Minimum credit is 1000 cents (1 dollar).\"}\n";
+        String expectedOutput = "{\"success\": false, \"message\": \"Minimum credit is 100 cents (1 dollar).\"}\n";
         assertEquals(expectedOutput, outContent.toString());
 
         assertEquals(0, user.getBalance());

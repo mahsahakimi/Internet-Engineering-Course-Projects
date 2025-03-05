@@ -28,8 +28,8 @@ public class AddCreditCommand {
                 return;
             }
 
-            if (credit < 1000) {
-                System.out.println("{\"success\": false, \"message\": \"Minimum credit is 1000 cents (1 dollar).\"}");
+            if (credit < 100) {
+                System.out.println("{\"success\": false, \"message\": \"Minimum credit is 100 cents (1 dollar).\"}");
                 return;
             }
 

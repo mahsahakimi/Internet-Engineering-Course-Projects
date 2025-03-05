@@ -14,7 +14,7 @@ class AuthorTest {
         Author author = new Author("John Doe", "J.D.", "American", born, died);
 
         assertNotNull(author);
-        assertEquals("John Doe", author.GetName());
+        assertEquals("John Doe", author.getName());
     }
 
     @Test
@@ -37,7 +37,7 @@ class AuthorTest {
         Author author = new Author("Sam Smith", "S.S.", "British", born, died);
 
         assertNotNull(author);
-        assertEquals("Sam Smith", author.GetName());
+        assertEquals("Sam Smith", author.getName());
     }
 
     @Test

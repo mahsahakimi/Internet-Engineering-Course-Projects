@@ -1,8 +1,6 @@
 package ir.ac.ut.ece.ie.miobook;
 
-import ir.ac.ut.ece.ie.miobook.command.AddCreditCommand;
-import ir.ac.ut.ece.ie.miobook.command.AddUserCommand;
-import ir.ac.ut.ece.ie.miobook.command.ShowUserDetailsCommand;
+import ir.ac.ut.ece.ie.miobook.command.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +17,11 @@ public class Main {
 
         if (command.equals("add_user")) {
             AddUserCommand.execute(inputJson);
-        } else if (command.equals("add_credit")) {
+        } else if (command.equals("add_author")) {
+            AddAuthorCommand.execute(inputJson);
+        } else if (command.equals("add_book")) {
+            AddBookCommand.execute(inputJson);
+        }else if (command.equals("add_credit")) {
             AddCreditCommand.execute(inputJson);
         } else if (command.equals("show_user_details")) {
             ShowUserDetailsCommand.execute(inputJson);

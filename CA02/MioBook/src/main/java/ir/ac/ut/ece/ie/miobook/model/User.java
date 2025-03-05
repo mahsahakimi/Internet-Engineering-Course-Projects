@@ -8,8 +8,8 @@ import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 public class User {
     Role role;
     String username;

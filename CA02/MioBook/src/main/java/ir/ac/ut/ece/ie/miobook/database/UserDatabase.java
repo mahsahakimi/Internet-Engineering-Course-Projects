@@ -4,6 +4,7 @@ import ir.ac.ut.ece.ie.miobook.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDatabase {
 
@@ -34,29 +35,20 @@ public class UserDatabase {
     }
 
     public User findUserByUsername(String username) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-        }
-        return null;
+        Optional<User> foundUser = users.stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findFirst();
+
+        return foundUser.orElse(null);
     }
 
     private boolean isUsernameUnique(String username) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return false;
-            }
-        }
-        return true;
+        return users.stream()
+                .noneMatch(user -> user.getUsername().equals(username));
     }
 
     private boolean isEmailUnique(String email) {
-        for (User user : users) {
-            if (user.getEmail().equals(email)) {
-                return false;
-            }
-        }
-        return true;
+        return users.stream()
+                .noneMatch(user -> user.getEmail().equals(email));
     }
 }

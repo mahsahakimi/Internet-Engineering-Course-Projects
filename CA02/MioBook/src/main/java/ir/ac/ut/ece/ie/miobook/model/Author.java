@@ -1,10 +1,11 @@
 package ir.ac.ut.ece.ie.miobook.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
-import java.time.format.DateTimeParseException;
-
+import lombok.Getter;
 import java.time.LocalDate;
 
+@Getter
 public class Author {
 
     String name;
@@ -26,9 +27,5 @@ public class Author {
             throw new IllegalArgumentException("Invalid dates!");
         }
 
-    }
-
-    public String GetName(){
-        return this.name;
     }
 }
