@@ -41,4 +41,7 @@ public class Author {
             throw new DateTimeParseException(name + " date is not valid...", "invalid-date", 0);
         }
     }
+    public String GetName(){
+        return this.name;
+    }
 }

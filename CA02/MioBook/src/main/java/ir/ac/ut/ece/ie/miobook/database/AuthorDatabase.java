@@ -1,13 +1,16 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
+import ir.ac.ut.ece.ie.miobook.model.Author;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Getter
 public class AuthorDatabase {
 
     private static AuthorDatabase instance;
-    private List<String> authors = new ArrayList<>();
+    private List<Author> authors = new ArrayList<>();
 
     private AuthorDatabase() {}
 
@@ -18,23 +21,22 @@ public class AuthorDatabase {
         return instance;
     }
 
-    public void addAuthor(String author) {
-        if (findAuthorByName(author) == null) {
+    public void addAuthor(Author author) {
+        String name = author.GetName();
+        if (findAuthorByName(name) == null) {
             authors.add(author);
         } else {
             throw new IllegalArgumentException("Author already exists: " + author);
         }
     }
 
-    public String findAuthorByName(String author) {
-        Optional<String> foundAuthor = authors.stream()
-                .filter(a -> a.equals(author))
-                .findFirst();
-
-        return foundAuthor.orElse(null);
+    public Author findAuthorByName(String name) {
+        for (Author author : authors) {
+            if(author.GetName().equals(name)) {
+                return author;
+            }
+        }
+        return null;
     }
 
-    public List<String> getAuthors() {
-        return authors;
-    }
 }
