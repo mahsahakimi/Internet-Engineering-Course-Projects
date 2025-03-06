@@ -31,6 +31,14 @@ public class Main {
             ShowUserDetailsCommand.execute(inputJson);
         } else if (command.equals("show_author_details")) {
             ShowAuthorDetailsCommand.execute(inputJson);
+        } else if (command.equals("search_books_by_title")) {
+            SearchBooksCommand.searchByTitle(inputJson);
+        } else if (command.equals("search_books_by_author")) {
+            SearchBooksCommand.searchByAuthor(inputJson);
+        } else if (command.equals("search_books_by_genre")) {
+            SearchBooksCommand.searchByGenre(inputJson);
+        } else if (command.equals("search_books_by_year")) {
+            SearchBooksCommand.searchByYear(inputJson);
         } else {
             System.out.println("Invalid command.");
         }

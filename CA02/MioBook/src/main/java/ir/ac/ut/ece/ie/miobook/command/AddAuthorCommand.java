@@ -25,7 +25,7 @@ public class AddAuthorCommand {
 
             String username = node.get("username").asText();
             User whoAdded = UserDatabase.getInstance().findUserByUsername(username);
-            if(whoAdded == null){
+            if (whoAdded == null) {
                 throw new IllegalArgumentException("there is no user with this username!");
             }
             else if ( whoAdded.getRole() == Role.customer){
