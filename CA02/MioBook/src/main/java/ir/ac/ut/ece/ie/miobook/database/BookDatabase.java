@@ -36,7 +36,6 @@ public class BookDatabase {
         Optional<Book> foundBook = books.stream()
                 .filter(book -> book.getTitle().equals(title))
                 .findFirst();
-
         return foundBook.orElse(null);
     }
 

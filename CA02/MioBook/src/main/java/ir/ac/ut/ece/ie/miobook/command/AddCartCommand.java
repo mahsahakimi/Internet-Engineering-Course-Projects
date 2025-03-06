@@ -48,7 +48,7 @@ public class AddCartCommand {
                 return;
             }
 
-            user.getCart().add(book);
+            user.addToCart(book);
             System.out.println("{\"success\": true, \"message\": \"Added book to cart.\"}");
 
         } catch (Exception e) {

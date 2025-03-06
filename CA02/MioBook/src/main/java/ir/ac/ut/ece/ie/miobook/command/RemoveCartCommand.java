@@ -48,7 +48,7 @@ public class RemoveCartCommand {
                 return;
             }
 
-            user.getCart().remove(book);
+            user.removeBook(book);
             System.out.println("{\"success\": true, \"message\": \"Removed book from cart.\"}");
 
         } catch (Exception e) {

@@ -19,9 +19,10 @@ public class User {
     String password;
     String email;
     Address address;
-    int balance;
-    List<Book> cart;
+    int balance = 0;
+    List<Book> cart = new ArrayList<>();
     List<Purchase> purchases = new ArrayList<>();
+    List<Book> ownedBooks = new ArrayList<>();
 
     public User(@JsonProperty("role") String role, @JsonProperty("username") String username,
                 @JsonProperty("password") String password, @JsonProperty("email") String email,
@@ -55,9 +56,24 @@ public class User {
         } else {
             throw new IllegalArgumentException("Address is not valid: " + address.getCountry() + ", " + address.getCity());
         }
+    }
 
-        this.balance = 0;
-        this.cart = new ArrayList<>();
+    public void addToCart(Book book){
+        this.cart.add(book);
+    }
+
+    public void clearCart() {
+        this.cart.clear();
+    }
+
+    public void removeBook(Book book){
+        this.cart.remove(book);
+    }
+
+    public void addToPurchase(Purchase p, List<Book> cart){
+        this.purchases.add(p);
+        // add books to user owned books
+        ownedBooks.addAll(cart);
     }
 
     @Override

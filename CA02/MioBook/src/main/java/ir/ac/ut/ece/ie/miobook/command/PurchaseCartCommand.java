@@ -69,8 +69,8 @@ public class PurchaseCartCommand {
             String formattedDateTime = now.format(formatter);
 
             Purchase purchase = new Purchase(bookTitles, totalCost, formattedDateTime);
-            user.getPurchases().add(purchase);
-            user.getCart().clear();
+            user.addToPurchase(purchase, cart);
+            user.clearCart();
 
             System.out.println("{\"success\": true, \"message\": \"Purchase completed successfully.\", \"data\": {\"bookCount\": " + cartSize + ", \"totalCost\": " + totalCost + ", \"date\": \"" + formattedDateTime + "\"}}");
 
