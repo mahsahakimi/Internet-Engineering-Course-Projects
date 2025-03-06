@@ -21,6 +21,8 @@ public class Main {
             AddAuthorCommand.execute(inputJson);
         } else if (command.equals("add_book")) {
             AddBookCommand.execute(inputJson);
+        }else if (command.equals("add_review")) {
+            AddReviewCommand.execute(inputJson);
         } else if (command.equals("add_cart")) {
             AddCartCommand.execute(inputJson);
         } else if (command.equals("remove_cart")) {
@@ -33,6 +35,12 @@ public class Main {
             ShowUserDetailsCommand.execute(inputJson);
         } else if (command.equals("show_author_details")) {
             ShowAuthorDetailsCommand.execute(inputJson);
+        }else if (command.equals("show_book_details")) {
+            ShowBookDetailsCommand.execute(inputJson);
+        }else if (command.equals("show_book_reviews")) {
+            ShowBookReviewsCommand.execute(inputJson);
+        }else if (command.equals("show_book_content")) {
+            ShowBookContentCommand.execute(inputJson);
         } else if (command.equals("search_books_by_title")) {
             SearchBooksCommand.searchByTitle(inputJson);
         } else if (command.equals("search_books_by_author")) {
