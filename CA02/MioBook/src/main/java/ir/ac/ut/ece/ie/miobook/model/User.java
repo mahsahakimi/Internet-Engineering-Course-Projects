@@ -8,6 +8,7 @@ import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class User {
     List<Book> cart = new ArrayList<>();
     List<Purchase> purchases = new ArrayList<>();
     List<Book> ownedBooks = new ArrayList<>();
+    private List<BorrowedBook> borrowedBooks = new ArrayList<>();
 
     public User(@JsonProperty("role") String role, @JsonProperty("username") String username,
                 @JsonProperty("password") String password, @JsonProperty("email") String email,
@@ -75,6 +77,41 @@ public class User {
         // add books to user owned books
         ownedBooks.addAll(cart);
     }
+
+    public void borrowBook(Book book, int days) {
+        // Check if the user already owns the book
+        if (ownedBooks.contains(book)) {
+            throw new IllegalStateException("You already own this book.");
+        }
+
+        // Check if the book is already borrowed
+        for (BorrowedBook borrowed : borrowedBooks) {
+            if (borrowed.getBook().equals(book)) {
+                // Check if the borrow date is still valid
+                if (borrowed.getDueDate().isAfter(LocalDateTime.now())) {
+                    throw new IllegalStateException("You already have this book borrowed.");
+                } else {
+                    // Remove the old borrow
+                    borrowedBooks.remove(borrowed);
+                    break;
+                }
+            }
+        }
+
+        if (borrowedBooks.size() >= 10) {
+            throw new IllegalStateException("You cannot borrow more than 10 books.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dueDate = now.plusDays(days);
+
+        // Calculate the borrow price
+        double borrowPrice = book.getPrice() * (days / 10.0);
+
+        // Keep all the info in the user's borrowedBooks list
+        borrowedBooks.add(new BorrowedBook(book, dueDate, borrowPrice));
+    }
+
 
     @Override
     public String toString() {
