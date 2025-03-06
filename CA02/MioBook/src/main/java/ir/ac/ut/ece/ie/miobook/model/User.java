@@ -21,6 +21,7 @@ public class User {
     Address address;
     int balance;
     List<Book> cart;
+    List<Purchase> purchases = new ArrayList<>();
 
     public User(@JsonProperty("role") String role, @JsonProperty("username") String username,
                 @JsonProperty("password") String password, @JsonProperty("email") String email,

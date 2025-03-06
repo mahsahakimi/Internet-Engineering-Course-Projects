@@ -27,6 +27,8 @@ public class Main {
             RemoveCartCommand.execute(inputJson);
         }else if (command.equals("add_credit")) {
             AddCreditCommand.execute(inputJson);
+        } else if (command.equals("purchase_cart")) {
+            PurchaseCartCommand.execute(inputJson);
         } else if (command.equals("show_user_details")) {
             ShowUserDetailsCommand.execute(inputJson);
         } else if (command.equals("show_author_details")) {
