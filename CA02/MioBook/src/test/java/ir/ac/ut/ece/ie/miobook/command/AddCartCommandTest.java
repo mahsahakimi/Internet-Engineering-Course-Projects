@@ -113,7 +113,7 @@ public class AddCartCommandTest {
     @Test
     public void testAddCartCartFull() throws IOException {
         for (int i = 0; i < 10; i++) {
-            normalUser.getCart().add(book);
+            normalUser.getCart().add(new CartElement(book, 0)); //add cart element with days = 0
         }
 
         String inputJson = "{\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";

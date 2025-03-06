@@ -2,10 +2,7 @@ package ir.ac.ut.ece.ie.miobook.command;
 
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Address;
-import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,8 +63,8 @@ public class PurchaseCartCommandTest {
 
     @Test
     public void testPurchaseCartSuccess() throws IOException {
-        normalUser.getCart().add(book1);
-        normalUser.getCart().add(book2);
+        normalUser.getCart().add(new CartElement(book1, 0));
+        normalUser.getCart().add(new CartElement(book2, 0));
 
         String inputJson = "{\"username\": \"normal_user\"}";
 
@@ -118,8 +115,8 @@ public class PurchaseCartCommandTest {
 
     @Test
     public void testPurchaseCartInsufficientBalance() throws IOException {
-        normalUser.getCart().add(book1);
-        normalUser.getCart().add(book2);
+        normalUser.getCart().add(new CartElement(book1, 0));
+        normalUser.getCart().add(new CartElement(book2, 0));
         normalUser.setBalance(1000);
 
         String inputJson = "{\"username\": \"normal_user\"}";

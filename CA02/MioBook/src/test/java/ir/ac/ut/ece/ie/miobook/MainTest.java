@@ -179,7 +179,7 @@ public class MainTest {
 
     @Test
     public void testRemoveCartSuccess() throws IOException {
-        normalUser.getCart().add(book);
+        normalUser.getCart().add(new CartElement(book, 0));
         String input = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
 //        remove_cart {"username": "normal_user", "title": "The Magical Adventure"}
         InputStream in = new ByteArrayInputStream(input.getBytes());

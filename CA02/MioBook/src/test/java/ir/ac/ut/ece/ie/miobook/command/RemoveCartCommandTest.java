@@ -45,7 +45,7 @@ public class RemoveCartCommandTest {
         genres.add("Fantasy");
         book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 19.99, "Synopsis", "Content");
         bookDatabase.addBook(book);
-        normalUser.getCart().add(book);
+        normalUser.getCart().add(new CartElement(book, 0));
     }
 
     @AfterEach
