@@ -3,10 +3,7 @@ package ir.ac.ut.ece.ie.miobook.command;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-import ir.ac.ut.ece.ie.miobook.model.Purchase;
-import ir.ac.ut.ece.ie.miobook.model.Role;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -40,7 +37,7 @@ public class PurchaseCartCommand {
                 return;
             }
 
-            List<Book> cart = user.getCart();
+            List<CartElement> cart = user.getCart();
 
             if (cart.isEmpty()) {
                 System.out.println("{\"success\": false, \"message\": \"Cart is empty.\"}");
@@ -49,8 +46,8 @@ public class PurchaseCartCommand {
 
             int totalCost = 0;
             int cartSize = cart.size();
-            for (Book book : cart) {
-                totalCost += book.getPrice();
+            for (CartElement ce : cart) {
+                totalCost += ce.getPrice();
             }
 
             if (user.getBalance() < totalCost) {
@@ -60,8 +57,8 @@ public class PurchaseCartCommand {
 
             user.setBalance(user.getBalance() - totalCost);
             List<String> bookTitles = new ArrayList<>();
-            for(Book book : cart){
-                bookTitles.add(book.getTitle());
+            for(CartElement ce : cart){
+                bookTitles.add(ce.getBook().getTitle());
             }
 
             LocalDateTime now = LocalDateTime.now();

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.model.Book;
+import ir.ac.ut.ece.ie.miobook.model.CartElement;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 
@@ -48,7 +49,8 @@ public class AddCartCommand {
                 return;
             }
 
-            user.addToCart(book);
+            CartElement newElement = new CartElement(book, 0);
+            user.addToCart(newElement);
             System.out.println("{\"success\": true, \"message\": \"Added book to cart.\"}");
 
         } catch (Exception e) {

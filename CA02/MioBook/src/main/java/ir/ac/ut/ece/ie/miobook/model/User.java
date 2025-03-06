@@ -8,9 +8,12 @@ import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -21,10 +24,11 @@ public class User {
     String email;
     Address address;
     int balance = 0;
-    List<Book> cart = new ArrayList<>();
+    List<CartElement> cart = new ArrayList<>();
     List<Purchase> purchases = new ArrayList<>();
     List<Book> ownedBooks = new ArrayList<>();
-    private List<BorrowedBook> borrowedBooks = new ArrayList<>();
+    Map<Book, LocalDate> borrowedBooks = new HashMap<>();
+
 
     public User(@JsonProperty("role") String role, @JsonProperty("username") String username,
                 @JsonProperty("password") String password, @JsonProperty("email") String email,
@@ -60,7 +64,7 @@ public class User {
         }
     }
 
-    public void addToCart(Book book){
+    public void addToCart(CartElement book){
         this.cart.add(book);
     }
 
@@ -69,47 +73,22 @@ public class User {
     }
 
     public void removeBook(Book book){
-        this.cart.remove(book);
+        this.cart.removeIf(ce -> ce.book.title.equals(book.getTitle()));
     }
 
-    public void addToPurchase(Purchase p, List<Book> cart){
+    public void addToPurchase(Purchase p, List<CartElement> cart){
+        LocalDate tempDate;
         this.purchases.add(p);
         // add books to user owned books
-        ownedBooks.addAll(cart);
-    }
-
-    public void borrowBook(Book book, int days) {
-        // Check if the user already owns the book
-        if (ownedBooks.contains(book)) {
-            throw new IllegalStateException("You already own this book.");
-        }
-
-        // Check if the book is already borrowed
-        for (BorrowedBook borrowed : borrowedBooks) {
-            if (borrowed.getBook().equals(book)) {
-                // Check if the borrow date is still valid
-                if (borrowed.getDueDate().isAfter(LocalDateTime.now())) {
-                    throw new IllegalStateException("You already have this book borrowed.");
-                } else {
-                    // Remove the old borrow
-                    borrowedBooks.remove(borrowed);
-                    break;
-                }
+        for (CartElement ce : cart){
+            if(ce.getDays() == 0){
+                ownedBooks.add(ce.book);
+            }
+            else{
+                tempDate = LocalDate.now().plusDays(ce.getDays());
+                borrowedBooks.put(ce.getBook(), tempDate);
             }
         }
-
-        if (borrowedBooks.size() >= 10) {
-            throw new IllegalStateException("You cannot borrow more than 10 books.");
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime dueDate = now.plusDays(days);
-
-        // Calculate the borrow price
-        double borrowPrice = book.getPrice() * (days / 10.0);
-
-        // Keep all the info in the user's borrowedBooks list
-        borrowedBooks.add(new BorrowedBook(book, dueDate, borrowPrice));
     }
 
 

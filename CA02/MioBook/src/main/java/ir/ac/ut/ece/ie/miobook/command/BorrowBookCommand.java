@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.model.Book;
+import ir.ac.ut.ece.ie.miobook.model.CartElement;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class BorrowBookCommand {
 
@@ -32,14 +34,6 @@ public class BorrowBookCommand {
         }
 
         String username = node.get("username").asText();
-        String title = node.get("title").asText();
-        int days = node.get("days").asInt();
-
-        if (days < 1 || days > 9) {
-            System.out.println("{\"success\": false, \"message\": \"Invalid number of days. Days must be between 1 and 9.\"}");
-            return;
-        }
-
         User user = UserDatabase.getInstance().findUserByUsername(username);
         if (user == null) {
             System.out.println("{\"success\": false, \"message\": \"User not found.\"}");
@@ -51,18 +45,21 @@ public class BorrowBookCommand {
             return;
         }
 
+        String title = node.get("title").asText();
         Book book = BookDatabase.getInstance().findBookByTitle(title);
         if (book == null) {
             System.out.println("{\"success\": false, \"message\": \"Book not found.\"}");
             return;
         }
+        int days = node.get("days").asInt();
 
-//        try {
-//            BookDatabase.getInstance().borrowBook(title, days);
-//            user.getCart().add(book);
-//            System.out.println("{\"success\": true, \"message\": \"Added borrowed book to cart.\"}");
-//        } catch (IllegalArgumentException e) {
-//            System.out.println("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
-//        }
+        if (days < 1 || days > 9) {
+            System.out.println("{\"success\": false, \"message\": \"Invalid number of days. Days must be between 1 and 9.\"}");
+            return;
+        }
+
+        CartElement newElement = new CartElement(book, days);
+        user.addToCart((newElement));
+
     }
 }

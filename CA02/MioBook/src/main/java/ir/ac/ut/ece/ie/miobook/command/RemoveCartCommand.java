@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.model.Book;
+import ir.ac.ut.ece.ie.miobook.model.CartElement;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 
@@ -26,13 +27,12 @@ public class RemoveCartCommand {
             String title = node.get("title").asText();
 
             User user = UserDatabase.getInstance().findUserByUsername(username);
-            Book book = BookDatabase.getInstance().findBookByTitle(title);
-
             if (user == null) {
                 System.out.println("{\"success\": false, \"message\": \"User not found.\"}");
                 return;
             }
 
+            Book book = BookDatabase.getInstance().findBookByTitle(title);
             if (book == null) {
                 System.out.println("{\"success\": false, \"message\": \"Book not found.\"}");
                 return;
@@ -43,7 +43,14 @@ public class RemoveCartCommand {
                 return;
             }
 
-            if (!user.getCart().contains(book)) {
+            boolean found = false;
+            for (CartElement ce : user.getCart()) {
+                if (ce.getBook().getTitle().equals(title)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
                 System.out.println("{\"success\": false, \"message\": \"Book not in cart.\"}");
                 return;
             }
