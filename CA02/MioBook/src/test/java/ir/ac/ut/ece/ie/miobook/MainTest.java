@@ -8,13 +8,15 @@ import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
 
@@ -355,4 +357,140 @@ public class MainTest {
 
         assertTrue(output.contains("\"averageRating\":4"));
     }
+
+//    part18.1
+//    search_books_by_title {"title": "The Magical Adventure"}
+    @Test
+    public void testSearchBooksByTitleSuccess() throws IOException {
+        String input = "search_books_by_title {\"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        Assertions.assertTrue(actualOutput.get("success").asBoolean());
+        Assertions.assertEquals("Books containing 'The Magical Adventure' in their title:", actualOutput.get("message").asText());
+        Assertions.assertEquals("The Magical Adventure", actualOutput.get("data").get("search").asText());
+
+        JsonNode expectedBook = mapper.readTree("{\"title\":\"The Magical Adventure\"}");
+        JsonNode actualBooks = actualOutput.get("data").get("books");
+
+        boolean bookFound = false;
+        for (JsonNode actualBook : actualBooks) {
+            if (actualBook.get("title").asText().equals("The Magical Adventure")) {
+                bookFound = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(bookFound);
+    }
+
+//    part18.2
+//    search_books_by_author {"name": "sample name"}
+    @Test
+    public void testSearchBooksByAuthorSuccess() throws IOException {
+        String input = "search_books_by_author {\"name\": \"sample name\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        Assertions.assertTrue(actualOutput.get("success").asBoolean());
+        Assertions.assertEquals("Books by 'sample name':", actualOutput.get("message").asText());
+        Assertions.assertEquals("sample name", actualOutput.get("data").get("search").asText());
+
+        JsonNode actualBooks = actualOutput.get("data").get("books");
+
+        boolean bookFound = false;
+        for (JsonNode actualBook : actualBooks) {
+            if (actualBook.get("author").asText().equals("sample name")) {
+                bookFound = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(bookFound);
+    }
+
+//    part18.3
+//    search_books_by_genre {"genre": "Fantasy"}
+    @Test
+    public void testSearchBooksByGenreSuccess() throws IOException {
+        String input = "search_books_by_genre {\"genre\": \"Fantasy\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        Assertions.assertTrue(actualOutput.get("success").asBoolean());
+        Assertions.assertEquals("Books in the 'Fantasy' genre:", actualOutput.get("message").asText());
+        Assertions.assertEquals("Fantasy", actualOutput.get("data").get("search").asText());
+
+        JsonNode actualBooks = actualOutput.get("data").get("books");
+
+        boolean bookFound = false;
+        for (JsonNode actualBook : actualBooks) {
+            if (actualBook.get("title").asText().equals("The Magical Adventure")) {
+                bookFound = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(bookFound);
+    }
+
+//    part18.4
+//    search_books_by_year {"from": 2023, "to": 2023}
+    @Test
+    public void testSearchBooksByYearSuccess() throws IOException {
+        String input = "search_books_by_year {\"from\": 2023, \"to\": 2023}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        Assertions.assertTrue(actualOutput.get("success").asBoolean());
+        Assertions.assertEquals("Books published from 2023 to 2023:", actualOutput.get("message").asText());
+        Assertions.assertEquals("2023-2023", actualOutput.get("data").get("search").asText());
+
+        JsonNode actualBooks = actualOutput.get("data").get("books");
+
+        boolean bookFound = false;
+        for (JsonNode actualBook : actualBooks) {
+            if (actualBook.get("title").asText().equals("The Magical Adventure")) {
+                bookFound = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(bookFound);
 }
