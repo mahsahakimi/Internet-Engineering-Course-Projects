@@ -7,12 +7,9 @@ import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +37,8 @@ public class MainTest {
                 "sample name",
                 "Pen Name",
                 "Nationality",
-                LocalDate.of(1900, 1, 1),
-                LocalDate.of(1980, 1, 1)
+                MySimpleDate.of(1900, 1, 1),
+                MySimpleDate.of(1980, 1, 1)
         );
         authorDatabase.addAuthor(author);
 
@@ -140,7 +137,7 @@ public class MainTest {
 
         Main.main(new String[]{});
 
-        String expectedOutput = "{\"success\": false, \"message\": \"Text 'invalid-date' could not be parsed at index 0\"}\n";
+        String expectedOutput = "{\"success\": false, \"message\": \"Invalid date format. Please use yyyy-MM-dd.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
         assertEquals(1, authorDatabase.getAuthors().size());
     }
@@ -213,6 +210,30 @@ public class MainTest {
         assertTrue(output.contains("\"balance\":2000"));
     }
 
+//    part11
+    @Test
+    public void testShowAuthorDetailsSuccess() throws IOException {
+        String input = "show_author_details {\"username\": \"sample name\"}";
+//        show_author_details {"username": "sample name"}
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\":true"));
+        assertTrue(output.contains("\"message\":\"Author details retrieved successfully.\""));
+        assertTrue(output.contains("\"name\":\"sample name\""));
+        assertTrue(output.contains("\"penName\":\"Pen Name\""));
+        assertTrue(output.contains("\"nationality\":\"Nationality\""));
+        assertTrue(output.contains("\"born\":\"1900-01-01\""));
+        assertTrue(output.contains("\"died\":\"1980-01-01\""));
+    }
+
     @Test
     public void testAddCartSuccess() throws IOException {
         String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
@@ -246,5 +267,30 @@ public class MainTest {
         String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
         assertTrue(normalUser.getCart().isEmpty());
+    }
+
+//    part12
+    @Test
+    public void testShowBookDetailsSuccess() throws IOException {
+        String input = "show_book_details {\"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\":true"));
+        assertTrue(output.contains("\"message\":\"Book details retrieved successfully.\""));
+        assertTrue(output.contains("\"title\":\"The Magical Adventure\""));
+        assertTrue(output.contains("\"author\":{\"name\":\"sample name\""));
+        assertTrue(output.contains("\"publisher\":\"Publisher\""));
+        assertTrue(output.contains("\"genres\":[\"Fantasy\"]"));
+        assertTrue(output.contains("\"year\":2023"));
+        assertTrue(output.contains("\"price\":199"));
+        assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
     }
 }

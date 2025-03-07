@@ -2,10 +2,10 @@ package ir.ac.ut.ece.ie.miobook.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ir.ac.ut.ece.ie.miobook.model.MySimpleDate;
 import ir.ac.ut.ece.ie.miobook.service.AddAuthorService;
-
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class AddAuthorCommand {
 
@@ -31,15 +31,19 @@ public class AddAuthorCommand {
         String born = node.get("born").asText();
         String died = node.has("died") ? node.get("died").asText() : null;
 
-        LocalDate bornDate = LocalDate.parse(born);
-        LocalDate diedDate = null;
-        if (died != null) {
-            diedDate = LocalDate.parse(died);
+        try {
+            MySimpleDate bornDate = MySimpleDate.parse(born);
+            MySimpleDate diedDate = new MySimpleDate();
+            if (died != null) {
+                diedDate = MySimpleDate.parse(died);
+            }
+
+            // Call the service to do the business logic
+            AddAuthorService.addAuthor(username, name, penName, nationality, bornDate, diedDate);
+
+            System.out.println("{\"success\": true, \"message\": \"Author added successfully.\"}");
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Please use yyyy-MM-dd.");
         }
-
-        // Call the service to do the business logic
-        AddAuthorService.addAuthor(username, name, penName, nationality, bornDate, diedDate);
-
-        System.out.println("{\"success\": true, \"message\": \"Author added successfully.\"}");
     }
 }

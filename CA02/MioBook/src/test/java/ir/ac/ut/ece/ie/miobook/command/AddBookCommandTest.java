@@ -3,10 +3,7 @@ package ir.ac.ut.ece.ie.miobook.command;
 import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Address;
-import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.Role;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +35,8 @@ public class AddBookCommandTest {
                 "sample name",
                 "Pen Name",
                 "Nationality",
-                LocalDate.of(1900, 1, 1),
-                LocalDate.of(1980, 1, 1)
+                MySimpleDate.of(1900, 1, 1),
+                MySimpleDate.of(1980, 1, 1)
         );
         authorDatabase.addAuthor(author);
     }

@@ -42,8 +42,8 @@ public class ShowPurchaseHistoryCommandTest {
                 "Author Name",
                 "Pen Name",
                 "Nationality",
-                LocalDate.of(1900, 1, 1),
-                LocalDate.of(1980, 1, 1)
+                MySimpleDate.of(1900, 1, 1),
+                MySimpleDate.of(1980, 1, 1)
         );
 
         List<String> genres = new ArrayList<>();

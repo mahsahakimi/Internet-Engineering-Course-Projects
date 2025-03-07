@@ -2,55 +2,29 @@ package ir.ac.ut.ece.ie.miobook.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-
-
+import ir.ac.ut.ece.ie.miobook.service.ShowBookDetailsService;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ShowBookDetailsCommand {
 
     public static void execute(String inputJson) throws IOException {
         if (inputJson == null) {
-            System.out.println("Input data for show_book_details command is missing.");
-            return;
+            throw new IllegalArgumentException("Input data for show_book_details command is missing.");
         }
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(inputJson);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(inputJson);
 
-            String title = node.get("title").asText();
-
-            Book book = BookDatabase.getInstance().findBookByTitle(title);
-
-            if (book == null) {
-                System.out.println("{\"success\": false, \"message\": \"Book not found.\"}");
-                return;
-            }
-
-            Map<String, Object> bookData = new HashMap<>();
-            bookData.put("title", book.getTitle());
-            bookData.put("author", book.getAuthor());
-            bookData.put("publisher", book.getPublisher());
-            bookData.put("genres", book.getGenres());
-            bookData.put("year", book.getYear());
-            bookData.put("price", book.getPrice());
-            bookData.put("synopsis", book.getSynopsis());
-//            bookData.put("averageRating", book.getAverageRating());
-
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Book details retrieved successfully.");
-            response.put("data", bookData);
-
-            System.out.println(mapper.writeValueAsString(response));
-
-        } catch (Exception e) {
-            System.out.println("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
+        // Check required fields
+        if (node.get("title") == null) {
+            throw new IllegalArgumentException("Missing required fields.");
         }
+
+        String title = node.get("title").asText();
+
+        // Call the service to do the business logic
+        String responseJson = ShowBookDetailsService.getBookDetails(title);
+
+        System.out.println(responseJson);
     }
 }
