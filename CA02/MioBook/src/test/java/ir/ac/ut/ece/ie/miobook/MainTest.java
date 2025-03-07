@@ -234,6 +234,31 @@ public class MainTest {
         assertTrue(output.contains("\"died\":\"1980-01-01\""));
     }
 
+//    part12
+    @Test
+    public void testShowBookDetailsSuccess() throws IOException {
+        String input = "show_book_details {\"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\":true"));
+        assertTrue(output.contains("\"message\":\"Book details retrieved successfully.\""));
+        assertTrue(output.contains("\"title\":\"The Magical Adventure\""));
+        assertTrue(output.contains("\"author\":{\"name\":\"sample name\""));
+        assertTrue(output.contains("\"publisher\":\"Publisher\""));
+        assertTrue(output.contains("\"genres\":[\"Fantasy\"]"));
+        assertTrue(output.contains("\"year\":2023"));
+        assertTrue(output.contains("\"price\":199"));
+        assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
+    }
+
     @Test
     public void testAddCartSuccess() throws IOException {
         String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
@@ -267,30 +292,5 @@ public class MainTest {
         String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
         assertTrue(normalUser.getCart().isEmpty());
-    }
-
-//    part12
-    @Test
-    public void testShowBookDetailsSuccess() throws IOException {
-        String input = "show_book_details {\"title\": \"The Magical Adventure\"}";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        Main.main(new String[]{});
-
-        String output = outContent.toString();
-
-        assertTrue(output.contains("\"success\":true"));
-        assertTrue(output.contains("\"message\":\"Book details retrieved successfully.\""));
-        assertTrue(output.contains("\"title\":\"The Magical Adventure\""));
-        assertTrue(output.contains("\"author\":{\"name\":\"sample name\""));
-        assertTrue(output.contains("\"publisher\":\"Publisher\""));
-        assertTrue(output.contains("\"genres\":[\"Fantasy\"]"));
-        assertTrue(output.contains("\"year\":2023"));
-        assertTrue(output.contains("\"price\":199"));
-        assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
     }
 }
