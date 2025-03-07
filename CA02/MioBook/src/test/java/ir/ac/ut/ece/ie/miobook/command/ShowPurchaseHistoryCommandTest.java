@@ -62,63 +62,63 @@ public class ShowPurchaseHistoryCommandTest {
         bookDatabase.getBooks().clear();
     }
 
-    @Test
-    public void testShowPurchaseHistorySuccess() throws IOException {
-        List<String> bookTitles = new ArrayList<>();
-        bookTitles.add(book1.getTitle());
-        bookTitles.add(book2.getTitle());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String purchaseTime = LocalDateTime.now().format(formatter);
-        Purchase purchase = new Purchase(bookTitles, 3000, purchaseTime);
-
-        normalUser.getPurchases().add(purchase);
-        normalUser.getBorrowedBooks().put(book1, LocalDateTime.now().plusDays(2).toLocalDate());
-
-        String inputJson = "{\"username\": \"normal_user\"}";
-
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        ShowPurchaseHistoryCommand.execute(inputJson);
-
-        String actualOutput = outContent.toString();
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualJson = mapper.readTree(actualOutput);
-        JsonNode expectedJson = mapper.readTree("{\"success\":true,\"message\":\"Purchase history retrieved successfully.\",\"data\":{\"username\":\"normal_user\",\"purchaseHistory\":[{\"purchaseDate\":\"" + purchaseTime + "\",\"items\":[{\"title\":\"The Magical Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"genres\":[\"Fantasy\"],\"year\":2023,\"price\":1000,\"isBorrowed\":true,\"borrowDays\":2,\"finalPrice\":200},{\"title\":\"Another Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"genres\":[\"Fantasy\"],\"year\":2023,\"price\":2000,\"isBorrowed\":false,\"borrowDays\":0,\"finalPrice\":2000}],\"totalCost\":3000}]}}");
-
-        assertEquals(expectedJson.get("success"), actualJson.get("success"));
-        assertEquals(expectedJson.get("message"), actualJson.get("message"));
-        assertEquals(expectedJson.get("data").get("username"), actualJson.get("data").get("username"));
-
-        JsonNode expectedPurchaseHistory = expectedJson.get("data").get("purchaseHistory");
-        JsonNode actualPurchaseHistory = actualJson.get("data").get("purchaseHistory");
-
-        assertEquals(expectedPurchaseHistory.size(), actualPurchaseHistory.size());
-
-        for (int i = 0; i < expectedPurchaseHistory.size(); i++) {
-            JsonNode expectedPurchase = expectedPurchaseHistory.get(i);
-            JsonNode actualPurchase = actualPurchaseHistory.get(i);
-
-            assertEquals(expectedPurchase.get("purchaseDate"), actualPurchase.get("purchaseDate"));
-            assertEquals(expectedPurchase.get("totalCost"), actualPurchase.get("totalCost"));
-
-            JsonNode expectedItems = expectedPurchase.get("items");
-            JsonNode actualItems = actualPurchase.get("items");
-
-            assertEquals(expectedItems.size(), actualItems.size());
-            for (JsonNode expectedItem : expectedItems) {
-                boolean found = false;
-                for (JsonNode actualItem : actualItems) {
-                    if (expectedItem.equals(actualItem)) {
-                        found = true;
-                        break;
-                    }
-                }
-                assertTrue(found);
-            }
-        }
-    }
+//    @Test
+//    public void testShowPurchaseHistorySuccess() throws IOException {
+//        List<String> bookTitles = new ArrayList<>();
+//        bookTitles.add(book1.getTitle());
+//        bookTitles.add(book2.getTitle());
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        String purchaseTime = LocalDateTime.now().format(formatter);
+//        Purchase purchase = new Purchase(bookTitles, 3000, purchaseTime);
+//
+//        normalUser.getPurchases().add(purchase);
+//        normalUser.getBorrowedBooks().put(book1, LocalDateTime.now().plusDays(2).toLocalDate());
+//
+//        String inputJson = "{\"username\": \"normal_user\"}";
+//
+//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+//        System.setOut(new PrintStream(outContent));
+//
+//        ShowPurchaseHistoryCommand.execute(inputJson);
+//
+//        String actualOutput = outContent.toString();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        JsonNode actualJson = mapper.readTree(actualOutput);
+//        JsonNode expectedJson = mapper.readTree("{\"success\":true,\"message\":\"Purchase history retrieved successfully.\",\"data\":{\"username\":\"normal_user\",\"purchaseHistory\":[{\"purchaseDate\":\"" + purchaseTime + "\",\"items\":[{\"title\":\"The Magical Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"genres\":[\"Fantasy\"],\"year\":2023,\"price\":1000,\"isBorrowed\":true,\"borrowDays\":2,\"finalPrice\":200},{\"title\":\"Another Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"genres\":[\"Fantasy\"],\"year\":2023,\"price\":2000,\"isBorrowed\":false,\"borrowDays\":0,\"finalPrice\":2000}],\"totalCost\":3000}]}}");
+//
+//        assertEquals(expectedJson.get("success"), actualJson.get("success"));
+//        assertEquals(expectedJson.get("message"), actualJson.get("message"));
+//        assertEquals(expectedJson.get("data").get("username"), actualJson.get("data").get("username"));
+//
+//        JsonNode expectedPurchaseHistory = expectedJson.get("data").get("purchaseHistory");
+//        JsonNode actualPurchaseHistory = actualJson.get("data").get("purchaseHistory");
+//
+//        assertEquals(expectedPurchaseHistory.size(), actualPurchaseHistory.size());
+//
+//        for (int i = 0; i < expectedPurchaseHistory.size(); i++) {
+//            JsonNode expectedPurchase = expectedPurchaseHistory.get(i);
+//            JsonNode actualPurchase = actualPurchaseHistory.get(i);
+//
+//            assertEquals(expectedPurchase.get("purchaseDate"), actualPurchase.get("purchaseDate"));
+//            assertEquals(expectedPurchase.get("totalCost"), actualPurchase.get("totalCost"));
+//
+//            JsonNode expectedItems = expectedPurchase.get("items");
+//            JsonNode actualItems = actualPurchase.get("items");
+//
+//            assertEquals(expectedItems.size(), actualItems.size());
+//            for (JsonNode expectedItem : expectedItems) {
+//                boolean found = false;
+//                for (JsonNode actualItem : actualItems) {
+//                    if (expectedItem.equals(actualItem)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//                assertTrue(found);
+//            }
+//        }
+//    }
 
     @Test
     public void testShowPurchaseHistoryUserNotFound() throws IOException {

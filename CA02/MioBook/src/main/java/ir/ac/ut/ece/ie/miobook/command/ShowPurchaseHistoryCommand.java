@@ -66,13 +66,13 @@ public class ShowPurchaseHistoryCommand {
                     int finalPrice = book.getPrice();
 
                     // Check if the book was borrowed
-                    if (user.getBorrowedBooks().containsKey(book)) {
-                        isBorrowed = true;
-                        LocalDate borrowDueDate = user.getBorrowedBooks().get(book);
-                        LocalDate purchaseDate = LocalDateTime.parse(purchase.getPurchaseDateTime(), formatter).toLocalDate();
-                        borrowDays = (int) java.time.temporal.ChronoUnit.DAYS.between(purchaseDate, borrowDueDate);
-                        finalPrice = (book.getPrice() * borrowDays) / 10;
-                    }
+//                    if (user.getBorrowedBooks().containsKey(book)) {
+//                        isBorrowed = true;
+//                        LocalDate borrowDueDate = user.getBorrowedBooks().get(book);
+//                        LocalDate purchaseDate = LocalDateTime.parse(purchase.getPurchaseDateTime(), formatter).toLocalDate();
+//                        borrowDays = (int) java.time.temporal.ChronoUnit.DAYS.between(purchaseDate, borrowDueDate);
+//                        finalPrice = (book.getPrice() * borrowDays) / 10;
+//                    }
 
                     item.put("isBorrowed", isBorrowed);
                     item.put("borrowDays", borrowDays);

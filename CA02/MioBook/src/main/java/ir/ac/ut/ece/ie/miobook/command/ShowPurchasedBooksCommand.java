@@ -54,21 +54,21 @@ public class ShowPurchasedBooksCommand {
         }
 
         // Add borrowed books that are not expired
-        for (Map.Entry<Book, LocalDate> entry : user.getBorrowedBooks().entrySet()) {
-            Book book = entry.getKey();
-            LocalDate dueDate = entry.getValue();
-            if (dueDate.isAfter(LocalDate.now())) {
-                Map<String, Object> bookData = new HashMap<>();
-                bookData.put("title", book.getTitle());
-                bookData.put("author", book.getAuthor().getName());
-                bookData.put("publisher", book.getPublisher());
-                bookData.put("category", book.getGenres());
-                bookData.put("year", book.getYear());
-                bookData.put("price", book.getPrice());
-                bookData.put("isBorrowed", true);
-                books.add(bookData);
-            }
-        }
+//        for (Map.Entry<Book, LocalDate> entry : user.getBorrowedBooks().entrySet()) {
+//            Book book = entry.getKey();
+//            LocalDate dueDate = entry.getValue();
+//            if (dueDate.isAfter(LocalDate.now())) {
+//                Map<String, Object> bookData = new HashMap<>();
+//                bookData.put("title", book.getTitle());
+//                bookData.put("author", book.getAuthor().getName());
+//                bookData.put("publisher", book.getPublisher());
+//                bookData.put("category", book.getGenres());
+//                bookData.put("year", book.getYear());
+//                bookData.put("price", book.getPrice());
+//                bookData.put("isBorrowed", true);
+//                books.add(bookData);
+//            }
+//        }
 
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);

@@ -65,9 +65,9 @@ public class PurchaseCartCommand {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDateTime = now.format(formatter);
 
-            Purchase purchase = new Purchase(bookTitles, totalCost, formattedDateTime);
-            user.addToPurchase(purchase, cart);
-            user.clearCart();
+//            Purchase purchase = new Purchase(bookTitles, totalCost, formattedDateTime);
+//            user.addToPurchase(purchase, cart);
+//            user.clearCart();
 
             System.out.println("{\"success\": true, \"message\": \"Purchase completed successfully.\", \"data\": {\"bookCount\": " + cartSize + ", \"totalCost\": " + totalCost + ", \"date\": \"" + formattedDateTime + "\"}}");
 

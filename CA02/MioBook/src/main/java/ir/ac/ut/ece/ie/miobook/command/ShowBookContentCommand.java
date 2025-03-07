@@ -49,12 +49,12 @@ public class ShowBookContentCommand
                 }
             }
             // search in borrowed books
-            if (user.getBorrowedBooks().containsKey(book)) {
-                LocalDate userAccess = user.getBorrowedBooks().get(book);
-                if(userAccess.isBefore(LocalDate.now().plusDays(1))){
-                    hasAccess = true;
-                }
-            }
+//            if (user.getBorrowedBooks().containsKey(book)) {
+//                LocalDate userAccess = user.getBorrowedBooks().get(book);
+//                if(userAccess.isBefore(LocalDate.now().plusDays(1))){
+//                    hasAccess = true;
+//                }
+//            }
             if(hasAccess){
                 Map<String, Object> data = new HashMap<>();
                 data.put("title", book.getTitle());

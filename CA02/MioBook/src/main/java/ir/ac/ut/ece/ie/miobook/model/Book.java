@@ -2,12 +2,14 @@ package ir.ac.ut.ece.ie.miobook.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class Book {
     String title;
     Author author;
