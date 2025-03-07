@@ -145,6 +145,7 @@ public class MainTest {
         assertEquals(1, authorDatabase.getAuthors().size());
     }
 
+//    part6
     @Test
     public void testAddCreditSuccess() throws IOException {
         String addUserInput = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";

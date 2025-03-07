@@ -1,4 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.validator;
+
 import java.time.LocalDate;
 
 public class BornDiedValidator {
