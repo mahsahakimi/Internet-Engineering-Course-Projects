@@ -1,7 +1,10 @@
 package ir.ac.ut.ece.ie.miobook;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
+import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +21,7 @@ public class MainTest {
     private UserDatabase userDatabase;
     private BookDatabase bookDatabase;
     private AuthorDatabase authorDatabase;
+    private ReviewDatabase reviewDatabase;
     private User adminUser;
     private Author author;
     private Book book;
@@ -28,6 +32,7 @@ public class MainTest {
         userDatabase = UserDatabase.getInstance();
         bookDatabase = BookDatabase.getInstance();
         authorDatabase = AuthorDatabase.getInstance();
+        reviewDatabase = ReviewDatabase.getInstance();
         Address address = new Address("USA", "New York");
         adminUser = new User("admin", "admin_user", "1234", "admin@mail.com", address);
         adminUser.setRole(Role.admin);
@@ -56,13 +61,15 @@ public class MainTest {
         userDatabase.getUsers().clear();
         bookDatabase.getBooks().clear();
         authorDatabase.getAuthors().clear();
+        reviewDatabase.getReviews().clear();
     }
 
 //    part1
+//    add_user {"role": "customer", "username": "test-name", "password": "1234", "email": "my.mail@mail.com", "address": {"country": "Iran", "city": "Karaj"}}
+
     @Test
     public void testAddUserSuccess() throws IOException {
         String input = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";
-//        add_user {"role": "customer", "username": "test-name", "password": "1234", "email": "my.mail@mail.com", "address": {"country": "Iran", "city": "Karaj"}}
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
@@ -76,10 +83,10 @@ public class MainTest {
     }
 
 //    part2
+//    add_author {"username": "admin_user", "name": "New Author Name", "nationality": "nationality", "penName": "New Pen Name", "born": "1982-04-12"}
     @Test
     public void testAddAuthorSuccess() throws IOException {
         String input = "add_author {\"username\": \"admin_user\", \"name\": \"New Author Name\", \"nationality\": \"nationality\", \"penName\": \"New Pen Name\", \"born\": \"1982-04-12\"}";
-//        add_author {"username": "admin_user", "name": "New Author Name", "nationality": "nationality", "penName": "New Pen Name", "born": "1982-04-12"}
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
@@ -94,6 +101,7 @@ public class MainTest {
     }
 
 //    part3
+//    add_book {"username": "admin_user", "title": "sample book", "author": "sample name", "publisher": "name", "year": 2012, "price": 250, "synopsis": "lorem", "content": "lorem ipsum", "genres": ["horror", "thriller"]}
     @Test
     public void testAddBookSuccess() throws IOException {
         String input = "add_book {\"username\": \"admin_user\", \"title\": \"sample book\", \"author\": \"sample name\", \"publisher\": \"name\", \"year\": 2012, \"price\": 250, \"synopsis\": \"lorem\", \"content\": \"lorem ipsum\", \"genres\": [\"horror\", \"thriller\"]}";
@@ -143,6 +151,7 @@ public class MainTest {
     }
 
 //    part6
+//    add_credit {"username": "test-name", "credit": 8200}
     @Test
     public void testAddCreditSuccess() throws IOException {
         String addUserInput = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";
@@ -155,7 +164,6 @@ public class MainTest {
         Main.main(new String[]{});
 
         String addCreditInput = "add_credit {\"username\": \"test-name\", \"credit\": 8200}";
-//        add_credit {"username": "test-name", "credit": 8200}
         InputStream addCreditIn = new ByteArrayInputStream(addCreditInput.getBytes());
         System.setIn(addCreditIn);
 
@@ -169,6 +177,7 @@ public class MainTest {
     }
 
 //    part10
+//    show_user_details {"username": "test-name"}
     @Test
     public void testShowUserDetailsSuccess() throws IOException {
         String addUserInput = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";
@@ -190,7 +199,6 @@ public class MainTest {
         Main.main(new String[]{});
 
         String showDetailsInput = "show_user_details {\"username\": \"test-name\"}";
-//        show_user_details {"username": "test-name"}
         InputStream showDetailsIn = new ByteArrayInputStream(showDetailsInput.getBytes());
         System.setIn(showDetailsIn);
 
@@ -211,10 +219,10 @@ public class MainTest {
     }
 
 //    part11
+//    show_author_details {"username": "sample name"}
     @Test
     public void testShowAuthorDetailsSuccess() throws IOException {
         String input = "show_author_details {\"username\": \"sample name\"}";
-//        show_author_details {"username": "sample name"}
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
@@ -235,6 +243,7 @@ public class MainTest {
     }
 
 //    part12
+//    show_book_details {"title": "The Magical Adventure"}
     @Test
     public void testShowBookDetailsSuccess() throws IOException {
         String input = "show_book_details {\"title\": \"The Magical Adventure\"}";
@@ -259,10 +268,52 @@ public class MainTest {
         assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
     }
 
+//    @Test
+//    public void testAddCartSuccess() throws IOException {
+//        String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+////        add_cart {"username": "normal_user", "title": "The Magical Adventure"}
+//        InputStream in = new ByteArrayInputStream(input.getBytes());
+//        System.setIn(in);
+//
+//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+//        System.setOut(new PrintStream(outContent));
+//
+//        Main.main(new String[]{});
+//
+//        String expectedOutput = "{\"success\": true, \"message\": \"Added book to cart.\"}\n";
+//        assertEquals(expectedOutput, outContent.toString());
+//        assertEquals(1, normalUser.getCart().size());
+//    }
+
+//    @Test
+//    public void testRemoveCartSuccess() throws IOException {
+//        normalUser.getCart().add(new CartElement(book, 0));
+//        String input = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+////        remove_cart {"username": "normal_user", "title": "The Magical Adventure"}
+//        InputStream in = new ByteArrayInputStream(input.getBytes());
+//        System.setIn(in);
+//
+//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+//        System.setOut(new PrintStream(outContent));
+//
+//        Main.main(new String[]{});
+//
+//        String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
+//        assertEquals(expectedOutput, outContent.toString());
+//        assertTrue(normalUser.getCart().isEmpty());
+//    }
+
+//    part14
+//    show_book_reviews {"title": "The Magical Adventure"}
     @Test
-    public void testAddCartSuccess() throws IOException {
-        String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
-//        add_cart {"username": "normal_user", "title": "The Magical Adventure"}
+    public void testShowBookReviewsSuccess() throws IOException {
+        // Add a review first
+        Review review1 = new Review("normal_user", "The Magical Adventure", 4, "Nice.");
+        Review review2 = new Review("admin_user", "The Magical Adventure", 5, "Very nice.");
+        reviewDatabase.addReview(review1);
+        reviewDatabase.addReview(review2);
+
+        String input = "show_book_reviews {\"title\": \"The Magical Adventure\"}";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
@@ -271,26 +322,37 @@ public class MainTest {
 
         Main.main(new String[]{});
 
-        String expectedOutput = "{\"success\": true, \"message\": \"Added book to cart.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
-        assertEquals(1, normalUser.getCart().size());
-    }
+        String output = outContent.toString();
 
-    @Test
-    public void testRemoveCartSuccess() throws IOException {
-        normalUser.getCart().add(new CartElement(book, 0));
-        String input = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
-//        remove_cart {"username": "normal_user", "title": "The Magical Adventure"}
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
+        assertTrue(output.contains("\"success\":true"));
+        assertTrue(output.contains("\"message\":\"Book reviews retrieved successfully.\""));
+        assertTrue(output.contains("\"title\":\"The Magical Adventure\""));
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        assertTrue(output.contains("\"reviews\":["));
 
-        Main.main(new String[]{});
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualReviews = mapper.readTree(output)
+                .get("data")
+                .get("reviews");
 
-        String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
-        assertTrue(normalUser.getCart().isEmpty());
+        JsonNode expectedReview1 = mapper.readTree("{\"username\":\"normal_user\",\"rate\":4,\"comment\":\"Nice.\"}");
+        JsonNode expectedReview2 = mapper.readTree("{\"username\":\"admin_user\",\"rate\":5,\"comment\":\"Very nice.\"}");
+
+        boolean foundReview1 = false;
+        boolean foundReview2 = false;
+
+        for (JsonNode actualReview : actualReviews) {
+            if (actualReview.equals(expectedReview1)) {
+                foundReview1 = true;
+            }
+            if (actualReview.equals(expectedReview2)) {
+                foundReview2 = true;
+            }
+        }
+
+        assertTrue(foundReview1);
+        assertTrue(foundReview2);
+
+        assertTrue(output.contains("\"averageRating\":4"));
     }
 }

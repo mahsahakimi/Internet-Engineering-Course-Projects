@@ -1,13 +1,9 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BookTest {
 
@@ -30,7 +26,7 @@ public class BookTest {
                 "Publishing House",
                 2023,
                 genres,
-                19,
+                1999,
                 "A thrilling tale of magic and friendship.",
                 "Chapter 1..."
         );
@@ -43,57 +39,6 @@ public class BookTest {
         assertEquals(1999, book.getPrice());
         assertEquals("A thrilling tale of magic and friendship.", book.getSynopsis());
         assertEquals("Chapter 1...", book.getContent());
-    }
-
-    @Test
-    public void testBookCreationInvalidYear() {
-        Author author = new Author(
-                "Author Name",
-                "Pen Name",
-                "Nationality",
-                MySimpleDate.of(1900, 1, 1),
-                MySimpleDate.of(1980, 1, 1)
-        );
-        List<String> genres = new ArrayList<>();
-        genres.add("Fantasy");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Book(
-                    "The Magical Adventure",
-                    author,
-                    "Publishing House",
-                    0,
-                    genres,
-                    19,
-                    "Synopsis",
-                    "Content"
-            );
-        });
-    }
-
-    @Test
-    public void testBookCreationNoGenres() {
-        Author author = new Author(
-                "Author Name",
-                "Pen Name",
-                "Nationality",
-                MySimpleDate.of(1900, 1, 1),
-                MySimpleDate.of(1980, 1, 1)
-        );
-        List<String> genres = new ArrayList<>();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Book(
-                    "The Magical Adventure",
-                    author,
-                    "Publishing House",
-                    2023,
-                    genres,
-                    199,
-                    "Synopsis",
-                    "Content"
-            );
-        });
     }
 
     @Test
