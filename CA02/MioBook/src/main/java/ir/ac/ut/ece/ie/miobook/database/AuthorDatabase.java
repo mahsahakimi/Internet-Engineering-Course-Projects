@@ -2,7 +2,6 @@ package ir.ac.ut.ece.ie.miobook.database;
 
 import ir.ac.ut.ece.ie.miobook.model.Author;
 import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +37,4 @@ public class AuthorDatabase {
         }
         return null;
     }
-
 }

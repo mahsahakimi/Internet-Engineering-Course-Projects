@@ -61,6 +61,7 @@ public class MainTest {
         authorDatabase.getAuthors().clear();
     }
 
+//    part1
     @Test
     public void testAddUserSuccess() throws IOException {
         String input = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";
@@ -75,6 +76,56 @@ public class MainTest {
 
         String expectedOutput = "{\"success\": true, \"message\": \"User added successfully.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
+    }
+
+//    part2
+    @Test
+    public void testAddAuthorSuccess() throws IOException {
+        String input = "add_author {\"username\": \"admin_user\", \"name\": \"New Author Name\", \"nationality\": \"nationality\", \"penName\": \"New Pen Name\", \"born\": \"1982-04-12\"}";
+//        add_author {"username": "admin_user", "name": "New Author Name", "nationality": "nationality", "penName": "New Pen Name", "born": "1982-04-12"}
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": true, \"message\": \"Author added successfully.\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(2, authorDatabase.getAuthors().size());
+    }
+
+    @Test
+    public void testAddAuthorMissingField() throws IOException {
+        String input = "add_author {\"username\": \"admin_user\", \"name\": \"New Author Name\", \"born\": \"1982-04-12\"}"; // missing penName
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": false, \"message\": \"Missing required fields.\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(1, authorDatabase.getAuthors().size());
+    }
+
+    @Test
+    public void testAddAuthorInvalidDate() throws IOException {
+        String input = "add_author {\"username\": \"admin_user\", \"name\": \"New Author Name\", \"nationality\": \"nationality\", \"penName\": \"New Pen Name\", \"born\": \"invalid-date\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": false, \"message\": \"Text 'invalid-date' could not be parsed at index 0\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(1, authorDatabase.getAuthors().size());
     }
 
     @Test
