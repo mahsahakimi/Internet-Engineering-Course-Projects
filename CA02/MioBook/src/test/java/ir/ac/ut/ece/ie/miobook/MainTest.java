@@ -47,7 +47,7 @@ public class MainTest {
 
         List<String> genres = new ArrayList<>();
         genres.add("Fantasy");
-        book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 19.99, "Synopsis", "Content");
+        book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 199, "Synopsis", "Content");
         bookDatabase.addBook(book);
 
         normalUser = new User("customer", "normal_user", "1234", "normal@mail.com", address);
@@ -94,6 +94,23 @@ public class MainTest {
         String expectedOutput = "{\"success\": true, \"message\": \"Author added successfully.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
         assertEquals(2, authorDatabase.getAuthors().size());
+    }
+
+//    part3
+    @Test
+    public void testAddBookSuccess() throws IOException {
+        String input = "add_book {\"username\": \"admin_user\", \"title\": \"sample book\", \"author\": \"sample name\", \"publisher\": \"name\", \"year\": 2012, \"price\": 250, \"synopsis\": \"lorem\", \"content\": \"lorem ipsum\", \"genres\": [\"horror\", \"thriller\"]}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String expectedOutput = "{\"success\": true, \"message\": \"Book added successfully.\"}\n";
+        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(2, bookDatabase.getBooks().size()); // Check if the book was added
     }
 
     @Test
@@ -192,23 +209,6 @@ public class MainTest {
         assertTrue(output.contains("\"country\":\"Iran\""));
         assertTrue(output.contains("\"city\":\"Karaj\""));
         assertTrue(output.contains("\"balance\":2000"));
-    }
-
-    @Test
-    public void testAddBookSuccess() throws IOException {
-        String input = "add_book {\"username\": \"admin_user\", \"title\": \"sample book\", \"author\": \"sample name\", \"publisher\": \"name\", \"year\": 2012, \"price\": 250, \"synopsis\": \"lorem\", \"content\": \"lorem ipsum\", \"genres\": [\"horror\", \"thriller\"]}";
-//        add_book {"username": "admin_user", "title": "sample book", "author": "sample name", "publisher": "name", "year": 2012, "price": 250, "synopsis": "lorem", "content": "lorem ipsum", "genres": ["horror", "thriller"]}
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        Main.main(new String[]{});
-
-        String expectedOutput = "{\"success\": true, \"message\": \"Book added successfully.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
-        assertEquals(2, bookDatabase.getBooks().size());
     }
 
     @Test

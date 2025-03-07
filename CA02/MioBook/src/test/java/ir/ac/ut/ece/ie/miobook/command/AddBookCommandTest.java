@@ -10,13 +10,12 @@ import ir.ac.ut.ece.ie.miobook.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AddBookCommandTest {
 
@@ -37,8 +36,8 @@ public class AddBookCommandTest {
         userDatabase.addUser(adminUser);
         author = new Author(
                 "sample name",
-                "Pen Name", // Add pen name
-                "Nationality", // Add nationality
+                "Pen Name",
+                "Nationality",
                 LocalDate.of(1900, 1, 1),
                 LocalDate.of(1980, 1, 1)
         );
@@ -75,27 +74,20 @@ public class AddBookCommandTest {
 
         String inputJson = "{\"username\": \"normal_user\", \"title\": \"sample book\", \"author\": \"sample name\", \"publisher\": \"name\", \"year\": 2012, \"price\": 250, \"synopsis\": \"lorem\", \"content\": \"lorem ipsum\", \"genres\": [\"horror\", \"thriller\"]}";
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        assertThrows(IllegalArgumentException.class, () -> {
+            AddBookCommand.execute(inputJson);
+        });
 
-        AddBookCommand.execute(inputJson);
-
-        String expectedOutput = "{\"success\": false, \"message\": \"Permission denied.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
         assertEquals(0, bookDatabase.getBooks().size());
     }
 
     @Test
-    public void testAddBookAuthorNotFound() throws IOException {
+    public void testAddBookAuthorNotFound() {
         String inputJson = "{\"username\": \"admin_user\", \"title\": \"sample book\", \"author\": \"not found author\", \"publisher\": \"name\", \"year\": 2012, \"price\": 250, \"synopsis\": \"lorem\", \"content\": \"lorem ipsum\", \"genres\": [\"horror\", \"thriller\"]}";
 
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        AddBookCommand.execute(inputJson);
-
-        String expectedOutput = "{\"success\": false, \"message\": \"Author not found.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
+        assertThrows(IllegalArgumentException.class, () -> {
+            AddBookCommand.execute(inputJson);
+        });
         assertEquals(0, bookDatabase.getBooks().size());
     }
 }

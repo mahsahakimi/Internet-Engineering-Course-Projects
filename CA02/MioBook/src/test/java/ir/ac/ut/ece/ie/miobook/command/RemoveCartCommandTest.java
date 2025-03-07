@@ -43,7 +43,7 @@ public class RemoveCartCommandTest {
 
         List<String> genres = new ArrayList<>();
         genres.add("Fantasy");
-        book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 19.99, "Synopsis", "Content");
+        book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 19, "Synopsis", "Content");
         bookDatabase.addBook(book);
         normalUser.getCart().add(new CartElement(book, 0));
     }

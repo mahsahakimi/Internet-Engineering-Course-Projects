@@ -30,7 +30,7 @@ public class BookTest {
                 "Publishing House",
                 2023,
                 genres,
-                19.99,
+                19,
                 "A thrilling tale of magic and friendship.",
                 "Chapter 1..."
         );
@@ -64,7 +64,7 @@ public class BookTest {
                     "Publishing House",
                     0,
                     genres,
-                    19.99,
+                    19,
                     "Synopsis",
                     "Content"
             );
@@ -89,7 +89,7 @@ public class BookTest {
                     "Publishing House",
                     2023,
                     genres,
-                    19.99,
+                    199,
                     "Synopsis",
                     "Content"
             );

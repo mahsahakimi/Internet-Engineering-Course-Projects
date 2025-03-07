@@ -2,14 +2,7 @@ package ir.ac.ut.ece.ie.miobook.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
-import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-import ir.ac.ut.ece.ie.miobook.model.Role;
-import ir.ac.ut.ece.ie.miobook.model.User;
-
+import ir.ac.ut.ece.ie.miobook.service.AddBookService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,50 +11,39 @@ public class AddBookCommand {
 
     public static void execute(String inputJson) throws IOException {
         if (inputJson == null) {
-            System.out.println("Input data for add_book command is missing.");
-            return;
+            throw new IllegalArgumentException("Input data for add_book command is missing.");
         }
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(inputJson);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(inputJson);
 
-            String username = node.get("username").asText();
-            String title = node.get("title").asText();
-            String authorName = node.get("author").asText();
-            String publisher = node.get("publisher").asText();
-            int year = node.get("year").asInt();
-            double price = node.get("price").asDouble();
-            String synopsis = node.get("synopsis").asText();
-            String content = node.get("content").asText();
-
-            JsonNode genresNode = node.get("genres");
-            List<String> genres = new ArrayList<>();
-            for (JsonNode genreNode : genresNode) {
-                genres.add(genreNode.asText());
-            }
-
-            User user = UserDatabase.getInstance().findUserByUsername(username);
-
-            if (user == null || user.getRole() != Role.admin) {
-                System.out.println("{\"success\": false, \"message\": \"Permission denied.\"}");
-                return;
-            }
-
-            Author author = AuthorDatabase.getInstance().findAuthorByName(authorName);
-
-            if (author == null) {
-                System.out.println("{\"success\": false, \"message\": \"Author not found.\"}");
-                return;
-            }
-
-            Book book = new Book(title, author, publisher, year, genres, price, synopsis, content);
-            BookDatabase.getInstance().addBook(book);
-
-            System.out.println("{\"success\": true, \"message\": \"Book added successfully.\"}");
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
+        // Check required fields
+        if (node.get("username") == null || node.get("title") == null ||
+                node.get("author") == null || node.get("publisher") == null ||
+                node.get("year") == null || node.get("price") == null ||
+                node.get("synopsis") == null || node.get("content") == null ||
+                node.get("genres") == null) {
+            throw new IllegalArgumentException("Missing required fields.");
         }
+
+        String username = node.get("username").asText();
+        String title = node.get("title").asText();
+        String authorName = node.get("author").asText();
+        String publisher = node.get("publisher").asText();
+        int year = node.get("year").asInt();
+        double price = node.get("price").asDouble();
+        String synopsis = node.get("synopsis").asText();
+        String content = node.get("content").asText();
+
+        JsonNode genresNode = node.get("genres");
+        List<String> genres = new ArrayList<>();
+        for (JsonNode genreNode : genresNode) {
+            genres.add(genreNode.asText());
+        }
+
+        // Call the service to do the business logic
+        AddBookService.addBook(username, title, authorName, publisher, year, price, genres, synopsis, content);
+
+        System.out.println("{\"success\": true, \"message\": \"Book added successfully.\"}");
     }
 }
