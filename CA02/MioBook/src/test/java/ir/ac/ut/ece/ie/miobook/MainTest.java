@@ -171,6 +171,7 @@ public class MainTest {
         assertEquals(expectedOutput, addCreditOutContent.toString());
     }
 
+//    part10
     @Test
     public void testShowUserDetailsSuccess() throws IOException {
         String addUserInput = "add_user {\"role\": \"customer\", \"username\": \"test-name\", \"password\": \"1234\", \"email\": \"my.mail@mail.com\", \"address\": {\"country\": \"Iran\", \"city\": \"Karaj\"}}";

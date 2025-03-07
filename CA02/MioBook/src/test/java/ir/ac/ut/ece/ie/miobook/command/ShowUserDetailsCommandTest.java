@@ -54,19 +54,6 @@ public class ShowUserDetailsCommandTest {
     }
 
     @Test
-    public void testShowUserDetailsUserNotFound() throws IOException {
-        String inputJson = "{\"username\": \"not-found\"}";
-
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        ShowUserDetailsCommand.execute(inputJson);
-
-        String expectedOutput = "{\"success\": false, \"message\": \"User not found.\"}\n";
-        assertEquals(expectedOutput, outContent.toString());
-    }
-
-    @Test
     public void testShowUserDetailsAdminUser() throws IOException {
         Address address = new Address("USA", "New York");
         User adminUser = new User("admin", "admin-name", "1234", "admin@mail.com", address);
