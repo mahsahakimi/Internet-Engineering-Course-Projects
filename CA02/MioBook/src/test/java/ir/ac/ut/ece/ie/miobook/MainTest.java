@@ -11,11 +11,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
@@ -178,6 +177,25 @@ public class MainTest {
         assertEquals(expectedOutput, addCreditOutContent.toString());
     }
 
+//    part9
+//    add_review {"username": "normal_user", "title": "The Magical Adventure", "rate": 4, "comment": "This is the perfect book!"}
+    @Test
+    public void testAddReviewSuccess() throws IOException {
+        String input = "add_review {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\", \"rate\": 4, \"comment\": \"This is the perfect book!\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\": true"));
+        assertTrue(output.contains("\"message\": \"Review added successfully.\""));
+    }
+
 //    part10
 //    show_user_details {"username": "test-name"}
     @Test
@@ -310,8 +328,9 @@ public class MainTest {
     @Test
     public void testShowBookReviewsSuccess() throws IOException {
         // Add a review first
-        Review review1 = new Review("normal_user", "The Magical Adventure", 4, "Nice.");
-        Review review2 = new Review("admin_user", "The Magical Adventure", 5, "Very nice.");
+        LocalDate date = LocalDate.now();
+        Review review1 = new Review("normal_user", "The Magical Adventure", 4, "Nice.", date);
+        Review review2 = new Review("admin_user", "The Magical Adventure", 5, "Very nice.", date);
         reviewDatabase.addReview(review1);
         reviewDatabase.addReview(review2);
 
@@ -493,4 +512,5 @@ public class MainTest {
             }
         }
         Assertions.assertTrue(bookFound);
+    }
 }
