@@ -32,6 +32,6 @@ public class BorrowBookService {
 //        check if available in cart
 
         CartElement newElement = new CartElement(book, days);
-        user.addToCart(newElement);
+        user.getCart().add(newElement);
     }
 }

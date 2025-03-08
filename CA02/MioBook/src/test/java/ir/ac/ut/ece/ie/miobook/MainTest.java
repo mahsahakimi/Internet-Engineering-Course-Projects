@@ -26,6 +26,7 @@ public class MainTest {
     private User adminUser;
     private Author author;
     private Book book;
+    private Book spaceExplorers;
     private User normalUser;
 
     @BeforeEach
@@ -53,7 +54,13 @@ public class MainTest {
         book = new Book("The Magical Adventure", author, "Publisher", 2023, genres, 199, "Synopsis", "Content");
         bookDatabase.addBook(book);
 
+        List<String> spaceGenres = new ArrayList<>();
+        spaceGenres.add("Science Fiction");
+        spaceExplorers = new Book("Space Explorers", author, "Publisher", 2024, spaceGenres, 200, "Synopsis", "Content");
+        bookDatabase.addBook(spaceExplorers);
+
         normalUser = new User("customer", "normal_user", "1234", "normal@mail.com", address);
+        normalUser.setBalance(10000);
         userDatabase.addUser(normalUser);
     }
 
@@ -116,7 +123,7 @@ public class MainTest {
 
         String expectedOutput = "{\"success\": true, \"message\": \"Book added successfully.\"}\n";
         assertEquals(expectedOutput, outContent.toString());
-        assertEquals(2, bookDatabase.getBooks().size()); // Check if the book was added
+        assertEquals(3, bookDatabase.getBooks().size()); // Check if the book was added
     }
 
     @Test
@@ -218,6 +225,43 @@ public void testRemoveCartSuccess() throws IOException {
 
         String expectedOutput = "{\"success\": true, \"message\": \"Credit added successfully.\"}\n";
         assertEquals(expectedOutput, addCreditOutContent.toString());
+    }
+
+//    part7
+//    purchase_cart {"username": "normal_user"}
+    @Test
+    public void testPurchaseCartSuccess() throws IOException {
+        String addInput1 = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        String addInput2 = "borrow_book {\"username\": \"normal_user\", \"title\": \"Space Explorers\", \"days\": 2}";
+        InputStream addIn1 = new ByteArrayInputStream(addInput1.getBytes());
+        System.setIn(addIn1);
+        Main.main(new String[]{});
+
+        InputStream addIn2 = new ByteArrayInputStream(addInput2.getBytes());
+        System.setIn(addIn2);
+        Main.main(new String[]{});
+
+        String purchaseInput = "purchase_cart {\"username\": \"normal_user\"}";
+        InputStream purchaseIn = new ByteArrayInputStream(purchaseInput.getBytes());
+        System.setIn(purchaseIn);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        assertTrue(actualOutput.get("success").asBoolean());
+        assertTrue(actualOutput.get("message").asText().equals("Purchase completed successfully."));
+
+        JsonNode data = actualOutput.get("data");
+        assertTrue(data.has("bookCount") && data.get("bookCount").asInt() == 2);
+        assertTrue(data.has("totalCost") && data.get("totalCost").asInt() > 0);
+        assertTrue(data.has("date") && data.get("date").asText().length() > 0);
     }
 
 //    part8
@@ -350,41 +394,6 @@ public void testRemoveCartSuccess() throws IOException {
         assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
     }
 
-//    @Test
-//    public void testAddCartSuccess() throws IOException {
-//        String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
-////        add_cart {"username": "normal_user", "title": "The Magical Adventure"}
-//        InputStream in = new ByteArrayInputStream(input.getBytes());
-//        System.setIn(in);
-//
-//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(outContent));
-//
-//        Main.main(new String[]{});
-//
-//        String expectedOutput = "{\"success\": true, \"message\": \"Added book to cart.\"}\n";
-//        assertEquals(expectedOutput, outContent.toString());
-//        assertEquals(1, normalUser.getCart().size());
-//    }
-
-//    @Test
-//    public void testRemoveCartSuccess() throws IOException {
-//        normalUser.getCart().add(new CartElement(book, 0));
-//        String input = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
-////        remove_cart {"username": "normal_user", "title": "The Magical Adventure"}
-//        InputStream in = new ByteArrayInputStream(input.getBytes());
-//        System.setIn(in);
-//
-//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(outContent));
-//
-//        Main.main(new String[]{});
-//
-//        String expectedOutput = "{\"success\": true, \"message\": \"Removed book from cart.\"}\n";
-//        assertEquals(expectedOutput, outContent.toString());
-//        assertTrue(normalUser.getCart().isEmpty());
-//    }
-
 //    part14
 //    show_book_reviews {"title": "The Magical Adventure"}
     @Test
@@ -500,7 +509,6 @@ public void testShowCartSuccess() throws IOException {
         Assertions.assertEquals("Books containing 'The Magical Adventure' in their title:", actualOutput.get("message").asText());
         Assertions.assertEquals("The Magical Adventure", actualOutput.get("data").get("search").asText());
 
-        JsonNode expectedBook = mapper.readTree("{\"title\":\"The Magical Adventure\"}");
         JsonNode actualBooks = actualOutput.get("data").get("books");
 
         boolean bookFound = false;

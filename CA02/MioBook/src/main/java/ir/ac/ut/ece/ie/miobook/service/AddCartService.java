@@ -32,6 +32,6 @@ public class AddCartService {
 //        check if available in cart
 
         CartElement newElement = new CartElement(book, 0);
-        user.addToCart(newElement);
+        user.getCart().add(newElement);
     }
 }
