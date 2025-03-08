@@ -3,49 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../stylesheets/style.css">
-    <title>Sign Up</title>
     <link rel="stylesheet" href="../stylesheets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <link rel="stylesheet" href="../stylesheets/signup.css">
+
+    <title>Sign Up</title>
+
 </head>
-<body class="d-flex justify-content-center align-items-center vh-100">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <h2 class="text-center">Sign Up</h2>
-            <p class="text-center text-muted">MioBook</p>
 
-            <form>
-                <input type="text" class="form-control mb-3" placeholder="Username"  >
-                <input type="password" class="form-control mb-3" placeholder="Password"  >
-                <input type="email" class="form-control mb-3" placeholder="Email"  >
-
-                <div class="row">
-                    <div class="col">
-                        <input type="text" class="form-control mb-3" placeholder="Country"  >
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control mb-3" placeholder="City"  >
-                    </div>
-                </div>
-
-                <p>I am</p>
-                <div class="d-flex justify-content-between mb-3">
-                    <button type="button" class="btn btn-outline-dark flex-grow-1 me-2">Customer</button>
-                    <button type="button" class="btn btn-outline-secondary flex-grow-1">Manager</button>
-                </div>
-
-                <button type="submit" class="btn btn-dark w-100" disabled>Sign up</button>
-            </form>
-
-            <p class="text-center mt-3">Already have an account? <a href="#">Sign in</a></p>
+<body class="d-flex justify-content-center align-items-center ">
+<div class="sign container">
+    <h2 class="text-center">Sign Up</h2>
+    <p class="subtitle text-center mb-5">MioBook</p>
+    <form action="#" method="POST" class="w-100">
+        <div class="mb-3">
+            <input type="text" class="form-control" name="username" placeholder="Username" >
         </div>
-    </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="password" placeholder="Password" >
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Email" >
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" class="form-control" name="country" placeholder="Country" >
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" name="city" placeholder="City" >
+            </div>
+        </div>
+        <label>I am</label>
+        <div class="row mb-3">
+            <div class="col">
+                <input type="radio" name="role" value="Customer" > Customer
+            </div>
+            <div class="col">
+                <input type="radio" name="role" value="Manager" > Manager
+            </div>
+        </div>
+        <button type="submit" class="btn btn-light w-100 mb-3"><strong>Sign up</strong></button>
+    </form>
+    <p class="signin-link text-center ">Already have an account? <a href="#"><strong>Sign in</strong></a></p>
 </div>
-
-<footer class="text-center text-white py-3">
-    <p>Copyright © 2025 - MioBook</p>
-</footer>
-
 </body>
+
+<footer class="w-100">
+    <p class="text-center">Copyright © 2025 - MioBook</p>
+</footer>
 </html>
