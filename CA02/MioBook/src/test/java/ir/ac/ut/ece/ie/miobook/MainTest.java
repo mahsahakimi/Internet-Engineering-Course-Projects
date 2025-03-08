@@ -151,6 +151,27 @@ public class MainTest {
         assertEquals(1, authorDatabase.getAuthors().size());
     }
 
+//    part4
+//    add_cart {"username": "normal_user", "title": "The Magical Adventure"}
+    @Test
+    public void testAddCartSuccess() throws IOException {
+        String input = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\": true"));
+        assertTrue(output.contains("\"message\": \"Added book to cart.\""));
+    }
+
+
+
 //    part6
 //    add_credit {"username": "test-name", "credit": 8200}
     @Test

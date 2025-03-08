@@ -19,8 +19,8 @@ public class User {
     private String email;
     private Address address;
     private int balance;
-
     List<CartElement> cart = new ArrayList<>();
+
     List<Purchase> purchases = new ArrayList<>();
     List<Book> ownedBooks = new ArrayList<>();
 //    Map<Book, LocalDate> borrowedBooks = new HashMap<>();
