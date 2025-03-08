@@ -604,6 +604,7 @@ public void testShowCartSuccess() throws IOException {
     }
 
 //    part17
+//    show_purchased_books {"username": "normal_user"}
     @Test
     public void testShowPurchasedBooksSuccess() throws IOException {
         String addInput1 = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
