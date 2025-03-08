@@ -394,6 +394,71 @@ public void testRemoveCartSuccess() throws IOException {
         assertTrue(output.contains("\"synopsis\":\"Synopsis\""));
     }
 
+//    part13
+    @Test
+    public void testShowBookContentSuccessOwned() throws IOException {
+        String addInput = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        InputStream addIn = new ByteArrayInputStream(addInput.getBytes());
+        System.setIn(addIn);
+        Main.main(new String[]{});
+
+        String purchaseInput = "purchase_cart {\"username\": \"normal_user\"}";
+        InputStream purchaseIn = new ByteArrayInputStream(purchaseInput.getBytes());
+        System.setIn(purchaseIn);
+        Main.main(new String[]{});
+
+        String input = "show_book_content {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        assertTrue(actualOutput.get("success").asBoolean());
+        assertTrue(actualOutput.get("message").asText().equals("Book content retrieved successfully"));
+        assertTrue(actualOutput.get("data").get("title").asText().equals("The Magical Adventure"));
+        assertTrue(actualOutput.get("data").has("content")); // Check if content exists
+    }
+
+    @Test
+    public void testShowBookContentSuccessBorrowed() throws IOException {
+        String borrowInput = "borrow_book {\"username\": \"normal_user\", \"title\": \"Space Explorers\", \"days\": 2}";
+        InputStream borrowIn = new ByteArrayInputStream(borrowInput.getBytes());
+        System.setIn(borrowIn);
+        Main.main(new String[]{});
+
+        String purchaseInput = "purchase_cart {\"username\": \"normal_user\"}";
+        InputStream purchaseIn = new ByteArrayInputStream(purchaseInput.getBytes());
+        System.setIn(purchaseIn);
+        Main.main(new String[]{});
+
+        String input = "show_book_content {\"username\": \"normal_user\", \"title\": \"Space Explorers\"}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        assertTrue(actualOutput.get("success").asBoolean());
+        assertTrue(actualOutput.get("message").asText().equals("Book content retrieved successfully"));
+        assertTrue(actualOutput.get("data").get("title").asText().equals("Space Explorers"));
+        assertTrue(actualOutput.get("data").has("content")); // Check if content exists
+    }
+
 //    part14
 //    show_book_reviews {"title": "The Magical Adventure"}
     @Test
