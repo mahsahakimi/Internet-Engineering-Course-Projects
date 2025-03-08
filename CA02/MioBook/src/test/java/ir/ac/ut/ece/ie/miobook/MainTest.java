@@ -170,7 +170,29 @@ public class MainTest {
         assertTrue(output.contains("\"message\": \"Added book to cart.\""));
     }
 
+//    part5
+//    add_cart {"username": "normal_user", "title": "The Magical Adventure"}
+@Test
+public void testRemoveCartSuccess() throws IOException {
+    String addInput = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+    InputStream addIn = new ByteArrayInputStream(addInput.getBytes());
+    System.setIn(addIn);
+    Main.main(new String[]{});
 
+    String removeInput = "remove_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+    InputStream removeIn = new ByteArrayInputStream(removeInput.getBytes());
+    System.setIn(removeIn);
+
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+
+    Main.main(new String[]{});
+
+    String output = outContent.toString();
+
+    assertTrue(output.contains("\"success\": true"));
+    assertTrue(output.contains("\"message\": \"Removed book from cart.\""));
+}
 
 //    part6
 //    add_credit {"username": "test-name", "credit": 8200}
