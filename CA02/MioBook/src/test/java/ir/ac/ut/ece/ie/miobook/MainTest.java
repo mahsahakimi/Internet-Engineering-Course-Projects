@@ -395,6 +395,7 @@ public void testRemoveCartSuccess() throws IOException {
     }
 
 //    part13
+//    show_book_content {"username": "normal_user", "title": "The Magical Adventure"}
     @Test
     public void testShowBookContentSuccessOwned() throws IOException {
         String addInput = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
@@ -551,6 +552,56 @@ public void testShowCartSuccess() throws IOException {
     }
     assertTrue(bookFound);
 }
+
+//    part16
+//    show_purchase_history {"username": "normal_user"}
+    @Test
+    public void testShowPurchaseHistorySuccess() throws IOException {
+        String addInput1 = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        String addInput2 = "borrow_book {\"username\": \"normal_user\", \"title\": \"Space Explorers\", \"days\": 2}";
+        InputStream addIn1 = new ByteArrayInputStream(addInput1.getBytes());
+        System.setIn(addIn1);
+        Main.main(new String[]{});
+
+        InputStream addIn2 = new ByteArrayInputStream(addInput2.getBytes());
+        System.setIn(addIn2);
+        Main.main(new String[]{});
+
+        String purchaseInput = "purchase_cart {\"username\": \"normal_user\"}";
+        InputStream purchaseIn = new ByteArrayInputStream(purchaseInput.getBytes());
+        System.setIn(purchaseIn);
+        Main.main(new String[]{});
+
+        String showInput = "show_purchase_history {\"username\": \"normal_user\"}";
+        InputStream showIn = new ByteArrayInputStream(showInput.getBytes());
+        System.setIn(showIn);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        assertTrue(actualOutput.get("success").asBoolean());
+        assertTrue(actualOutput.get("message").asText().equals("Purchase history retrieved successfully."));
+        assertTrue(actualOutput.get("data").get("username").asText().equals("normal_user"));
+
+        JsonNode purchaseHistory = actualOutput.get("data").get("purchaseHistory");
+        assertTrue(purchaseHistory.isArray() && purchaseHistory.size() > 0);
+
+        JsonNode firstPurchase = purchaseHistory.get(0);
+        assertTrue(firstPurchase.has("purchaseDate"));
+
+        JsonNode items = firstPurchase.get("items");
+        assertTrue(items.isArray() && items.size() > 0);
+
+        JsonNode firstItem = items.get(0);
+        assertTrue(firstItem.has("title"));
+    }
 
 //    part18.1
 //    search_books_by_title {"title": "The Magical Adventure"}

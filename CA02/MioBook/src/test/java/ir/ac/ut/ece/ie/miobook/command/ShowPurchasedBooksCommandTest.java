@@ -8,16 +8,12 @@ import ir.ac.ut.ece.ie.miobook.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShowPurchasedBooksCommandTest {
 
@@ -59,45 +55,6 @@ public class ShowPurchasedBooksCommandTest {
         userDatabase.getUsers().clear();
         bookDatabase.getBooks().clear();
     }
-
-//    @Test
-//    public void testShowPurchasedBooksSuccess() throws IOException {
-//        normalUser.getOwnedBooks().add(book1);
-//        normalUser.getBorrowedBooks().put(book2, LocalDate.now().plusDays(7));
-//
-//        String inputJson = "{\"username\": \"normal_user\"}";
-//
-//        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(outContent));
-//
-//        ShowPurchasedBooksCommand.execute(inputJson);
-//
-//        String actualOutput = outContent.toString();
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode actualJson = mapper.readTree(actualOutput);
-//        JsonNode expectedJson = mapper.readTree("{\"success\":true,\"message\":\"Purchased books retrieved successfully.\",\"data\":{\"username\":\"normal_user\",\"books\":[{\"title\":\"The Magical Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"category\":[\"Fantasy\"],\"year\":2023,\"price\":1000,\"isBorrowed\":false},{\"title\":\"Another Adventure\",\"author\":\"Author Name\",\"publisher\":\"Publisher\",\"category\":[\"Fantasy\"],\"year\":2023,\"price\":2000,\"isBorrowed\":true}]}}");
-//
-//        assertEquals(expectedJson.get("success"), actualJson.get("success"));
-//        assertEquals(expectedJson.get("message"), actualJson.get("message"));
-//        assertEquals(expectedJson.get("data").get("username"), actualJson.get("data").get("username"));
-//
-//        JsonNode expectedBooks = expectedJson.get("data").get("books");
-//        JsonNode actualBooks = actualJson.get("data").get("books");
-//
-//        assertEquals(expectedBooks.size(), actualBooks.size());
-//
-//        for (JsonNode expectedBook : expectedBooks) {
-//            boolean found = false;
-//            for (JsonNode actualBook : actualBooks) {
-//                if (expectedBook.equals(actualBook)) {
-//                    found = true;
-//                    break;
-//                }
-//            }
-//            assertTrue(found);
-//        }
-//    }
 
     @Test
     public void testShowPurchasedBooksUserNotFound() throws IOException {
