@@ -603,6 +603,63 @@ public void testShowCartSuccess() throws IOException {
         assertTrue(firstItem.has("title"));
     }
 
+//    part17
+    @Test
+    public void testShowPurchasedBooksSuccess() throws IOException {
+        String addInput1 = "add_cart {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\"}";
+        String addInput2 = "borrow_book {\"username\": \"normal_user\", \"title\": \"Space Explorers\", \"days\": 2}";
+        InputStream addIn1 = new ByteArrayInputStream(addInput1.getBytes());
+        System.setIn(addIn1);
+        Main.main(new String[]{});
+
+        InputStream addIn2 = new ByteArrayInputStream(addInput2.getBytes());
+        System.setIn(addIn2);
+        Main.main(new String[]{});
+
+        String purchaseInput = "purchase_cart {\"username\": \"normal_user\"}";
+        InputStream purchaseIn = new ByteArrayInputStream(purchaseInput.getBytes());
+        System.setIn(purchaseIn);
+        Main.main(new String[]{});
+
+        String showInput = "show_purchased_books {\"username\": \"normal_user\"}";
+        InputStream showIn = new ByteArrayInputStream(showInput.getBytes());
+        System.setIn(showIn);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualOutput = mapper.readTree(output);
+
+        assertTrue(actualOutput.get("success").asBoolean());
+        assertTrue(actualOutput.get("message").asText().equals("Purchased books retrieved successfully."));
+        assertTrue(actualOutput.get("data").get("username").asText().equals("normal_user"));
+
+        JsonNode books = actualOutput.get("data").get("books");
+        assertTrue(books.isArray() && books.size() > 0);
+
+        boolean book1Found = false;
+        boolean book2Found = false;
+
+        for (JsonNode book : books) {
+            if (book.has("title") && book.get("title").asText().equals("The Magical Adventure")) {
+                book1Found = true;
+                assertTrue(book.has("isBorrowed") && book.get("isBorrowed").asBoolean() == false);
+            }
+            if (book.has("title") && book.get("title").asText().equals("Space Explorers")) {
+                book2Found = true;
+                assertTrue(book.has("isBorrowed") && book.get("isBorrowed").asBoolean() == true);
+            }
+        }
+
+        assertTrue(book1Found);
+        assertTrue(book2Found);
+    }
+
 //    part18.1
 //    search_books_by_title {"title": "The Magical Adventure"}
     @Test
