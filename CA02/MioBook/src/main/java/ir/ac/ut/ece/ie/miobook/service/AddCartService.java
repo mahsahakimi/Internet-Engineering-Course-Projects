@@ -29,6 +29,8 @@ public class AddCartService {
             throw new IllegalArgumentException("Cart is full.");
         }
 
+//        check if available in cart
+
         CartElement newElement = new CartElement(book, 0);
         user.addToCart(newElement);
     }

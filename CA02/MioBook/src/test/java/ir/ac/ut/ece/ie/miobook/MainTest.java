@@ -220,6 +220,25 @@ public void testRemoveCartSuccess() throws IOException {
         assertEquals(expectedOutput, addCreditOutContent.toString());
     }
 
+//    part8
+//    borrow_book {"username": "normal_user", "title": "The Magical Adventure", "days": 2}
+    @Test
+    public void testBorrowBookSuccess() throws IOException {
+        String input = "borrow_book {\"username\": \"normal_user\", \"title\": \"The Magical Adventure\", \"days\": 2}";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Main.main(new String[]{});
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("\"success\": true"));
+        assertTrue(output.contains("\"message\": \"Book borrowed successfully.\""));
+    }
+
 //    part9
 //    add_review {"username": "normal_user", "title": "The Magical Adventure", "rate": 4, "comment": "This is the perfect book!"}
     @Test
