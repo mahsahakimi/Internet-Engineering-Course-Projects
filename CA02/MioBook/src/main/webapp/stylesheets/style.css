@@ -5,7 +5,10 @@
   font-stretch: 75% 125%;
   font-style: normal;
 }
-
+.logo-container img {
+    height: 30px;
+    border-radius: 40px;
+}
 .form-control:focus {
             box-shadow: 0 0 8px #16423C;
             outline: none;
@@ -44,4 +47,57 @@ footer {
     color: white;
     margin-top: 100px;
     padding : 5px;
+}
+
+.medium-btn{
+    max-width : 240px;
+    min-width : 60px;
+    border-radius: 6px;
+    color: white;
+    padding: 8px 0;
+    width: 100%;
+    border : none;
+}
+.text-secondary{
+    opacity : 0.8;
+}
+
+.gray-btn{
+    background-color: rgb(242, 242, 242) !important;
+    color: black !important;
+    opacity : 0.7 !important;
+}
+.gray-btn:hover {
+    opacity : 1 !important;
+}
+
+.green-btn{
+    background-color: #16423C !important;
+    color: white !important;
+    opacity : 0.9 !important;
+}
+
+.green-btn:hover {
+    opacity : 1 !important;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.pagination .page-item .page-link {
+    border: none;
+    margin: 0 8px;
+    color: #333;
+    font-size: 16px;
+    padding: 6px 10px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #e9ecef;
+    border-radius: 8px;
+    font-weight: bold;
 }

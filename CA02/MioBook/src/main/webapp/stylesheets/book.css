@@ -1,0 +1,27 @@
+.book-main-img{
+    width: 300px;
+    height: 400px;
+    border-radius : 8px;
+    object-fit: cover; /* Crop to fit */
+
+}
+.container{
+    border-radius : 12px;
+    background-color : white;
+    min-width : 1000px;
+    max-width : 1600px;
+}
+
+.bright-titles{
+    color:gray;
+    font-size:14px;
+}
+.avatar {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(108, 117, 125, 0.25);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}   
