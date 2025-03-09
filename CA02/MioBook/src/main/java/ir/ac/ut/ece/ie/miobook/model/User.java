@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -28,6 +29,14 @@ public class User {
         this.email = email;
         this.address = address;
         this.balance = 0;
+    }
+
+    public void removeBookFromCart(Book book) {
+        Optional<CartElement> elementToRemove = cart.stream()
+                .filter(cartElement -> cartElement.getBook().equals(book))
+                .findFirst();
+
+        elementToRemove.ifPresent(cart::remove);
     }
 
     @Override

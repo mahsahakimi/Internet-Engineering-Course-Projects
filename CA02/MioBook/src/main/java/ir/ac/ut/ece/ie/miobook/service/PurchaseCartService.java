@@ -49,7 +49,6 @@ public class PurchaseCartService {
         List<String> bookTitles = new ArrayList<>();
         List<Book> ownedBooks = user.getOwnedBooks();
         List<BorrowedBook> borrowedBooks = user.getBorrowedBooks();
-//        if it need check the book available or not
         for(CartElement ce : cart){
             bookTitles.add(ce.getBook().getTitle());
             if (ce.getDays() == 0){

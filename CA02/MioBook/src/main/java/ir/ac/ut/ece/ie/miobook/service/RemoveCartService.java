@@ -36,6 +36,6 @@ public class RemoveCartService {
             throw new IllegalArgumentException("Book not in cart.");
         }
 
-        user.getCart().remove(book);
+        user.removeBookFromCart(book);
     }
 }

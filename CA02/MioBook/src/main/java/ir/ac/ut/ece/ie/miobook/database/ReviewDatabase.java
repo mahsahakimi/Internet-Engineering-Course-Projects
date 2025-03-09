@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
-import ir.ac.ut.ece.ie.miobook.model.Author;
 import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.model.Review;
 import ir.ac.ut.ece.ie.miobook.model.User;
@@ -8,6 +7,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class ReviewDatabase {
@@ -44,8 +44,13 @@ public class ReviewDatabase {
             throw new IllegalArgumentException("Invalid value for rating : " + rate);
         }
         reviews.add((review));
-
     }
 
-
+    public List<Review> getReviewsByBook(Book book) {
+        return reviews.stream()
+                .filter(review -> {
+                    Book reviewBook = BookDatabase.getInstance().findBookByTitle(review.getTitle());
+                    return reviewBook != null && reviewBook.equals(book);
+                }).collect(Collectors.toList());
+    }
 }

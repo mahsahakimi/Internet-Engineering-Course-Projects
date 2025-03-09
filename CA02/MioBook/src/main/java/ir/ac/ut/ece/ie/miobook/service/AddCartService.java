@@ -2,10 +2,7 @@ package ir.ac.ut.ece.ie.miobook.service;
 
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-import ir.ac.ut.ece.ie.miobook.model.CartElement;
-import ir.ac.ut.ece.ie.miobook.model.Role;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
 
 public class AddCartService {
 
@@ -29,7 +26,20 @@ public class AddCartService {
             throw new IllegalArgumentException("Cart is full.");
         }
 
-//        check if available in cart
+        // Check if the book is already in the cart
+        if (user.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
+            throw new IllegalArgumentException("Book is already in the cart.");
+        }
+
+        // Check if the book is already owned
+        if (user.getOwnedBooks().stream().anyMatch(ownedBook -> ownedBook.equals(book))) {
+            throw new IllegalArgumentException("Book is already owned.");
+        }
+
+        // Check if the book is already borrowed
+        if (user.getBorrowedBooks().stream().anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
+            throw new IllegalArgumentException("Book is already borrowed and not expired.");
+        }
 
         CartElement newElement = new CartElement(book, 0);
         user.getCart().add(newElement);

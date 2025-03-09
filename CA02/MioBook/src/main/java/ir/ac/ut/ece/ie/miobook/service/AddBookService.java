@@ -7,6 +7,7 @@ import ir.ac.ut.ece.ie.miobook.model.Author;
 import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
+
 import java.util.List;
 
 public class AddBookService {
@@ -27,6 +28,14 @@ public class AddBookService {
         if (year <= 0) {
             throw new IllegalArgumentException("Year must be a positive number.");
         }
+
+        // Check if the author was alive in the book's year
+        if (author.getBorn() != null && author.getBorn().getYear() > year) {
+            throw new IllegalArgumentException("Author was not born yet in that year.");
+        }
+//        if (author.getDied() != null && author.getDied().getYear() < year) {
+//            throw new IllegalArgumentException("Author was dead in that year.");
+//        }
 
         if (genres == null || genres.isEmpty()) {
             throw new IllegalArgumentException("Book must have at least one genre.");
