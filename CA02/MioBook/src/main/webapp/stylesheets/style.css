@@ -5,13 +5,23 @@
   font-stretch: 75% 125%;
   font-style: normal;
 }
+
+.form-control:focus {
+            box-shadow: 0 0 8px #16423C;
+            outline: none;
+        }
+
 body, footer, div, input{
     font-family: 'Inter', sans-serif;
     font-weight: 400;
 
 }
+.w-90 {
+    width: 90% !important;
+}
+
 body {
-    background-color: #D9D9D9;
+    background-color: rgb(247,249,251);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
