@@ -10,12 +10,6 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.book-img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px 12px 0 0;
-}
-
 .intro-img {
     max-width: 320px;
     border-radius: 12px 12px 12px 12px;
@@ -31,4 +25,11 @@
 
 .pagination .page-item .page-link {
     background-color: transparent;
+}
+
+.book-cover{
+    width: 210px;
+    height: 160px;
+    border-radius : 4px;
+    object-fit: cover;
 }
