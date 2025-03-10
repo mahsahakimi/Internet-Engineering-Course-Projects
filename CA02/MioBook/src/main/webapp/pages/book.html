@@ -6,38 +6,43 @@
     <title>Book</title>
     <link rel="stylesheet" href="../stylesheets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../stylesheets/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../stylesheets/book.css">
 </head>
 <body>
 <nav class="navbar bg-white shadow-sm mb-5 ">
-    <div class="container-fluid d-flex align-items-center justify-content-between">
+    <div class="container-fluid d-flex align-items-center justify-content-between max-height-nav">
         <a class="navbar-brand d-flex align-items-center" href="#">
-            <div class="logo-container">
+            <div class="logo-container max-height-nav ms-5">
                 <img src="../images/LOGO.png" alt="Meow Logo">
             </div>
         </a>
-
-        <div class="flex-grow-1 mx-4" style="max-width: 500px;">
-            <div class="input-group input-group-sm">
-                <button class="btn  btn-sm border dropdown-toggle" type="button">Author</button>
-                <input type="text" class="form-control bg-light border-light" placeholder="Search">
+        <div class="search-container max-height-nav d-flex w-50">
+            <div class="dropdown max-height-nav col-md-2">
+                <button class="btn dropdown-toggle max-height-nav" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Author
+                </button>
+                <ul class="dropdown-menu max-height-nav" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Author</a></li>
+                    <li><a class="dropdown-item" href="#">Title</a></li>
+                    <li><a class="dropdown-item" href="#">Publisher</a></li>
+                </ul>
             </div>
+            <div class="border-start mx-3 "></div>
+            <input type="text" class="form-control search-box max-height-nav" placeholder="Search">
         </div>
 
-        <button class="btn green-btn btn-sm">Buy now</button>
+        <button class="btn green-btn max-height-nav ">Buy now</button>
     </div>
 </nav>
 
 
-<!-- Book Section -->
 <section class="d-flex justify-content-center">
 
-<div class="container p-4 row w-90">
-    <div class="col-md-4">
+<div class="container p-4    w-80 row">
+    <div class="col-md-4 d-flex justify-content-center">
         <img src="../images/book.png" class="book-main-img d-flex justify-content-center" alt="Book Cover">
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 ">
         <h2 class="book-title fw-bold mb-3">Book Title</h2>
 
         <div class="row bright-titles mb-1">
@@ -67,10 +72,10 @@
 
 
 <section class="d-flex justify-content-center">
-    <div class="container p-4 row w-90 mt-5">
+    <div class="container p-4 row w-80 mt-5">
         <div class="row mb-3">
             <div class="col-md-6">
-                <h2 class="fw-bold">Reviews <span class="fw-normal text-secondary">130</span></h2>
+                <h5 class="fw-bold">Reviews <span class="fw-normal text-secondary">130</span></h5>
             </div>
             <div class="col-md-6 text-end">
                 <button class="btn gray-btn medium-btn">
@@ -78,15 +83,15 @@
                 </button>
             </div>
         </div>
-        <div class="card border-0 mb-1">
+        <div class="card border-0">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-1 col-2">
-                        <div class="avatar">
+                        <div class="avatar d-flex align-items-center justify-content-center">
                             <span class="text-secondary fw-bold">TW</span>
                         </div>
                     </div>
-                    <div class="col-md-8 col-6 pt-2">
+                    <div class="col-md-8 col-6">
                         <p class="fw-bold mb-1">The Person</p>
                         <p class="text-secondary">I bought it 3 weeks ago and now come back just to say "Awesome". I really enjoyed it.</p>
                     </div>
@@ -108,11 +113,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-1 col-2">
-                        <div class="avatar">
+                        <div class="avatar d-flex align-items-center justify-content-center">
                             <span class="text-secondary fw-bold">TW</span>
                         </div>
                     </div>
-                    <div class="col-md-8 col-6 pt-2">
+                    <div class="col-md-8 col-6">
                         <p class="fw-bold mb-1">The Person</p>
                         <p class="text-secondary">I bought it 3 weeks ago and now come back just to say "Awesome". I really enjoyed it.</p>
                     </div>
@@ -134,11 +139,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-1 col-2">
-                        <div class="avatar">
+                        <div class="avatar d-flex align-items-center justify-content-center">
                             <span class="text-secondary fw-bold">TW</span>
                         </div>
                     </div>
-                    <div class="col-md-8 col-6 pt-2">
+                    <div class="col-md-8 col-6">
                         <p class="fw-bold mb-1">The Person</p>
                         <p class="text-secondary">I bought it 3 weeks ago and now come back just to say "Awesome". I really enjoyed it.</p>
                     </div>
@@ -160,11 +165,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-1 col-2">
-                        <div class="avatar">
+                        <div class="avatar d-flex align-items-center justify-content-center">
                             <span class="text-secondary fw-bold">TW</span>
                         </div>
                     </div>
-                    <div class="col-md-8 col-6 pt-2">
+                    <div class="col-md-8 col-6">
                         <p class="fw-bold mb-1">The Person</p>
                         <p class="text-secondary">I bought it 3 weeks ago and now come back just to say "Awesome". I really enjoyed it.</p>
                     </div>
@@ -201,8 +206,6 @@
 
 
 </section>
-
-
 
 
 <footer class="w-100">

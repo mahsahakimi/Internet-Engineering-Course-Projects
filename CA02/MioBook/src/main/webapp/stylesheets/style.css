@@ -10,9 +10,9 @@
     border-radius: 40px;
 }
 .form-control:focus {
-            box-shadow: 0 0 8px #16423C;
-            outline: none;
-        }
+    box-shadow: 0 0 8px #16423C;
+    outline: none;
+}
 
 body, footer, div, input{
     font-family: 'Inter', sans-serif;
@@ -21,8 +21,15 @@ body, footer, div, input{
 }
 .w-90 {
     width: 90% !important;
+}.w-80 {
+    width: 80% !important;
 }
-
+.w-50 {
+    width: 50% !important;
+}
+.w-30 {
+    width: 30% !important;
+}
 body {
     background-color: rgb(247,249,251);
     display: flex;
@@ -50,9 +57,27 @@ footer {
 }
 
 .medium-btn{
-    max-width : 240px;
+    max-width : 200px;
     min-width : 60px;
-    border-radius: 6px;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 0;
+    width: 100%;
+    border : none;
+}
+.small-btn{
+    max-width : 120px;
+    min-width : 40px;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 0;
+    width: 100%;
+    border : none;
+}
+.large-btn{
+    max-width : 340px;
+    min-width : 100px;
+    border-radius: 8px;
     color: white;
     padding: 8px 0;
     width: 100%;
@@ -60,25 +85,6 @@ footer {
 }
 .text-secondary{
     opacity : 0.8;
-}
-
-.gray-btn{
-    background-color: rgb(242, 242, 242) !important;
-    color: black !important;
-    opacity : 0.7 !important;
-}
-.gray-btn:hover {
-    opacity : 1 !important;
-}
-
-.green-btn{
-    background-color: #16423C !important;
-    color: white !important;
-    opacity : 0.9 !important;
-}
-
-.green-btn:hover {
-    opacity : 1 !important;
 }
 
 .pagination-container {
@@ -100,4 +106,34 @@ footer {
     background-color: #e9ecef;
     border-radius: 8px;
     font-weight: bold;
+}
+
+.search-container{
+    background-color: rgba(108, 117, 125, 0.25);
+    border-radius : 8px;
+}
+.max-height-nav {
+    max-height: 40px;
+}
+.search-box{
+    border : none;
+}
+
+.gray-btn{
+    background-color: rgb(242, 242, 242) !important;
+    color: black !important;
+    opacity : 0.7 !important;
+}
+.gray-btn:hover {
+    opacity : 1 !important;
+}
+
+.green-btn{
+    background-color: #16423C !important;
+    color: white !important;
+    opacity : 0.9 !important;
+}
+
+.green-btn:hover {
+    opacity : 1 !important;
 }

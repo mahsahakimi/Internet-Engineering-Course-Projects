@@ -1,0 +1,89 @@
+/* باکس بالایی (اعتبار و اطلاعات کاربری) */
+.top-box {
+    width : 1100;
+    border-radius: 12px;
+    padding: 28px;
+    margin: 20px auto;
+}
+
+.account-box {
+    min-width: 600px;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.credit-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.credit-section input {
+    width: 60%;
+}
+
+.user-info {
+    width: 312px;
+    height: 150px;
+    border-radius: 12px;
+    padding: 24px 28px;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* باکس سبد خرید */
+.cart-box {
+    width: 1100px;
+    border-radius: 12px;
+    padding: 28px;
+    background: white;
+    margin: 40px auto;
+}
+
+.cart-box h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead tr {
+    background-color: #EAECEF;
+}
+
+.table thead th {
+    padding: 12px;
+    text-align: left;
+}
+
+.table tbody td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.product-img {
+    width: 40px;
+    height: 50px;
+}
+
+.history-box {
+    width: 1100px;
+    border-radius: 12px;
+    padding: 28px;
+    background: #FFFFFF;
+    margin: 40px auto;
+}
+
+.history-box h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
