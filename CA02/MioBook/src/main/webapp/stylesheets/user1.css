@@ -87,3 +87,8 @@
     font-weight: bold;
     margin-bottom: 20px;
 }
+.table{
+border-collapse: separate; /* Required for border-radius to work */
+            border-spacing: 0; /* Optional: Removes spacing between cells */
+            border-radius: 10px; /* Adjust the radius as needed */
+}
