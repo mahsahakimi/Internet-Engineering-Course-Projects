@@ -29,6 +29,10 @@ public class AddReviewService {
             throw new IllegalArgumentException("Permission denied.");
         }
 
+        if (!user.getOwnedBooks().contains(book) && user.getBorrowedBooks().stream().noneMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
+            throw new IllegalArgumentException("You must purchase or borrow the book to add a review.");
+        }
+
         if (rate < 1 || rate > 5) {
             throw new IllegalArgumentException("Rate must be an integer between 1 and 5.");
         }

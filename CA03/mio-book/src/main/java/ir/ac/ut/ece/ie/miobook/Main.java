@@ -1,6 +1,7 @@
 package ir.ac.ut.ece.ie.miobook;
 
 import ir.ac.ut.ece.ie.miobook.command.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -60,6 +61,8 @@ public class Main {
                     SearchBooksCommand.searchByGenre(inputJson);
                 } else if (command.equals("search_books_by_year")) {
                     SearchBooksCommand.searchByYear(inputJson);
+                } else if (command.equals("search_books")) { // TODO: Unkown command!
+                    SearchBooksCommand.searchBooks(inputJson);
                 } else {
                     System.out.println("{\"success\": false, \"message\": \"Invalid command.\"}");
                 }

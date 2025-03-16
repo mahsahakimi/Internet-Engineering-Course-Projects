@@ -28,21 +28,7 @@ public class ReviewDatabase {
     }
 
     public void addReview(Review review) {
-        String name = review.getUsername();
-        String title = review.getTitle();
-
-        Book book = BookDatabase.getInstance().findBookByTitle(title);
-        if (book == null){
-            throw new IllegalArgumentException("Book does not exist : " + title);
-        }
-        User user = UserDatabase.getInstance().findUserByUsername(name);
-        if (user == null){
-            throw new IllegalArgumentException("User does not exist : " + name);
-        }
-        int rate = review.getRate();
-        if(rate < 1 || rate > 5 ){
-            throw new IllegalArgumentException("Invalid value for rating : " + rate);
-        }
+        reviews.removeIf(r -> r.getUsername().equals(review.getUsername()) && r.getTitle().equals(review.getTitle()));
         reviews.add((review));
     }
 
@@ -52,5 +38,15 @@ public class ReviewDatabase {
                     Book reviewBook = BookDatabase.getInstance().findBookByTitle(review.getTitle());
                     return reviewBook != null && reviewBook.equals(book);
                 }).collect(Collectors.toList());
+    }
+
+    public double calculateAverageRating(Book book) {
+        List<Review> bookReviews = getReviewsByBook(book);
+        if (bookReviews.isEmpty()) {
+            return 0; // No reviews, so average is 0
+        }
+
+        double totalRating = bookReviews.stream().mapToInt(Review::getRate).sum();
+        return totalRating / bookReviews.size();
     }
 }

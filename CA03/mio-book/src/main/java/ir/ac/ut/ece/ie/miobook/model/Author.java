@@ -1,11 +1,8 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;
 
 @Setter
 @Getter
