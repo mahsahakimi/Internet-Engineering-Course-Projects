@@ -8,6 +8,7 @@ import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
 
+//deprecated!
 public class AddAuthorService {
 
     public static void addAuthor(String username, String name, String penName, String nationality, MySimpleDate born, MySimpleDate died) {

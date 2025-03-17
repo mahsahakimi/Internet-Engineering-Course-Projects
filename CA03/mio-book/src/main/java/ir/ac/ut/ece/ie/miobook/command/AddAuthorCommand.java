@@ -8,6 +8,7 @@ import ir.ac.ut.ece.ie.miobook.service.AddAuthorService;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 
+//deprecated!
 public class AddAuthorCommand {
 
     public static void execute(String inputJson) throws IOException {

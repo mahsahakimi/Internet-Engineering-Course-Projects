@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+//deprecated!
 public class ShowAuthorDetailsService {
 
     public static String getAuthorDetails(String authorName) throws IOException {

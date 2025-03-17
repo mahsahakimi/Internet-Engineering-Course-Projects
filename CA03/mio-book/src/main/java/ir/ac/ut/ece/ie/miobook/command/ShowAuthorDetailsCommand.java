@@ -7,6 +7,7 @@ import ir.ac.ut.ece.ie.miobook.service.ShowAuthorDetailsService;
 
 import java.io.IOException;
 
+//deprecated!
 public class ShowAuthorDetailsCommand {
 
     public static void execute(String inputJson) throws IOException {
