@@ -2,28 +2,26 @@ package ir.ac.ut.ece.ie.miobook.database;
 
 import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.model.Review;
-import ir.ac.ut.ece.ie.miobook.model.User;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Repository
 public class ReviewDatabase {
 
-    private static ReviewDatabase instance;
     private List<Review> reviews = new ArrayList<>();
+    private final BookDatabase bookDatabase;
 
-    private ReviewDatabase() {}
-
-    public static ReviewDatabase getInstance() {
-        if (instance == null) {
-            instance = new ReviewDatabase();
-        }
-        return instance;
+    public ReviewDatabase(BookDatabase bookDatabase) {
+        this.bookDatabase = bookDatabase;
     }
-    public List<Review> getReviews(){
+
+    public List<Review> getReviews() {
         return reviews;
     }
 
@@ -35,7 +33,7 @@ public class ReviewDatabase {
     public List<Review> getReviewsByBook(Book book) {
         return reviews.stream()
                 .filter(review -> {
-                    Book reviewBook = BookDatabase.getInstance().findBookByTitle(review.getTitle());
+                    Book reviewBook = bookDatabase.findBookByTitle(review.getTitle());
                     return reviewBook != null && reviewBook.equals(book);
                 }).collect(Collectors.toList());
     }

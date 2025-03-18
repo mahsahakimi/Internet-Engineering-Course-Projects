@@ -5,10 +5,10 @@ import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.AuthorNotFoundException;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDatesException;
-import ir.ac.ut.ece.ie.miobook.exceptions.InvalidRoleException;
+import ir.ac.ut.ece.ie.miobook.exceptions.PermissionDeniedException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.MySimpleDate;
+import ir.ac.ut.ece.ie.miobook.utils.MySimpleDate;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
@@ -21,13 +21,21 @@ import java.util.Map;
 @Service
 public class AuthorService {
 
+    private final AuthorDatabase authorDatabase;
+    private final UserDatabase userDatabase;
+
+    public AuthorService(AuthorDatabase authorDatabase, UserDatabase userDatabase) {
+        this.authorDatabase = authorDatabase;
+        this.userDatabase = userDatabase;
+    }
+
     public void addAuthor(String username, String name, String penName, String nationality, MySimpleDate born, MySimpleDate died) {
-        User whoAdded = UserDatabase.getInstance().findUserByUsername(username);
+        User whoAdded = userDatabase.findUserByUsername(username);
 
         if (whoAdded == null) {
             throw new UserNotFoundException(username);
         } else if (whoAdded.getRole() == Role.customer) {
-            throw new InvalidRoleException(Role.customer.toString());
+            throw new PermissionDeniedException(Role.customer.toString());
         }
 
         if (!BornDiedValidator.validateBornDied(born.toLocalDate(), died.toLocalDate())) {
@@ -35,11 +43,11 @@ public class AuthorService {
         }
 
         Author author = new Author(name, penName, nationality, born, died);
-        AuthorDatabase.getInstance().addAuthor(author);
+        authorDatabase.addAuthor(author);
     }
 
     public String getAuthorDetails(String authorName) {
-        Author author = AuthorDatabase.getInstance().findAuthorByName(authorName);
+        Author author = authorDatabase.findAuthorByName(authorName);
 
         if (author == null) {
             throw new AuthorNotFoundException(authorName);

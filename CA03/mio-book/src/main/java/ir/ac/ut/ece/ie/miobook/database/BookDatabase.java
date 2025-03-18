@@ -1,33 +1,26 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
+import ir.ac.ut.ece.ie.miobook.exceptions.BookTitleAlreadyExistsException;
 import ir.ac.ut.ece.ie.miobook.model.Book;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Repository
 public class BookDatabase {
 
-    private static BookDatabase instance;
     private List<Book> books = new ArrayList<>();
 
     public List<Book> getBooks() {
         return books;
     }
 
-    private BookDatabase() {}
-
-    public static BookDatabase getInstance() {
-        if (instance == null) {
-            instance = new BookDatabase();
-        }
-        return instance;
-    }
-
     public void addBook(Book book) {
         if (findBookByTitle(book.getTitle()) != null) {
-            throw new IllegalArgumentException("Book title already exists: " + book.getTitle());
+            throw new BookTitleAlreadyExistsException(book.getTitle());
         }
         books.add(book);
     }

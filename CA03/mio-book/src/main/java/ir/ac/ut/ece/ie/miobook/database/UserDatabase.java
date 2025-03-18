@@ -1,27 +1,19 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
 import ir.ac.ut.ece.ie.miobook.model.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class UserDatabase {
 
-    private static UserDatabase instance;
     private List<User> users = new ArrayList<>();
 
     public List<User> getUsers() {
         return users;
-    }
-
-    private UserDatabase() {}
-
-    public static UserDatabase getInstance() {
-        if (instance == null) {
-            instance = new UserDatabase();
-        }
-        return instance;
     }
 
     public void addUser(User user) {

@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidRoleException.class)
-    public ResponseEntity<Response<String>> handleInvalidRoleException(InvalidRoleException ex) {
+    @ExceptionHandler(PermissionDeniedException.class)
+    public ResponseEntity<Response<String>> handlePermissionDeniedException(PermissionDeniedException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
@@ -71,6 +71,54 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<Response<String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MinimumCreditException.class)
+    public ResponseEntity<Response<String>> handleMinimumCreditException(MinimumCreditException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCreditAmountException.class)
+    public ResponseEntity<Response<String>> handleInvalidCreditAmountException(InvalidCreditAmountException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidAddressFormatException.class)
+    public ResponseEntity<Response<String>> handleInvalidAddressFormatException(InvalidAddressFormatException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<Response<String>> handleInvalidRoleException(InvalidRoleException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidUsernameException.class)
+    public ResponseEntity<Response<String>> handleInvalidUsernameException(InvalidUsernameException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Response<String>> handleInvalidPasswordException(InvalidPasswordException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidEmailException.class)
+    public ResponseEntity<Response<String>> handleInvalidEmailException(InvalidEmailException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidAddressException.class)
+    public ResponseEntity<Response<String>> handleInvalidAddressException(InvalidAddressException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

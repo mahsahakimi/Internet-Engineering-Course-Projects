@@ -1,4 +1,4 @@
-package ir.ac.ut.ece.ie.miobook.model;
+package ir.ac.ut.ece.ie.miobook.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

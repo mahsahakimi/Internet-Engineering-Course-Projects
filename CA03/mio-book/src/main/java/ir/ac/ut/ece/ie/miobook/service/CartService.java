@@ -18,9 +18,17 @@ import java.util.Map;
 @Service
 public class CartService {
 
+    private final UserDatabase userDatabase;
+    private final BookDatabase bookDatabase;
+
+    public CartService(UserDatabase userDatabase, BookDatabase bookDatabase) {
+        this.userDatabase = userDatabase;
+        this.bookDatabase = bookDatabase;
+    }
+
     public void addToCart(String username, String title) {
-        User user = UserDatabase.getInstance().findUserByUsername(username);
-        Book book = BookDatabase.getInstance().findBookByTitle(title);
+        User user = userDatabase.findUserByUsername(username);
+        Book book = bookDatabase.findBookByTitle(title);
 
         if (user == null) {
             throw new UserNotFoundException(username);
@@ -29,7 +37,7 @@ public class CartService {
             throw new BookNotFoundException(title);
         }
         if (user.getRole() == Role.admin) {
-            throw new InvalidRoleException(Role.admin.toString());
+            throw new PermissionDeniedException(Role.admin.toString());
         }
         if (user.getCart().size() >= 10) {
             throw new CartIsFull();
@@ -48,8 +56,8 @@ public class CartService {
     }
 
     public void removeFromCart(String username, String title) {
-        User user = UserDatabase.getInstance().findUserByUsername(username);
-        Book book = BookDatabase.getInstance().findBookByTitle(title);
+        User user = userDatabase.findUserByUsername(username);
+        Book book = bookDatabase.findBookByTitle(title);
 
         if (user == null) {
             throw new UserNotFoundException(username);
@@ -58,7 +66,7 @@ public class CartService {
             throw new BookNotFoundException(title);
         }
         if (user.getRole() == Role.admin) {
-            throw new InvalidRoleException(Role.admin.toString());
+            throw new PermissionDeniedException(Role.admin.toString());
         }
 
         boolean found = false;
@@ -75,13 +83,13 @@ public class CartService {
     }
 
     public String purchaseCart(String username) {
-        User user = UserDatabase.getInstance().findUserByUsername(username);
+        User user = userDatabase.findUserByUsername(username);
 
         if (user == null) {
             throw new UserNotFoundException(username);
         }
         if (user.getRole() == Role.admin) {
-            throw new InvalidRoleException(Role.admin.toString());
+            throw new PermissionDeniedException(Role.admin.toString());
         }
 
         List<CartElement> cart = user.getCart();
@@ -137,13 +145,13 @@ public class CartService {
     }
 
     public String showCart(String username) {
-        User user = UserDatabase.getInstance().findUserByUsername(username);
+        User user = userDatabase.findUserByUsername(username);
 
         if (user == null) {
             throw new UserNotFoundException(username);
         }
         if (user.getRole() == Role.admin) {
-            throw new InvalidRoleException(Role.admin.toString());
+            throw new PermissionDeniedException(Role.admin.toString());
         }
 
         int totalCost = 0;

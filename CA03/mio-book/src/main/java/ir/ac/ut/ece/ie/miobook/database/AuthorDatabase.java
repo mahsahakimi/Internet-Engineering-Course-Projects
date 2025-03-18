@@ -1,24 +1,19 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
+import ir.ac.ut.ece.ie.miobook.exceptions.AuthorAlreadyExistsException;
 import ir.ac.ut.ece.ie.miobook.model.Author;
-import lombok.Getter;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Repository
 public class AuthorDatabase {
 
-    private static AuthorDatabase instance;
     private List<Author> authors = new ArrayList<>();
 
-    private AuthorDatabase() {}
-
-    public static AuthorDatabase getInstance() {
-        if (instance == null) {
-            instance = new AuthorDatabase();
-        }
-        return instance;
+    public List<Author> getAuthors() {
+        return authors;
     }
 
     public void addAuthor(Author author) {
@@ -26,13 +21,13 @@ public class AuthorDatabase {
         if (findAuthorByName(name) == null) {
             authors.add(author);
         } else {
-            throw new IllegalArgumentException("Author already exists: " + author);
+            throw new AuthorAlreadyExistsException(author.getName());
         }
     }
 
     public Author findAuthorByName(String name) {
         for (Author author : authors) {
-            if(author.getName().equals(name)) {
+            if (author.getName().equals(name)) {
                 return author;
             }
         }

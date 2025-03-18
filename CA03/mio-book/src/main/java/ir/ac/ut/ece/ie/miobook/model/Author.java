@@ -1,5 +1,6 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
+import ir.ac.ut.ece.ie.miobook.utils.MySimpleDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
