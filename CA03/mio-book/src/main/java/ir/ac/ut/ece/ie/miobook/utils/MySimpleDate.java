@@ -2,11 +2,14 @@ package ir.ac.ut.ece.ie.miobook.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Getter
+@Component
 public class MySimpleDate {
     private int year;
     private int month;
@@ -33,7 +36,7 @@ public class MySimpleDate {
         String[] parts = dateString.split("-");
 
         if (parts.length != 3) {
-            throw new IllegalArgumentException("Invalid date format. Please use yyyy-MM-dd.");
+            throw new InvalidDateFormatException();
         }
 
         try {
@@ -42,7 +45,7 @@ public class MySimpleDate {
             int day = Integer.parseInt(parts[2]);
             return new MySimpleDate(year, month, day);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid date format. Please use yyyy-MM-dd.");
+            throw new InvalidDateFormatException();
         }
     }
 

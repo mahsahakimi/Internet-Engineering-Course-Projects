@@ -51,9 +51,33 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BookTitleAlreadyExistsException.class)
+    public ResponseEntity<Response<String>> handleBookTitleAlreadyExistsException(BookTitleAlreadyExistsException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthorAlreadyExistsException.class)
+    public ResponseEntity<Response<String>> handleAuthorAlreadyExistsException(AuthorAlreadyExistsException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Response<String>> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Response<String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Response<String>> handleRuntimeException(RuntimeException ex) {
-        Response<String> response = new Response<>("error", "An unexpected error occurred. Please try again later.", null);
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
