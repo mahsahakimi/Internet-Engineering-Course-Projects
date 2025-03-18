@@ -12,6 +12,8 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;
 
+
+
         while ((line = reader.readLine()) != null) { // Loop until EOF
             line = line.trim();
             String[] parts = line.split(" ", 2);
@@ -73,5 +75,9 @@ public class Main {
 
             System.out.flush();
         }
+    }
+
+    private void load_data(){
+
     }
 }

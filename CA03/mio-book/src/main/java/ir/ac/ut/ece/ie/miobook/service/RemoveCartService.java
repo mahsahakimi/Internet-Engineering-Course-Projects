@@ -7,6 +7,7 @@ import ir.ac.ut.ece.ie.miobook.model.CartElement;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 
+//deprecated!
 public class RemoveCartService {
 
     public static void removeFromCart(String username, String title) {

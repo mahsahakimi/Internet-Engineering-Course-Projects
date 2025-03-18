@@ -6,6 +6,7 @@ import ir.ac.ut.ece.ie.miobook.service.RemoveCartService;
 
 import java.io.IOException;
 
+//deprecated!
 public class RemoveCartCommand {
 
     public static void execute(String inputJson) throws IOException {

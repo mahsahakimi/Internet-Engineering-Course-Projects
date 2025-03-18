@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//deprecated!
 public class PurchaseCartService {
 
     public static String purchaseCart(String username) throws IOException {

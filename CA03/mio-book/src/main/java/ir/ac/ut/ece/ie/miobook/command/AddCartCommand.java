@@ -6,6 +6,7 @@ import ir.ac.ut.ece.ie.miobook.service.AddCartService;
 
 import java.io.IOException;
 
+//deprecated!
 public class AddCartCommand {
 
     public static void execute(String inputJson) throws IOException {
