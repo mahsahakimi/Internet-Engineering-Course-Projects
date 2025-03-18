@@ -8,7 +8,7 @@ import ir.ac.ut.ece.ie.miobook.model.Review;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 public class AddReviewService {
@@ -37,7 +37,7 @@ public class AddReviewService {
             throw new IllegalArgumentException("Rate must be an integer between 1 and 5.");
         }
 
-        LocalDate submissionTime = LocalDate.now();
+        LocalDateTime submissionTime = LocalDateTime.now();
         Review review = new Review(username, title, rate, comment, submissionTime);
         ReviewDatabase.getInstance().addReview(review);
     }
