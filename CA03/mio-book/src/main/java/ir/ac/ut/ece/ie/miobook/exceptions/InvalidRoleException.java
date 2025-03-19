@@ -1,5 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.exceptions;
 
+import ir.ac.ut.ece.ie.miobook.model.Role;
+
 public class InvalidRoleException extends RuntimeException {
 
   private static final String ERROR_CODE = "INVALID_ROLE";

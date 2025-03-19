@@ -40,16 +40,16 @@ public class CartService {
             throw new PermissionDeniedException(Role.admin.toString());
         }
         if (user.getCart().size() >= 10) {
-            throw new CartIsFull();
+            throw new CartIsFullException();
         }
         if (user.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
-            throw new BookAlreadyInCart(title);
+            throw new BookAlreadyInCartException(title);
         }
         if (user.getOwnedBooks().stream().anyMatch(ownedBook -> ownedBook.equals(book))) {
-            throw new BookAlreadyOwned(title);
+            throw new BookAlreadyOwnedException(title);
         }
         if (user.getBorrowedBooks().stream().anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
-            throw new BookAlreadyBorrowed(title);
+            throw new BookAlreadyBorrowedException(title);
         }
         CartElement newElement = new CartElement(book, 0);
         user.getCart().add(newElement);
@@ -77,7 +77,7 @@ public class CartService {
             }
         }
         if (!found) {
-            throw new BookNotInCart(title);
+            throw new BookNotInCartException(title);
         }
         user.removeBookFromCart(book);
     }
@@ -95,7 +95,7 @@ public class CartService {
         List<CartElement> cart = user.getCart();
 
         if (cart.isEmpty()) {
-            throw new CartIsEmpty();
+            throw new CartIsEmptyException();
         }
 
         int totalCost = 0;
@@ -105,7 +105,7 @@ public class CartService {
         }
 
         if (user.getBalance() < totalCost) {
-            throw new InsufficientBalance(username);
+            throw new InsufficientBalanceException(username);
         }
 
         LocalDateTime now = LocalDateTime.now();
