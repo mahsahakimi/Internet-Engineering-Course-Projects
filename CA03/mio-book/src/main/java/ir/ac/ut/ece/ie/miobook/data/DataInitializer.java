@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -77,10 +78,30 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeBooks() {
         try {
             URL url = new URL("http://194.60.230.196:8000/books");
-            List<Book> books = fetchData(url, new TypeReference<List<Book>>() {});
-            if(books != null) {
-                for (Book book : books) {
-                    bookDatabase.addBook(book);
+            List<Map<String, Object>> bookMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
+
+            if (bookMaps != null) {
+                for (Map<String, Object> bookMap : bookMaps) {
+                    String authorName = (String) bookMap.get("author");
+
+                    Author foundAuthor = authorDatabase.findAuthorByName(authorName);
+
+                    if (foundAuthor != null) {
+                        Book fixedBook = new Book(
+                                (String) bookMap.get("title"),
+                                foundAuthor,
+                                (String) bookMap.get("publisher"),
+                                (Integer) bookMap.get("year"),
+                                (List<String>) bookMap.get("genres"),
+                                (Integer) bookMap.get("price"),
+                                (String) bookMap.get("synopsis"),
+                                (String) bookMap.get("content")
+                        );
+
+                        bookDatabase.addBook(fixedBook);
+                    } else {
+                        System.err.println("Author not found: " + authorName + " for book: " + bookMap.get("title"));
+                    }
                 }
             }
         } catch (IOException e) {

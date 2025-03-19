@@ -1,4 +1,4 @@
-package ir.ac.ut.ece.ie.miobook.utils;
+package ir.ac.ut.ece.ie.miobook.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,14 +9,13 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Getter
-@Component
-public class MySimpleDate {
+public class MyLocalDate {
     private int year;
     private int month;
     private int day;
 
     @JsonCreator
-    public MySimpleDate(
+    public MyLocalDate(
             @JsonProperty("year") int year,
             @JsonProperty("month") int month,
             @JsonProperty("day") int day) {
@@ -25,13 +24,31 @@ public class MySimpleDate {
         this.day = day;
     }
 
-    public MySimpleDate() {
+    public MyLocalDate() {
         this.year = 0;
         this.month = 0;
         this.day = 0;
     }
 
-    public static MySimpleDate parse(String dateString) {
+    // constructor to create MySimpleDate from a String
+    public MyLocalDate(String dateString) {
+        // the dateString to be in "yyyy-MM-dd" format
+        String[] parts = dateString.split("-");
+
+        if (parts.length != 3) {
+            throw new InvalidDateFormatException();
+        }
+
+        try {
+            this.year = Integer.parseInt(parts[0]);
+            this.month = Integer.parseInt(parts[1]);
+            this.day = Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            throw new InvalidDateFormatException();
+        }
+    }
+
+    public static MyLocalDate parse(String dateString) {
         // the dateString to be in "yyyy-MM-dd" format
         String[] parts = dateString.split("-");
 
@@ -43,7 +60,7 @@ public class MySimpleDate {
             int year = Integer.parseInt(parts[0]);
             int month = Integer.parseInt(parts[1]);
             int day = Integer.parseInt(parts[2]);
-            return new MySimpleDate(year, month, day);
+            return new MyLocalDate(year, month, day);
         } catch (NumberFormatException e) {
             throw new InvalidDateFormatException();
         }
@@ -66,17 +83,17 @@ public class MySimpleDate {
     }
 
     // Function to create MySimpleDate from LocalDate
-    public static MySimpleDate fromLocalDate(LocalDate localDate) {
+    public static MyLocalDate fromLocalDate(LocalDate localDate) {
         if (localDate == null) {
-            return new MySimpleDate();
+            return new MyLocalDate();
         }
-        return new MySimpleDate(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
+        return new MyLocalDate(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
     }
 
-    public static MySimpleDate of(int year, int month, int day) {
+    public static MyLocalDate of(int year, int month, int day) {
         if (year == 0 && month == 0 && day == 0) {
             return null;
         }
-        return new MySimpleDate(year, month, day);
+        return new MyLocalDate(year, month, day);
     }
 }

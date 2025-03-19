@@ -4,7 +4,7 @@ import ir.ac.ut.ece.ie.miobook.dto.AddAuthorRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
-import ir.ac.ut.ece.ie.miobook.utils.MySimpleDate;
+import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,9 @@ import java.time.format.DateTimeParseException;
 public class AuthorController {
 
     private final AuthorService authorService;
-    private final MySimpleDate mySimpleDate;
 
-    public AuthorController(AuthorService authorService, MySimpleDate mySimpleDate) {
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
-        this.mySimpleDate = mySimpleDate;
     }
 
     @PostMapping("/add") // (add_author)
@@ -32,11 +30,11 @@ public class AuthorController {
         // Example: POST /authors/add with JSON body containing author details.
         request.validate();
 
-        MySimpleDate bornDate;
-        MySimpleDate diedDate;
+        MyLocalDate bornDate;
+        MyLocalDate diedDate;
         try {
-            bornDate = mySimpleDate.parse(request.getBorn());
-            diedDate = request.getDied() != null ? mySimpleDate.parse(request.getDied()) : null;
+            bornDate = MyLocalDate.parse(request.getBorn());
+            diedDate = request.getDied() != null ? MyLocalDate.parse(request.getDied()) : null;
         } catch (DateTimeParseException e) {
             throw new InvalidDateFormatException();
         }

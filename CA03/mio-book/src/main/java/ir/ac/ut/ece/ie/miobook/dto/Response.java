@@ -1,16 +1,16 @@
 package ir.ac.ut.ece.ie.miobook.dto;
 
-import java.time.LocalDateTime;
+import ir.ac.ut.ece.ie.miobook.model.MyLocalDateTime;
 
 public class Response<T> {
     private String status;
-    private LocalDateTime timestamp;
+    private MyLocalDateTime timestamp;
     private String message;
     private T data;
 
     public Response(String status, String message, T data) {
         this.status = status;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = MyLocalDateTime.now();
         this.message = message;
         this.data = data;
     }

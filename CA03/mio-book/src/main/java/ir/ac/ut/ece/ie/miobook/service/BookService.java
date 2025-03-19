@@ -11,7 +11,6 @@ import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +102,7 @@ public class BookService {
             throw new InvalidRatingException();
         }
 
-        LocalDateTime submissionTime = LocalDateTime.now();
+        MyLocalDateTime submissionTime = MyLocalDateTime.now();
         Review review = new Review(username, title, rate, comment, submissionTime);
         reviewDatabase.addReview(review);
     }

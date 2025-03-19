@@ -8,7 +8,7 @@ import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDatesException;
 import ir.ac.ut.ece.ie.miobook.exceptions.PermissionDeniedException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.utils.MySimpleDate;
+import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
@@ -29,7 +29,7 @@ public class AuthorService {
         this.userDatabase = userDatabase;
     }
 
-    public void addAuthor(String username, String name, String penName, String nationality, MySimpleDate born, MySimpleDate died) {
+    public void addAuthor(String username, String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
         User whoAdded = userDatabase.findUserByUsername(username);
 
         if (whoAdded == null) {

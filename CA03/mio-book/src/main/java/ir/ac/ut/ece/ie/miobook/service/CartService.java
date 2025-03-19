@@ -8,8 +8,6 @@ import ir.ac.ut.ece.ie.miobook.model.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,9 +106,7 @@ public class CartService {
             throw new InsufficientBalanceException(username);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = now.format(formatter);
+        MyLocalDateTime now = MyLocalDateTime.now();
 
         user.setBalance(user.getBalance() - totalCost);
         List<String> bookTitles = new ArrayList<>();
@@ -121,20 +117,20 @@ public class CartService {
             if (ce.getDays() == 0){
                 ownedBooks.add(ce.getBook());
             } else {
-                LocalDateTime dueDate = now.plusDays(ce.getDays());
+                MyLocalDateTime dueDate = now.plusDays(ce.getDays());
                 BorrowedBook borrowedBook = new BorrowedBook(ce.getBook(), dueDate);
                 borrowedBooks.add(borrowedBook);
             }
         }
 
-        Purchase purchase = new Purchase(bookTitles, totalCost, formattedDateTime);
+        Purchase purchase = new Purchase(bookTitles, totalCost, now.toString());
         user.getPurchases().add(purchase);
         user.getCart().clear();
 
         Map<String, Object> data = new HashMap<>();
         data.put("bookCount", cartSize);
         data.put("totalCost", totalCost);
-        data.put("date", formattedDateTime);
+        data.put("date", now);
 
         ObjectMapper mapper = new ObjectMapper();
         try {

@@ -12,8 +12,6 @@ import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,10 +103,8 @@ public class UserService {
         for (Purchase purchase : user.getPurchases()) {
             Map<String, Object> purchaseData = new HashMap<>();
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime purchaseDateTime = LocalDateTime.parse(purchase.getPurchaseDateTime(), formatter);
-            String formattedDateTime = purchaseDateTime.format(formatter);
-            purchaseData.put("purchaseDate", formattedDateTime);
+            MyLocalDateTime purchaseDateTime = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
+            purchaseData.put("purchaseDate", purchaseDateTime);
 
             List<Map<String, Object>> items = new ArrayList<>();
             for (String title : purchase.getBookTitles()) {
@@ -130,9 +126,9 @@ public class UserService {
                     for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
                         if (borrowedBook.getBook().getTitle().equals(book.getTitle())) {
                             isBorrowed = true;
-                            LocalDateTime borrowDueDate = borrowedBook.getDueDate();
-                            LocalDateTime purchaseDate = LocalDateTime.parse(purchase.getPurchaseDateTime(), formatter);
-                            borrowDays = (int) java.time.temporal.ChronoUnit.DAYS.between(purchaseDate, borrowDueDate);
+                            MyLocalDateTime borrowDueDate = borrowedBook.getDueDate();
+                            MyLocalDateTime purchaseDate = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
+                            borrowDays = (int) MyLocalDateTime.daysBetween(purchaseDate, borrowDueDate);
                             finalPrice = (book.getPrice() * borrowDays) / 10;
                             break;
                         }
