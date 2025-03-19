@@ -17,24 +17,36 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/add") // For adding a new user to the system (add_user)
+    @PostMapping("/add") // (add_user)
     public ResponseEntity<Response<String>> addUser(@RequestBody AddUserRequest request) {
+        // Adds a new user to the system.
+        // Parameters: role, username, password, email, address.
+        // Returns: success message or error if the user already exists or input is invalid.
+        // Example: POST /users/add with JSON body containing user details.
         request.validate();
         userService.addUser(request.getRole(), request.getUsername(), request.getPassword(), request.getEmail(), request.getAddress());
         Response<String> response = new Response<>("success", "User added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/credit") // For adding credit to a user's account (add_credit)
+    @PostMapping("/credit") // (add_credit)
     public ResponseEntity<Response<String>> addCredit(@RequestBody AddCreditRequest request) {
+        // Adds credit to a user's account.
+        // Parameters: username, credit amount.
+        // Returns: success message or error if the user is not found or input is invalid.
+        // Example: POST /users/credit with JSON body containing username and credit.
         request.validate();
         userService.addCredit(request.getUsername(), request.getCredit());
         Response<String> response = new Response<>("success", "Credit added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/details") // For getting the details of a user (show_user_details)
+    @GetMapping("/details") // (show_user_details)
     public ResponseEntity<Response<String>> showUserDetails(@RequestParam("username") String username) {
+        // Retrieves the details of a specific user.
+        // Parameters: username.
+        // Returns: user details in JSON format or error if the user is not found.
+        // Example: GET /users/details?username=user_username.
         if (username == null || username.isEmpty()) {
             throw new MissingRequiredFieldsException("username");
         }
@@ -44,8 +56,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/purchase-history") // For getting the purchase history of a user (show_purchase_history)
+    @GetMapping("/purchase_history") // (show_purchase_history)
     public ResponseEntity<Response<String>> showPurchaseHistory(@RequestParam("username") String username) {
+        // Retrieves the purchase history of a specific user.
+        // Parameters: username.
+        // Returns: purchase history in JSON format or error if the user is not found.
+        // Example: GET /users/purchase_history?username=user_username.
         if (username == null || username.isEmpty()) {
             throw new MissingRequiredFieldsException("username");
         }
@@ -55,8 +71,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/purchased-books") // For getting purchased books of a user (show_purchased_books)
+    @GetMapping("/purchased_books") // (show_purchased_books)
     public ResponseEntity<Response<String>> showPurchasedBooks(@RequestParam("username") String username) {
+        // Retrieves the list of books purchased by a specific user.
+        // Parameters: username.
+        // Returns: list of purchased books in JSON format or error if the user is not found.
+        // Example: GET /users/purchased_books?username=user_username.
         if (username == null || username.isEmpty()) {
             throw new MissingRequiredFieldsException("username");
         }

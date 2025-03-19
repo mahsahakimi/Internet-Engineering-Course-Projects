@@ -282,3 +282,94 @@ All API endpoints now start with: `/api/carts`
         }
         ```
     * **Error:** If you aren't found, we'll send an error.
+
+# User API Documentation
+
+## Base URL
+
+All API endpoints now start with: `/api/users`
+
+## Endpoints
+
+### 1. Add User (add_user)
+
+* **Method:** `POST`
+* **URL:** `/api/users/add`
+* **Description:** Adds a new user to the system.
+* **Request Body:** A special note (JSON) with the user's details:
+    ```json
+    {
+      "role": "user",
+      "username": "new_user",
+      "password": "password123",
+      "email": "[email address removed]",
+      "address": "123 Main St"
+    }
+    ```
+* **Response:**
+    * **Success (201 Created):**
+        ```json
+        {
+          "status": "success",
+          "message": "User added successfully.",
+          "data": null
+        }
+        ```
+    * **Error:** If the user already exists or the details are wrong, we'll send an error.
+
+### 2. Add Credit (add_credit)
+
+* **Method:** `POST`
+* **URL:** `/api/users/credit`
+* **Description:** Adds credit to a user's account.
+* **Request Body:** A special note (JSON) with the username and credit amount:
+    ```json
+    {
+      "username": "existing_user",
+      "credit": 50
+    }
+    ```
+* **Response:**
+    * **Success (200 OK):**
+        ```json
+        {
+          "status": "success",
+          "message": "Credit added successfully.",
+          "data": null
+        }
+        ```
+    * **Error:** If the user isn't found or the credit amount is wrong, we'll send an error.
+
+### 3. Show User Details (show_user_details)
+
+* **Method:** `GET`
+* **URL:** `/api/users/details?username=existing_user`
+* **Description:** Shows the details of a specific user.
+* **Parameters:**
+    * `username`: The user's username.
+* **Response:**
+    * **Success (200 OK):** A note (JSON) with the user's details.
+    * **Error:** If the user isn't found, we'll send an error.
+
+### 4. Show Purchase History (show_purchase_history)
+
+* **Method:** `GET`
+* **URL:** `/api/users/purchase_history?username=existing_user`
+* **Description:** Shows the purchase history of a specific user.
+* **Parameters:**
+    * `username`: The user's username.
+* **Response:**
+    * **Success (200 OK):** A note (JSON) with the user's purchase history.
+    * **Error:** If the user isn't found, we'll send an error.
+
+### 5. Show Purchased Books (show_purchased_books)
+
+* **Method:** `GET`
+* **URL:** `/api/users/purchased_books?username=existing_user`
+* **Description:** Shows the list of books purchased by a specific user.
+* **Parameters:**
+    * `username`: The user's username.
+* **Response:**
+    * **Success (200 OK):** A note (JSON) with the list of purchased books.
+    * **Error:** If the user isn't found, we'll send an error.
+
