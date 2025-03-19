@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<Response<String>> handleBookNotFoundException(BookNotFoundException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(PermissionDeniedException.class)
     public ResponseEntity<Response<String>> handlePermissionDeniedException(PermissionDeniedException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
@@ -123,12 +129,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Response<String>> handleRuntimeException(RuntimeException ex) {
-        Response<String> response = new Response<>("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(BookAlreadyBorrowedException.class)
     public ResponseEntity<Response<String>> handleBookAlreadyBorrowedException(BookAlreadyBorrowedException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
@@ -145,12 +145,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response<String>> handleBookAlreadyOwnedException(BookAlreadyOwnedException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<Response<String>> handleBookNotFoundException(BookNotFoundException ex) {
-        Response<String> response = new Response<>("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BookNotInCartException.class)
@@ -219,6 +213,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SortByException.class)
+    public ResponseEntity<Response<String>> handleSortByException(SortByException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(SortOrderException.class)
+    public ResponseEntity<Response<String>> handleSortOrderException(SortOrderException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
     @ExceptionHandler(NoBooksFoundException.class)
     public ResponseEntity<Response<String>> handleNoBooksFoundException(NoBooksFoundException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
@@ -235,5 +240,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response<String>> handleInvalidYearRange(InvalidYearRangeException ex) {
         Response<String> response = new Response<>("error", ex.getMessage(), null);
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response<String>> handleRuntimeException(RuntimeException ex) {
+        Response<String> response = new Response<>("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

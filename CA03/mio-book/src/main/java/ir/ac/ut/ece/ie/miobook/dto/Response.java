@@ -14,4 +14,14 @@ public class Response<T> {
         this.message = message;
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "status='" + status + '\'' +
+                ", timestamp=" + timestamp +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }

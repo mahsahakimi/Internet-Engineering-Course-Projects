@@ -21,7 +21,7 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping("/add")
+    @PostMapping("/add") // (add_book)
     public ResponseEntity<Response<String>> addBook(@RequestBody AddBookRequest request) {
         request.validate();
 
@@ -47,7 +47,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/borrow")
+    @PostMapping("/borrow") // (borrow_book)
     public ResponseEntity<Response<String>> borrowBook(@RequestBody BorrowBookRequest request) {
         request.validate();
         bookService.borrowBook(request.getUsername(), request.getTitle(), request.getDays());
@@ -55,7 +55,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/add_review")
+    @PostMapping("/add_review") // (add_review)
     public ResponseEntity<Response<String>> add_review(@RequestBody AddReviewRequest request) {
         request.validate();
         bookService.addReview(request.getUsername(), request.getTitle(), request.getRate(), request.getComment());
@@ -63,7 +63,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/details")
+    @GetMapping("/details") // (show_book_details)
     public ResponseEntity<Response<String>> showBookDetails(@RequestParam("title") String title) {
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
@@ -74,7 +74,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/content")
+    @GetMapping("/content") // (show_book_content)
     public ResponseEntity<Response<String>> showBookContent(@RequestParam("title") String title, @RequestParam("username") String username) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("Missing 'username' field.");
@@ -88,7 +88,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/reviews")
+    @GetMapping("/reviews") // (show_book_reviews)
     public ResponseEntity<Response<String>> showBookReviews(@RequestParam("title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -101,7 +101,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/search_by_title")
+    @GetMapping("/search_by_title") // (search_books_by_title)
     public ResponseEntity<Response<String>> searchByTitle(@RequestParam(value = "title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -113,7 +113,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/search_by_author")
+    @GetMapping("/search_by_author") // (search_books_by_author)
     public ResponseEntity<Response<String>> searchByAuthor(@RequestParam(value = "name") String authorName,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -126,7 +126,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/search_by_genre")
+    @GetMapping("/search_by_genre") // (search_books_by_genre)
     public ResponseEntity<Response<String>> searchByGenre(@RequestParam(value = "genre") String genre,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -140,7 +140,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/search_by_year")
+    @GetMapping("/search_by_year") // (search_books_by_year)
     public ResponseEntity<Response<String>> searchByYear(@RequestParam(value = "from") Integer fromYear,
                                                             @RequestParam(value = "to") Integer toYear,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -158,7 +158,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/searchBooks")
+    @GetMapping("/searchBooks") // (search_books)
     public ResponseEntity<Response<String>> searchBooks(@RequestParam(value = "title", required = false) String title,
                                                         @RequestParam(value = "author", required = false) String authorName,
                                                         @RequestParam(value = "genre", required = false) String genre,
@@ -181,11 +181,11 @@ public class BookController {
         List<String> validSortOrder = Arrays.asList("asc", "desc", null);
 
         if (sortBy != null && !validSortBy.contains(sortBy)) {
-            throw new IllegalArgumentException("Invalid sortBy value. Allowed values: averageRating, reviewCount.");
+            throw new SortByException(sortBy);
         }
 
         if (sortOrder != null && !validSortOrder.contains(sortOrder)) {
-            throw new IllegalArgumentException("Invalid sortOrder value. Allowed values: asc, desc.");
+            throw new SortOrderException(sortOrder);
         }
 
         String responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);

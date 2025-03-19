@@ -17,7 +17,7 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/add")
+    @PostMapping("/add") // (add_cart)
     public ResponseEntity<Response<String>> addToCart(@RequestBody AddToCartRequest request){
         request.validate();
 
@@ -26,7 +26,7 @@ public class CartController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/remove")
+    @DeleteMapping("/remove") // (remove_cart)
     public ResponseEntity<Response<String>> removeFromCart(@RequestParam String username, @RequestParam String title){
         if (username == null || title == null){
             throw new MissingRequiredFieldsException("username, title.");
@@ -37,7 +37,7 @@ public class CartController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/purchase")
+    @PostMapping("/purchase") // (purchase_cart)
     public ResponseEntity<Response<String>> purchaseCart(@RequestBody PurchaseCartRequest request){
         request.validate();
 
@@ -47,7 +47,7 @@ public class CartController {
 
     }
 
-    @GetMapping("/details")
+    @GetMapping("/details") // (show_cart)
     public ResponseEntity<Response<String>> showCart(@RequestParam String username){
         if (username == null){
             throw new MissingRequiredFieldsException("username.");
