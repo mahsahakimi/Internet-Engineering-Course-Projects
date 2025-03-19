@@ -1,7 +1,5 @@
 # Book API Documentation
 
-Welcome to our updated library guide! We've moved, so here's how to find us:
-
 ## Base URL
 
 All API endpoints now start with: `/api/books`
@@ -187,4 +185,100 @@ All API endpoints now start with: `/api/books`
     * `genre`: The genre name.
     * `fromYear`: The start year.
     * `toYear`: The end year.
-    * 
+    * `sortBy`: How to sort the results (like `averageRating` or `reviewCount`).
+    * `sortOrder`: In what order to sort (like `asc` for ascending or `desc` for descending).
+    * `page`: The page number.
+    * `pageSize`: How many books per page.
+* **Response:**
+    * **Success (200 OK):** A note (JSON) with a list of books that match your search.
+    * **Error:** If there's something wrong with your search, we'll send an error.
+
+# Cart API Documentation
+
+## Base URL
+
+All API endpoints now start with: `/api/carts`
+
+## Endpoints
+
+### 1. Add to Cart (add_cart)
+
+* **Method:** `POST`
+* **URL:** `/api/carts/add`
+* **Description:** Puts a book in your shopping cart.
+* **Request Body:** A special note (JSON) with your username and the book's title:
+    ```json
+    {
+      "username": "your_username",
+      "title": "Book Title"
+    }
+    ```
+* **Response:**
+    * **Success (200 OK):**
+        ```json
+        {
+          "status": "success",
+          "message": "Book added to cart successfully.",
+          "data": null
+        }
+        ```
+    * **Error:** If the book or you aren't found, we'll send an error.
+
+### 2. Remove from Cart (remove_cart)
+
+* **Method:** `DELETE`
+* **URL:** `/api/carts/remove?username=your_username&title=BookTitle`
+* **Description:** Takes a book out of your shopping cart.
+* **Parameters:**
+    * `username`: your username.
+    * `title`: The book's title.
+* **Response:**
+    * **Success (200 OK):**
+        ```json
+        {
+          "status": "success",
+          "message": "Book removed from cart successfully.",
+          "data": null
+        }
+        ```
+    * **Error:** If the book or you aren't found, we'll send an error.
+
+### 3. Purchase Cart (purchase_cart)
+
+* **Method:** `POST`
+* **URL:** `/api/carts/purchase`
+* **Description:** Buys all the books in your cart.
+* **Request Body:** A special note (JSON) with your username:
+    ```json
+    {
+      "username": "your_username"
+    }
+    ```
+* **Response:**
+    * **Success (200 OK):**
+        ```json
+        {
+          "status": "success",
+          "message": "Purchase completed successfully.",
+          "data": "Purchase details here"
+        }
+        ```
+    * **Error:** If your cart is empty or you don't have enough game coins, we'll send an error.
+
+### 4. Show Cart (show_cart)
+
+* **Method:** `GET`
+* **URL:** `/api/carts/details?username=your_username`
+* **Description:** Shows you what's in your shopping cart.
+* **Parameters:**
+    * `username`: your username.
+* **Response:**
+    * **Success (200 OK):**
+        ```json
+        {
+          "status": "success",
+          "message": "Cart details retrieved successfully",
+          "data": "List of books in your cart"
+        }
+        ```
+    * **Error:** If you aren't found, we'll send an error.

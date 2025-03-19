@@ -19,6 +19,10 @@ public class CartController {
 
     @PostMapping("/add") // (add_cart)
     public ResponseEntity<Response<String>> addToCart(@RequestBody AddToCartRequest request){
+        // Adds a book to a user's shopping cart.
+        // Parameters: username, title (of the book).
+        // Returns: success message or error if the book or user is not found.
+        // Example: POST /carts/add with JSON body containing username and title.
         request.validate();
 
         cartService.addToCart(request.getUsername(), request.getTitle());
@@ -28,6 +32,10 @@ public class CartController {
 
     @DeleteMapping("/remove") // (remove_cart)
     public ResponseEntity<Response<String>> removeFromCart(@RequestParam String username, @RequestParam String title){
+        // Removes a book from a user's shopping cart.
+        // Parameters: username, title (of the book).
+        // Returns: success message or error if the book or user is not found.
+        // Example: DELETE /carts/remove?username=user_username&title=book_title.
         if (username == null || title == null){
             throw new MissingRequiredFieldsException("username, title.");
         }
@@ -39,6 +47,10 @@ public class CartController {
 
     @PostMapping("/purchase") // (purchase_cart)
     public ResponseEntity<Response<String>> purchaseCart(@RequestBody PurchaseCartRequest request){
+        // Completes the purchase of all books in a user's shopping cart.
+        // Parameters: username.
+        // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
+        // Example: POST /carts/purchase with JSON body containing username.
         request.validate();
 
         String purchaseDetails = cartService.purchaseCart(request.getUsername());
@@ -49,6 +61,10 @@ public class CartController {
 
     @GetMapping("/details") // (show_cart)
     public ResponseEntity<Response<String>> showCart(@RequestParam String username){
+        // Retrieves the contents of a user's shopping cart.
+        // Parameters: username.
+        // Returns: cart details (list of books) in JSON format, or error if the user is not found.
+        // Example: GET /carts/details?username=user_username.
         if (username == null){
             throw new MissingRequiredFieldsException("username.");
         }
