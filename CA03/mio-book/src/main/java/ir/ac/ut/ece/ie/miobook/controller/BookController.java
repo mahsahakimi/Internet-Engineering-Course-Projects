@@ -23,6 +23,10 @@ public class BookController {
 
     @PostMapping("/add") // (add_book)
     public ResponseEntity<Response<String>> addBook(@RequestBody AddBookRequest request) {
+        // Adds a new book to the library. Requires admin privileges.
+        // Parameters: username (admin), title, author, publisher, year, price, genres, synopsis, content.
+        // Returns: success message or error if book already exists or input is invalid.
+        // Example: POST /books/add with JSON body containing book details.
         request.validate();
 
         String priceString = request.getPrice(); // Assuming it's a String
@@ -49,6 +53,10 @@ public class BookController {
 
     @PostMapping("/borrow") // (borrow_book)
     public ResponseEntity<Response<String>> borrowBook(@RequestBody BorrowBookRequest request) {
+        // Allows a user to borrow a book.
+        // Parameters: username, title, days (number of days to borrow).
+        // Returns: success message or error if book is not available or user has insufficient credit.
+        // Example: POST /books/borrow with JSON body containing username, title, and days.
         request.validate();
         bookService.borrowBook(request.getUsername(), request.getTitle(), request.getDays());
         Response<String> response = new Response<>("success", "Book added successfully.", null);
@@ -57,6 +65,10 @@ public class BookController {
 
     @PostMapping("/add_review") // (add_review)
     public ResponseEntity<Response<String>> add_review(@RequestBody AddReviewRequest request) {
+        // Adds a review for a book.
+        // Parameters: username, title, rate (1-5), comment.
+        // Returns: success message or error if book or user not found or rate is invalid.
+        // Example: POST /books/add_review with JSON body containing review details.
         request.validate();
         bookService.addReview(request.getUsername(), request.getTitle(), request.getRate(), request.getComment());
         Response<String> response = new Response<>("success", "Review added successfully", null);
@@ -65,6 +77,10 @@ public class BookController {
 
     @GetMapping("/details") // (show_book_details)
     public ResponseEntity<Response<String>> showBookDetails(@RequestParam("title") String title) {
+        // Retrieves details of a specific book.
+        // Parameters: title (book title).
+        // Returns: book details in JSON format or error if book not found.
+        // Example: GET /books/details?title=ExampleBookTitle.
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
@@ -76,6 +92,10 @@ public class BookController {
 
     @GetMapping("/content") // (show_book_content)
     public ResponseEntity<Response<String>> showBookContent(@RequestParam("title") String title, @RequestParam("username") String username) {
+        // Retrieves the content of a book for a specific user (if they have borrowed it).
+        // Parameters: title (book title), username.
+        // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
+        // Example: GET /books/content?title=ExampleBookTitle&username=ExampleUsername.
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("Missing 'username' field.");
         }
@@ -92,6 +112,10 @@ public class BookController {
     public ResponseEntity<Response<String>> showBookReviews(@RequestParam("title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        // Retrieves reviews for a specific book with pagination.
+        // Parameters: title (book title), page (optional, default 1), pageSize (optional, default 10).
+        // Returns: reviews in JSON format or error if book not found.
+        // Example: GET /books/reviews?title=ExampleBookTitle&page=2&pageSize=20.
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
@@ -105,6 +129,10 @@ public class BookController {
     public ResponseEntity<Response<String>> searchByTitle(@RequestParam(value = "title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        // Searches books by title with pagination.
+        // Parameters: title (search term), page (optional, default 1), pageSize (optional, default 10).
+        // Returns: list of books matching the title in JSON format.
+        // Example: GET /books/search_by_title?title=ExampleTitle&page=1&pageSize=10.
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
@@ -117,6 +145,10 @@ public class BookController {
     public ResponseEntity<Response<String>> searchByAuthor(@RequestParam(value = "name") String authorName,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        // Searches books by author name with pagination.
+        // Parameters: name (author name), page (optional, default 1), pageSize (optional, default 10).
+        // Returns: list of books by the author in JSON format.
+        // Example: GET /books/search_by_author?name=ExampleAuthor&page=1&pageSize=10.
         if (authorName == null || authorName.isEmpty()){
             throw new MissingRequiredFieldsException("author");
         }
@@ -130,7 +162,10 @@ public class BookController {
     public ResponseEntity<Response<String>> searchByGenre(@RequestParam(value = "genre") String genre,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-
+        // Searches books by genre with pagination.
+        // Parameters: genre (book genre), page (optional, default 1), pageSize (optional, default 10).
+        // Returns: list of books matching the genre in JSON format.
+        // Example: GET /books/search_by_genre?genre=Fantasy&page=1&pageSize=10.
         if (genre == null || genre.isEmpty()) {
             throw new MissingRequiredFieldsException("genre");
         }
@@ -145,7 +180,10 @@ public class BookController {
                                                             @RequestParam(value = "to") Integer toYear,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-
+        // Searches books published within a year range with pagination.
+        // Parameters: from (start year), to (end year), page (optional, default 1), pageSize (optional, default 10).
+        // Returns: list of books published within the year range in JSON format.
+        // Example: GET /books/search_by_year?from=2020&to=2023&page=1&pageSize=10.
         if (fromYear == null) {
             throw new MissingRequiredFieldsException("from year.");
         }
@@ -168,7 +206,12 @@ public class BookController {
                                                         @RequestParam(value = "sortOrder", required = false) String sortOrder,
                                                         @RequestParam(value = "page", defaultValue = "1") int page,
                                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-
+        // Advanced search for books with multiple filters and sorting options with pagination.
+        // Parameters: title (optional), author (optional), genre (optional), fromYear (optional), toYear (optional),
+        //             sortBy (optional: averageRating, reviewCount), sortOrder (optional: asc, desc),
+        //             page (optional, default 1), pageSize (optional, default 10).
+        // Returns: list of books matching the search criteria in JSON format.
+        // Example: GET /books/searchBooks?title=ExampleTitle&author=ExampleAuthor&genre=Fantasy&fromYear=2020&toYear=2023&sortBy=averageRating&sortOrder=desc&page=1&pageSize=10.
         if (fromYear == null) {
             throw new MissingRequiredFieldsException("from year.");
         }
