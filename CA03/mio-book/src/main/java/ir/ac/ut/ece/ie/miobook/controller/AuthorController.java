@@ -23,7 +23,7 @@ public class AuthorController {
     }
 
     @PostMapping("/add") // (add_author)
-    public ResponseEntity<Response<String>> addAuthor(@RequestBody AddAuthorRequest request) {
+    public ResponseEntity<Response> addAuthor(@RequestBody AddAuthorRequest request) {
         // Adds a new author to the system.
         // Parameters: username (admin), name, penName, nationality, born (date), died (date, optional).
         // Returns: success message or error if the author already exists or input is invalid.
@@ -41,12 +41,12 @@ public class AuthorController {
 
         authorService.addAuthor(request.getUsername(), request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
 
-        Response<String> response = new Response<>("success", "Author added successfully.", null);
+        Response response = new Response("success", "Author added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/details") // (show_author_details)
-    public ResponseEntity<Response<String>> getAuthorDetails(@RequestParam("username") String authorName) {
+    public ResponseEntity<Response> getAuthorDetails(@RequestParam("username") String authorName) {
         // Retrieves the details of a specific author.
         // Parameters: username (author's name).
         // Returns: author details in JSON format or error if the author is not found.
@@ -56,7 +56,7 @@ public class AuthorController {
         }
 
         String authorDetails = authorService.getAuthorDetails(authorName);
-        Response<String> response = new Response<>("success", "Author details retrieved successfully.", authorDetails);
+        Response response = new Response("success", "Author details retrieved successfully.", authorDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

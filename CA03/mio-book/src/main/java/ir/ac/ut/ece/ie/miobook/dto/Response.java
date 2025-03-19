@@ -2,15 +2,15 @@ package ir.ac.ut.ece.ie.miobook.dto;
 
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDateTime;
 
-public class Response<T> {
-    private String status;
-    private MyLocalDateTime timestamp;
-    private String message;
-    private T data;
+public class Response {
+    public String status;
+    public String timestamp;
+    public String message;
+    public Object data;
 
-    public Response(String status, String message, T data) {
+    public Response(String status, String message, Object data) {
         this.status = status;
-        this.timestamp = MyLocalDateTime.now();
+        this.timestamp = MyLocalDateTime.now().toString();
         this.message = message;
         this.data = data;
     }

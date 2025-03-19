@@ -18,7 +18,7 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/add") // (add_cart)
-    public ResponseEntity<Response<String>> addToCart(@RequestBody AddToCartRequest request){
+    public ResponseEntity<Response> addToCart(@RequestBody AddToCartRequest request){
         // Adds a book to a user's shopping cart.
         // Parameters: username, title (of the book).
         // Returns: success message or error if the book or user is not found.
@@ -26,12 +26,12 @@ public class CartController {
         request.validate();
 
         cartService.addToCart(request.getUsername(), request.getTitle());
-        Response<String> response = new Response<>("success", "Book added to cart successfully.", null);
+        Response response = new Response("success", "Book added to cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/remove") // (remove_cart)
-    public ResponseEntity<Response<String>> removeFromCart(@RequestParam String username, @RequestParam String title){
+    public ResponseEntity<Response> removeFromCart(@RequestParam String username, @RequestParam String title){
         // Removes a book from a user's shopping cart.
         // Parameters: username, title (of the book).
         // Returns: success message or error if the book or user is not found.
@@ -41,12 +41,12 @@ public class CartController {
         }
 
         cartService.removeFromCart(username, title);
-        Response<String> response = new Response<>("success", "Book removed from cart successfully.", null);
+        Response response = new Response("success", "Book removed from cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/purchase") // (purchase_cart)
-    public ResponseEntity<Response<String>> purchaseCart(@RequestBody PurchaseCartRequest request){
+    public ResponseEntity<Response> purchaseCart(@RequestBody PurchaseCartRequest request){
         // Completes the purchase of all books in a user's shopping cart.
         // Parameters: username.
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
@@ -54,13 +54,13 @@ public class CartController {
         request.validate();
 
         String purchaseDetails = cartService.purchaseCart(request.getUsername());
-        Response<String> response = new Response<>("success", "Purchase completed successfully.", purchaseDetails);
+        Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
     @GetMapping("/details") // (show_cart)
-    public ResponseEntity<Response<String>> showCart(@RequestParam String username){
+    public ResponseEntity<Response> showCart(@RequestParam String username){
         // Retrieves the contents of a user's shopping cart.
         // Parameters: username.
         // Returns: cart details (list of books) in JSON format, or error if the user is not found.
@@ -70,7 +70,7 @@ public class CartController {
         }
 
         String cartDetails = cartService.showCart(username);
-        Response<String> response = new Response<>("success", "Cart details retrieved successfully", cartDetails);
+        Response response = new Response("success", "Cart details retrieved successfully", cartDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

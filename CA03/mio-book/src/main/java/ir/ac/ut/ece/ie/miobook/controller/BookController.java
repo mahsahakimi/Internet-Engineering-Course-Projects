@@ -22,7 +22,7 @@ public class BookController {
     private BookService bookService;
 
     @PostMapping("/add") // (add_book)
-    public ResponseEntity<Response<String>> addBook(@RequestBody AddBookRequest request) {
+    public ResponseEntity<Response> addBook(@RequestBody AddBookRequest request) {
         // Adds a new book to the library. Requires admin privileges.
         // Parameters: username (admin), title, author, publisher, year, price, genres, synopsis, content.
         // Returns: success message or error if book already exists or input is invalid.
@@ -47,36 +47,36 @@ public class BookController {
                 request.getPublisher(), request.getYear(), finalPrice, request.getGenres(),
                 request.getSynopsis(), request.getContent());
 
-        Response<String> response = new Response<>("success", "Book added successfully.", null);
+        Response response = new Response("success", "Book added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/borrow") // (borrow_book)
-    public ResponseEntity<Response<String>> borrowBook(@RequestBody BorrowBookRequest request) {
+    public ResponseEntity<Response> borrowBook(@RequestBody BorrowBookRequest request) {
         // Allows a user to borrow a book.
         // Parameters: username, title, days (number of days to borrow).
         // Returns: success message or error if book is not available or user has insufficient credit.
         // Example: POST /books/borrow with JSON body containing username, title, and days.
         request.validate();
         bookService.borrowBook(request.getUsername(), request.getTitle(), request.getDays());
-        Response<String> response = new Response<>("success", "Book added successfully.", null);
+        Response response = new Response("success", "Book added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/add_review") // (add_review)
-    public ResponseEntity<Response<String>> add_review(@RequestBody AddReviewRequest request) {
+    public ResponseEntity<Response> add_review(@RequestBody AddReviewRequest request) {
         // Adds a review for a book.
         // Parameters: username, title, rate (1-5), comment.
         // Returns: success message or error if book or user not found or rate is invalid.
         // Example: POST /books/add_review with JSON body containing review details.
         request.validate();
         bookService.addReview(request.getUsername(), request.getTitle(), request.getRate(), request.getComment());
-        Response<String> response = new Response<>("success", "Review added successfully", null);
+        Response response = new Response("success", "Review added successfully", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/details") // (show_book_details)
-    public ResponseEntity<Response<String>> showBookDetails(@RequestParam("title") String title) {
+    public ResponseEntity<Response> showBookDetails(@RequestParam("title") String title) {
         // Retrieves details of a specific book.
         // Parameters: title (book title).
         // Returns: book details in JSON format or error if book not found.
@@ -86,12 +86,12 @@ public class BookController {
         }
 
         String bookDetails = bookService.getBookDetails(title);
-        Response<String> response = new Response<>("success", "Book details retrieved.", bookDetails);
+        Response response = new Response("success", "Book details retrieved.", bookDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/content") // (show_book_content)
-    public ResponseEntity<Response<String>> showBookContent(@RequestParam("title") String title, @RequestParam("username") String username) {
+    public ResponseEntity<Response> showBookContent(@RequestParam("title") String title, @RequestParam("username") String username) {
         // Retrieves the content of a book for a specific user (if they have borrowed it).
         // Parameters: title (book title), username.
         // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
@@ -104,12 +104,12 @@ public class BookController {
         }
 
         String bookContent = bookService.showBookContent(username, title);
-        Response<String> response = new Response<>("success", "Book content retrieved.", bookContent);
+        Response response = new Response("success", "Book content retrieved.", bookContent);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/reviews") // (show_book_reviews)
-    public ResponseEntity<Response<String>> showBookReviews(@RequestParam("title") String title,
+    public ResponseEntity<Response> showBookReviews(@RequestParam("title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Retrieves reviews for a specific book with pagination.
@@ -121,12 +121,12 @@ public class BookController {
         }
 
         String bookReviews = bookService.getBookReviews(title, page, pageSize);
-        Response<String> response = new Response<>("success", "Book reviews retrieved.", bookReviews);
+        Response response = new Response("success", "Book reviews retrieved.", bookReviews);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/search_by_title") // (search_books_by_title)
-    public ResponseEntity<Response<String>> searchByTitle(@RequestParam(value = "title") String title,
+    public ResponseEntity<Response> searchByTitle(@RequestParam(value = "title") String title,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by title with pagination.
@@ -137,12 +137,12 @@ public class BookController {
             throw new MissingRequiredFieldsException("title");
         }
         String responseJson = bookService.searchByTitle(title, page, pageSize);
-        Response<String> response = new Response<>("success", "Books found successfully", responseJson);
+        Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/search_by_author") // (search_books_by_author)
-    public ResponseEntity<Response<String>> searchByAuthor(@RequestParam(value = "name") String authorName,
+    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "name") String authorName,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by author name with pagination.
@@ -154,12 +154,12 @@ public class BookController {
         }
 
         String responseJson = bookService.searchByAuthor(authorName, page, pageSize);
-        Response<String> response = new Response<>("success", "Books found successfully", responseJson);
+        Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/search_by_genre") // (search_books_by_genre)
-    public ResponseEntity<Response<String>> searchByGenre(@RequestParam(value = "genre") String genre,
+    public ResponseEntity<Response> searchByGenre(@RequestParam(value = "genre") String genre,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by genre with pagination.
@@ -171,12 +171,12 @@ public class BookController {
         }
 
         String responseJson = bookService.searchByGenre(genre, page, pageSize);
-        Response<String> response = new Response<>("success", "Books found successfully", responseJson);
+        Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/search_by_year") // (search_books_by_year)
-    public ResponseEntity<Response<String>> searchByYear(@RequestParam(value = "from") Integer fromYear,
+    public ResponseEntity<Response> searchByYear(@RequestParam(value = "from") Integer fromYear,
                                                             @RequestParam(value = "to") Integer toYear,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -192,12 +192,12 @@ public class BookController {
         }
 
         String responseJson = bookService.searchByYear(fromYear, toYear, page, pageSize);
-        Response<String> response = new Response<>("success", "Books found successfully", responseJson);
+        Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/searchBooks") // (search_books)
-    public ResponseEntity<Response<String>> searchBooks(@RequestParam(value = "title", required = false) String title,
+    public ResponseEntity<Response> searchBooks(@RequestParam(value = "title", required = false) String title,
                                                         @RequestParam(value = "author", required = false) String authorName,
                                                         @RequestParam(value = "genre", required = false) String genre,
                                                         @RequestParam(value = "fromYear", required = false) Integer fromYear,
@@ -232,7 +232,7 @@ public class BookController {
         }
 
         String responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
-        Response<String> response = new Response<>("success", "Books retrieved successfully.", responseJson);
+        Response response = new Response("success", "Books retrieved successfully.", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
