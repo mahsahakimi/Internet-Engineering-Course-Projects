@@ -373,3 +373,49 @@ All API endpoints now start with: `/api/users`
     * **Success (200 OK):** A note (JSON) with the list of purchased books.
     * **Error:** If the user isn't found, we'll send an error.
 
+# Author API Documentation
+
+## Base URL
+
+All API endpoints now start with: `/api/authors`
+
+## Endpoints
+
+### 1. Add Author (add_author)
+
+* **Method:** `POST`
+* **URL:** `/api/authors/add`
+* **Description:** Adds a new author to the system.
+* **Request Body:** A special note (JSON) with the author's details:
+    ```json
+    {
+      "username": "admin_username",
+      "name": "Jane Doe",
+      "penName": "J.D. Writer",
+      "nationality": "American",
+      "born": "1980-01-01",
+      "died": "2020-01-01"
+    }
+    ```
+    * Note: The "died" field is optional.
+* **Response:**
+    * **Success (201 Created):**
+        ```json
+        {
+          "status": "success",
+          "message": "Author added successfully.",
+          "data": null
+        }
+        ```
+    * **Error:** If the author already exists or the details are wrong, we'll send an error.
+
+### 2. Show Author Details (show_author_details)
+
+* **Method:** `GET`
+* **URL:** `/api/authors/details?username=Jane Doe`
+* **Description:** Shows the details of a specific author.
+* **Parameters:**
+    * `username`: The author's name.
+* **Response:**
+    * **Success (200 OK):** A note (JSON) with the author's details.
+    * **Error:** If the author isn't found, we'll send an error.

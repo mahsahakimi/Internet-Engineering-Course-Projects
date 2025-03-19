@@ -24,8 +24,12 @@ public class AuthorController {
         this.mySimpleDate = mySimpleDate;
     }
 
-    @PostMapping("/add") // For adding a new author (add_author)
+    @PostMapping("/add") // (add_author)
     public ResponseEntity<Response<String>> addAuthor(@RequestBody AddAuthorRequest request) {
+        // Adds a new author to the system.
+        // Parameters: username (admin), name, penName, nationality, born (date), died (date, optional).
+        // Returns: success message or error if the author already exists or input is invalid.
+        // Example: POST /authors/add with JSON body containing author details.
         request.validate();
 
         MySimpleDate bornDate;
@@ -43,8 +47,12 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/details") // For getting author details (show_author_details)
+    @GetMapping("/details") // (show_author_details)
     public ResponseEntity<Response<String>> getAuthorDetails(@RequestParam("username") String authorName) {
+        // Retrieves the details of a specific author.
+        // Parameters: username (author's name).
+        // Returns: author details in JSON format or error if the author is not found.
+        // Example: GET /authors/details?username=author_name.
         if (authorName == null || authorName.isEmpty()) {
             throw new MissingRequiredFieldsException("username");
         }
