@@ -1,5 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.database;
 
+import ir.ac.ut.ece.ie.miobook.exceptions.EmailAlreadyExistsException;
+import ir.ac.ut.ece.ie.miobook.exceptions.UsernameAlreadyExistsException;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import org.springframework.stereotype.Repository;
 
@@ -18,10 +20,10 @@ public class UserDatabase {
 
     public void addUser(User user) {
         if (!isUsernameUnique(user.getUsername())) {
-            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
+            throw new UsernameAlreadyExistsException(user.getUsername());
         }
         if (!isEmailUnique(user.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+            throw new EmailAlreadyExistsException(user.getEmail());
         }
         users.add(user);
     }

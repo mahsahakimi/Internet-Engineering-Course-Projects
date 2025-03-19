@@ -1,10 +1,12 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Review {
     int rate;
     String comment;
