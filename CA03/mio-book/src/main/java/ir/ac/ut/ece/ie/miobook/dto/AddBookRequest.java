@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddBookRequest {
-    private String username;
     private String author;
     private String title;
     private String publisher;
@@ -20,9 +19,6 @@ public class AddBookRequest {
     private List<String> genres;
 
     public void validate() {
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
         if (author == null || author.isEmpty()) {
             throw new MissingRequiredFieldsException("author");
         }

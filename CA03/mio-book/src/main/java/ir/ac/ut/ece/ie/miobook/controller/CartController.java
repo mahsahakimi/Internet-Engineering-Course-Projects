@@ -1,7 +1,6 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
 import ir.ac.ut.ece.ie.miobook.dto.AddToCartRequest;
-import ir.ac.ut.ece.ie.miobook.dto.PurchaseCartRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.service.CartService;
@@ -20,56 +19,50 @@ public class CartController {
     @PostMapping("/add") // (add_cart)
     public ResponseEntity<Response> addToCart(@RequestBody AddToCartRequest request){
         // Adds a book to a user's shopping cart.
-        // Parameters: username, title (of the book).
+        // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
-        // Example: POST /carts/add with JSON body containing username and title.
+        // Example: POST /carts/add with JSON body containing title.
         request.validate();
 
-        cartService.addToCart(request.getUsername(), request.getTitle());
+        cartService.addToCart(request.getTitle());
         Response response = new Response("success", "Book added to cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/remove") // (remove_cart)
-    public ResponseEntity<Response> removeFromCart(@RequestParam String username, @RequestParam String title){
-        // Removes a book from a user's shopping cart.
-        // Parameters: username, title (of the book).
+    public ResponseEntity<Response> removeFromCart(@RequestParam String title){
+        // Removes a book from the user's shopping cart.
+        // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
-        // Example: DELETE /carts/remove?username=user_username&title=book_title.
-        if (username == null || title == null){
+        // Example: DELETE /carts/remove?title=book_title.
+        if (title == null){
             throw new MissingRequiredFieldsException("username, title.");
         }
 
-        cartService.removeFromCart(username, title);
+        cartService.removeFromCart(title);
         Response response = new Response("success", "Book removed from cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/purchase") // (purchase_cart)
-    public ResponseEntity<Response> purchaseCart(@RequestBody PurchaseCartRequest request){
+    public ResponseEntity<Response> purchaseCart(){
         // Completes the purchase of all books in a user's shopping cart.
-        // Parameters: username.
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
-        // Example: POST /carts/purchase with JSON body containing username.
-        request.validate();
+        // Example: POST /carts/purchase with a JSON empty body.
 
-        String purchaseDetails = cartService.purchaseCart(request.getUsername());
+        String purchaseDetails = cartService.purchaseCart();
         Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
     @GetMapping("/details") // (show_cart)
-    public ResponseEntity<Response> showCart(@RequestParam String username){
-        // Retrieves the contents of a user's shopping cart.
-        // Parameters: username.
-        // Returns: cart details (list of books) in JSON format, or error if the user is not found.
-        // Example: GET /carts/details?username=user_username.
-        if (username == null){
-            throw new MissingRequiredFieldsException("username.");
-        }
+    public ResponseEntity<Response> showCart(){
+        // Retrieves the contents of the user's shopping cart.
+        // Returns: cart details (list of books) in JSON format.
+        // Example: GET /carts/details.
 
-        String cartDetails = cartService.showCart(username);
+        String cartDetails = cartService.showCart();
         Response response = new Response("success", "Cart details retrieved successfully", cartDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

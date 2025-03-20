@@ -28,13 +28,11 @@ public class UserService {
         this.bookDatabase = bookDatabase;
     }
 
-    public String getPurchasedBooks(String username) throws UserNotFoundException {
-        User user = userDatabase.findUserByUsername(username);
-
+    public String getPurchasedBooks() throws UserNotFoundException {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
-
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
         }
@@ -71,7 +69,7 @@ public class UserService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("username", username);
+        data.put("username", user.getUsername());
         data.put("books", books);
 
         Map<String, Object> response = new HashMap<>();
@@ -87,13 +85,11 @@ public class UserService {
         }
     }
 
-    public String getPurchaseHistory(String username) {
-        User user = userDatabase.findUserByUsername(username);
-
+    public String getPurchaseHistory() {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
-
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
         }
@@ -148,7 +144,7 @@ public class UserService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("username", username);
+        data.put("username", user.getUsername());
         data.put("purchaseHistory", purchaseHistory);
 
         Map<String, Object> response = new HashMap<>();
@@ -164,11 +160,10 @@ public class UserService {
         }
     }
 
-    public String getUserDetails(String username) {
-        User user = userDatabase.findUserByUsername(username);
-
+    public String getUserDetails() {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
 
         Map<String, Object> userData = new HashMap<>();
@@ -194,23 +189,19 @@ public class UserService {
         }
     }
 
-    public void addCredit(String username, int credit) {
+    public void addCredit(int credit) {
+        User user = userDatabase.getLoggedInUser();
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+        if (user.getRole() != Role.customer) {
+            throw new PermissionDeniedException(Role.admin.toString());
+        }
         if (credit <= 0) {
             throw new InvalidCreditAmountException();
         }
-
         if (credit < 100) {
             throw new MinimumCreditException();
-        }
-
-        User user = userDatabase.findUserByUsername(username);
-
-        if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
         }
 
         user.setBalance(user.getBalance() + credit);
@@ -243,4 +234,25 @@ public class UserService {
         userDatabase.addUser(user);
     }
 
+    public void userLogin(String username, String password){
+        if(userDatabase.getLoggedInUser() != null) {
+            throw new UserSessionActiveException();
+        }
+        User user = userDatabase.findUserByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException(username);
+        }
+        if (user.getPassword() != password){
+            throw new IncorrectPasswordException();
+        }
+        userDatabase.setLoggedInUser(user);
+
+    }
+
+    public void userLogout(){
+        if(userDatabase.getLoggedInUser() == null){
+            throw new UserNotLoggedInException();
+        }
+        userDatabase.setLoggedInUser(null);
+    }
 }

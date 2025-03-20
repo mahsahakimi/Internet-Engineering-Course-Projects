@@ -3,6 +3,8 @@ package ir.ac.ut.ece.ie.miobook.database;
 import ir.ac.ut.ece.ie.miobook.exceptions.EmailAlreadyExistsException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UsernameAlreadyExistsException;
 import ir.ac.ut.ece.ie.miobook.model.User;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,11 +14,15 @@ import java.util.Optional;
 @Repository
 public class UserDatabase {
 
-    private List<User> users = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
 
     public List<User> getUsers() {
         return users;
     }
+
+    @Setter
+    @Getter
+    private User loggedInUser = null;
 
     public void addUser(User user) {
         if (!isUsernameUnique(user.getUsername())) {

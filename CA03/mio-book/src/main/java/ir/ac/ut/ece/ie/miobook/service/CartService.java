@@ -1,6 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.security.auth.UnixNumericUserPrincipal;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
@@ -24,19 +25,20 @@ public class CartService {
         this.bookDatabase = bookDatabase;
     }
 
-    public void addToCart(String username, String title) {
-        User user = userDatabase.findUserByUsername(username);
-        Book book = bookDatabase.findBookByTitle(title);
-
+    public void addToCart(String title) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (book == null) {
-            throw new BookNotFoundException(title);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
         }
+
+        Book book = bookDatabase.findBookByTitle(title);
+        if (book == null) {
+            throw new BookNotFoundException(title);
+        }
+
         if (user.getCart().size() >= 10) {
             throw new CartIsFullException();
         }
@@ -53,18 +55,18 @@ public class CartService {
         user.getCart().add(newElement);
     }
 
-    public void removeFromCart(String username, String title) {
-        User user = userDatabase.findUserByUsername(username);
-        Book book = bookDatabase.findBookByTitle(title);
-
+    public void removeFromCart(String title) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (book == null) {
-            throw new BookNotFoundException(title);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
+        }
+
+        Book book = bookDatabase.findBookByTitle(title);
+        if (book == null) {
+            throw new BookNotFoundException(title);
         }
 
         boolean found = false;
@@ -80,11 +82,10 @@ public class CartService {
         user.removeBookFromCart(book);
     }
 
-    public String purchaseCart(String username) {
-        User user = userDatabase.findUserByUsername(username);
-
+    public String purchaseCart() {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
@@ -103,7 +104,7 @@ public class CartService {
         }
 
         if (user.getBalance() < totalCost) {
-            throw new InsufficientBalanceException(username);
+            throw new InsufficientBalanceException(user.getUsername());
         }
 
         MyLocalDateTime now = MyLocalDateTime.now();
@@ -140,11 +141,10 @@ public class CartService {
         }
     }
 
-    public String showCart(String username) {
-        User user = userDatabase.findUserByUsername(username);
-
+    public String showCart() {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
@@ -176,7 +176,7 @@ public class CartService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("username", username);
+        data.put("username", user.getUsername());
         data.put("totalCost", totalCost);
         data.put("items", items);
 

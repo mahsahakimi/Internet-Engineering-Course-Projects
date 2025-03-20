@@ -6,6 +6,7 @@ import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +17,13 @@ import java.time.format.DateTimeParseException;
 @RequestMapping("/authors")
 public class AuthorController {
 
-    private final AuthorService authorService;
-
-    public AuthorController(AuthorService authorService) {
-        this.authorService = authorService;
-    }
+    @Autowired
+    private AuthorService authorService;
 
     @PostMapping("/add") // (add_author)
     public ResponseEntity<Response> addAuthor(@RequestBody AddAuthorRequest request) {
         // Adds a new author to the system.
-        // Parameters: username (admin), name, penName, nationality, born (date), died (date, optional).
+        // Parameters: name, penName, nationality, born (date), died (date, optional).
         // Returns: success message or error if the author already exists or input is invalid.
         // Example: POST /authors/add with JSON body containing author details.
         request.validate();
@@ -39,7 +37,7 @@ public class AuthorController {
             throw new InvalidDateFormatException();
         }
 
-        authorService.addAuthor(request.getUsername(), request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
+        authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
 
         Response response = new Response("success", "Author added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

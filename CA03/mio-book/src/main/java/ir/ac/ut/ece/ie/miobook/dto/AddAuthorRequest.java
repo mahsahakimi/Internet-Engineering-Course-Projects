@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddAuthorRequest {
-    private String username;
     private String name;
     private String penName;
     private String nationality;
@@ -15,9 +14,6 @@ public class AddAuthorRequest {
     private String died;
 
     public void validate() {
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
         if (name == null || name.isEmpty()) {
             throw new MissingRequiredFieldsException("name");
         }

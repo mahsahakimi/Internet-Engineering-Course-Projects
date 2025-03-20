@@ -24,7 +24,7 @@ public class BookController {
     @PostMapping("/add") // (add_book)
     public ResponseEntity<Response> addBook(@RequestBody AddBookRequest request) {
         // Adds a new book to the library. Requires admin privileges.
-        // Parameters: username (admin), title, author, publisher, year, price, genres, synopsis, content.
+        // Parameters: title, author, publisher, year, price, genres, synopsis, content.
         // Returns: success message or error if book already exists or input is invalid.
         // Example: POST /books/add with JSON body containing book details.
         request.validate();
@@ -43,7 +43,7 @@ public class BookController {
             finalPrice = (Integer) price;
         }
 
-        bookService.addBook(request.getUsername(), request.getTitle(), request.getAuthor(),
+        bookService.addBook(request.getTitle(), request.getAuthor(),
                 request.getPublisher(), request.getYear(), finalPrice, request.getGenres(),
                 request.getSynopsis(), request.getContent());
 
@@ -54,11 +54,11 @@ public class BookController {
     @PostMapping("/borrow") // (borrow_book)
     public ResponseEntity<Response> borrowBook(@RequestBody BorrowBookRequest request) {
         // Allows a user to borrow a book.
-        // Parameters: username, title, days (number of days to borrow).
+        // Parameters: title, days (number of days to borrow).
         // Returns: success message or error if book is not available or user has insufficient credit.
         // Example: POST /books/borrow with JSON body containing username, title, and days.
         request.validate();
-        bookService.borrowBook(request.getUsername(), request.getTitle(), request.getDays());
+        bookService.borrowBook(request.getTitle(), request.getDays());
         Response response = new Response("success", "Book added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -66,11 +66,11 @@ public class BookController {
     @PostMapping("/add_review") // (add_review)
     public ResponseEntity<Response> add_review(@RequestBody AddReviewRequest request) {
         // Adds a review for a book.
-        // Parameters: username, title, rate (1-5), comment.
+        // Parameters: title, rate (1-5), comment.
         // Returns: success message or error if book or user not found or rate is invalid.
         // Example: POST /books/add_review with JSON body containing review details.
         request.validate();
-        bookService.addReview(request.getUsername(), request.getTitle(), request.getRate(), request.getComment());
+        bookService.addReview(request.getTitle(), request.getRate(), request.getComment());
         Response response = new Response("success", "Review added successfully", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -91,19 +91,17 @@ public class BookController {
     }
 
     @GetMapping("/content") // (show_book_content)
-    public ResponseEntity<Response> showBookContent(@RequestParam("title") String title, @RequestParam("username") String username) {
+    public ResponseEntity<Response> showBookContent(@RequestParam("title") String title) {
         // Retrieves the content of a book for a specific user (if they have borrowed it).
-        // Parameters: title (book title), username.
+        // Parameters: title (book title).
         // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
-        // Example: GET /books/content?title=ExampleBookTitle&username=ExampleUsername.
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Missing 'username' field.");
-        }
+        // Example: GET /books/content?title=ExampleBookTitle.
+
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
 
-        String bookContent = bookService.showBookContent(username, title);
+        String bookContent = bookService.showBookContent(title);
         Response response = new Response("success", "Book content retrieved.", bookContent);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

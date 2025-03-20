@@ -7,14 +7,10 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BorrowBookRequest {
-    private String username;
     private String title;
     private Integer days;
 
     public void validate() {
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }

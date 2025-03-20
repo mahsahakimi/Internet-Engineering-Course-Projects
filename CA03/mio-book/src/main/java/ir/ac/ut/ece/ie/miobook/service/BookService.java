@@ -32,12 +32,15 @@ public class BookService {
         this.reviewDatabase = reviewDatabase;
     }
 
-    public void addBook(String username, String title, String authorName, String publisher, int year, int price, List<String> genres, String synopsis, String content) {
-        User user = userDatabase.findUserByUsername(username);
-        Author author = authorDatabase.findAuthorByName(authorName);
+    public void addBook(String title, String authorName, String publisher, int year, int price, List<String> genres, String synopsis, String content) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
+            throw new UserNotLoggedInException();
         }
+        if (user.getRole() == Role.customer) {
+            throw new PermissionDeniedException(Role.customer.toString());
+        }
+        Author author = authorDatabase.findAuthorByName(authorName);
         if (author == null) {
             throw new AuthorNotFoundException(authorName);
         }
@@ -52,17 +55,18 @@ public class BookService {
         bookDatabase.addBook(book);
     }
 
-    public void borrowBook(String username, String title, int days) {
-        User user = userDatabase.findUserByUsername(username);
-        Book book = bookDatabase.findBookByTitle(title);
+    public void borrowBook(String title, int days) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (book == null) {
-            throw new BookNotFoundException(title);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() != Role.customer) {
             throw new PermissionDeniedException(Role.admin.toString());
+        }
+
+        Book book = bookDatabase.findBookByTitle(title);
+        if (book == null) {
+            throw new BookNotFoundException(title);
         }
         if (days < 1 || days > 9) {
             throw new DaysOutOfRangeException();
@@ -83,17 +87,18 @@ public class BookService {
         user.setCart(temp);
     }
 
-    public void addReview(String username, String title, int rate, String comment) {
-        User user = userDatabase.findUserByUsername(username);
-        Book book = bookDatabase.findBookByTitle(title);
+    public void addReview(String title, int rate, String comment) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (book == null) {
-            throw new BookNotFoundException(title);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() != Role.customer) {
             throw new PermissionDeniedException(Role.admin.toString());
+        }
+
+        Book book = bookDatabase.findBookByTitle(title);
+        if (book == null) {
+            throw new BookNotFoundException(title);
         }
         if (!user.getOwnedBooks().contains(book) && user.getBorrowedBooks().stream().noneMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
             throw new BookNotOwnedException();
@@ -103,7 +108,7 @@ public class BookService {
         }
 
         MyLocalDateTime submissionTime = MyLocalDateTime.now();
-        Review review = new Review(username, title, rate, comment, submissionTime);
+        Review review = new Review(user.getUsername(), title, rate, comment, submissionTime);
         reviewDatabase.addReview(review);
     }
 
@@ -131,17 +136,18 @@ public class BookService {
         }
     }
 
-    public String showBookContent(String username, String title) {
-        User user = userDatabase.findUserByUsername(username);
-        Book book = bookDatabase.findBookByTitle(title);
+    public String showBookContent(String title) {
+        User user = userDatabase.getLoggedInUser();
         if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (book == null) {
-            throw new BookNotFoundException(title);
+            throw new UserNotLoggedInException();
         }
         if (user.getRole() != Role.customer) {
             throw new PermissionDeniedException(Role.admin.toString());
+        }
+
+        Book book = bookDatabase.findBookByTitle(title);
+        if (book == null) {
+            throw new BookNotFoundException(title);
         }
 
         boolean hasAccess = false;

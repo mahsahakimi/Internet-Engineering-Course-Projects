@@ -3,10 +3,7 @@ package ir.ac.ut.ece.ie.miobook.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.exceptions.AuthorNotFoundException;
-import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDatesException;
-import ir.ac.ut.ece.ie.miobook.exceptions.PermissionDeniedException;
-import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
+import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.Author;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.model.Role;
@@ -29,12 +26,13 @@ public class AuthorService {
         this.userDatabase = userDatabase;
     }
 
-    public void addAuthor(String username, String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
-        User whoAdded = userDatabase.findUserByUsername(username);
+    public void addAuthor(String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
+        User whoAdded = userDatabase.getLoggedInUser();
 
         if (whoAdded == null) {
-            throw new UserNotFoundException(username);
-        } else if (whoAdded.getRole() == Role.customer) {
+            throw new UserNotLoggedInException();
+        }
+        if (whoAdded.getRole() == Role.customer) {
             throw new PermissionDeniedException(Role.customer.toString());
         }
 

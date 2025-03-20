@@ -3,6 +3,7 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.AddCreditRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddUserRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
+import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,57 +33,60 @@ public class UserController {
     @PostMapping("/credit") // (add_credit)
     public ResponseEntity<Response> addCredit(@RequestBody AddCreditRequest request) {
         // Adds credit to a user's account.
-        // Parameters: username, credit amount.
+        // Parameters: credit amount.
         // Returns: success message or error if the user is not found or input is invalid.
-        // Example: POST /users/credit with JSON body containing username and credit.
+        // Example: POST /users/credit with JSON body containing credit.
         request.validate();
-        userService.addCredit(request.getUsername(), request.getCredit());
+        userService.addCredit(request.getCredit());
         Response response = new Response("success", "Credit added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/details") // (show_user_details)
-    public ResponseEntity<Response> showUserDetails(@RequestParam("username") String username) {
+    public ResponseEntity<Response> showUserDetails() {
         // Retrieves the details of a specific user.
-        // Parameters: username.
         // Returns: user details in JSON format or error if the user is not found.
-        // Example: GET /users/details?username=user_username.
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
+        // Example: GET /users/details
 
-        String userDetails = userService.getUserDetails(username);
+        String userDetails = userService.getUserDetails();
         Response response = new Response("success", "User details retrieved.", userDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/purchase_history") // (show_purchase_history)
-    public ResponseEntity<Response> showPurchaseHistory(@RequestParam("username") String username) {
-        // Retrieves the purchase history of a specific user.
-        // Parameters: username.
+    public ResponseEntity<Response> showPurchaseHistory() {
+        // Retrieves the purchase history of user.
         // Returns: purchase history in JSON format or error if the user is not found.
-        // Example: GET /users/purchase_history?username=user_username.
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
+        // Example: GET /users/purchase_history
 
-        String purchaseHistory = userService.getPurchaseHistory(username);
+        String purchaseHistory = userService.getPurchaseHistory();
         Response response = new Response("success", "Purchase history retrieved.", purchaseHistory);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/purchased_books") // (show_purchased_books)
-    public ResponseEntity<Response> showPurchasedBooks(@RequestParam("username") String username) {
+    public ResponseEntity<Response> showPurchasedBooks() {
         // Retrieves the list of books purchased by a specific user.
-        // Parameters: username.
         // Returns: list of purchased books in JSON format or error if the user is not found.
-        // Example: GET /users/purchased_books?username=user_username.
-        if (username == null || username.isEmpty()) {
-            throw new MissingRequiredFieldsException("username");
-        }
+        // Example: GET /users/purchased_books.
 
-        String purchasedBooks = userService.getPurchasedBooks(username);
+        String purchasedBooks = userService.getPurchasedBooks();
         Response response = new Response("success", "Purchased books retrieved.", purchasedBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Response> userLogin(@RequestBody UserLoginRequest request) {
+        request.validate();
+        userService.userLogin(request.getUsername(), request.getPassword());
+        Response response = new Response("success", "User logged in successfully.", null);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Response> userLogin() {
+        userService.userLogout();
+        Response response = new Response("success", "User logged out successfully.", null);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

@@ -2,7 +2,13 @@ package ir.ac.ut.ece.ie.miobook.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 
+    private static final String ERROR_CODE = "USER_NOT_FOUND";
+
     public UserNotFoundException(String username) {
-        super("User " + username + " not found.");
+        super(String.format("Error [%s]: User %s not found.", ERROR_CODE, username));
+    }
+
+    public String getErrorCode() {
+        return ERROR_CODE;
     }
 }

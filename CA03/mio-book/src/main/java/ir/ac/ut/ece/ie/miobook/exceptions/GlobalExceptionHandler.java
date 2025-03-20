@@ -247,4 +247,23 @@ public class GlobalExceptionHandler {
         Response response = new Response("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(UserSessionActiveException.class)
+    public ResponseEntity<Response> handleUserSessionActiveException(UserSessionActiveException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<Response> handleIncorrectPasswordException(IncorrectPasswordException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UserNotLoggedInException.class)
+    public ResponseEntity<Response> handleUserNotLoggedInException(UserNotLoggedInException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }
