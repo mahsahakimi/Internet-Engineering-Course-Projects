@@ -14,7 +14,6 @@ All API endpoints now start with: `/api/books`
 * **Request Body:** A special note (JSON) with book details:
     ```json
     {
-      "username": "librarian_username",
       "title": "Book Title",
       "author": "Author Name",
       "publisher": "Publisher Name",
@@ -44,7 +43,6 @@ All API endpoints now start with: `/api/books`
 * **Request Body:** A note (JSON) with borrowing details:
     ```json
     {
-      "username": "user_username",
       "title": "Book Title",
       "days": 7
     }
@@ -68,7 +66,6 @@ All API endpoints now start with: `/api/books`
 * **Request Body:** A note (JSON) with review details:
     ```json
     {
-      "username": "user_username",
       "title": "Book Title",
       "rate": 5,
       "comment": "This book was awesome!"
@@ -99,11 +96,10 @@ All API endpoints now start with: `/api/books`
 ### 5. Show Book Content (show_book_content)
 
 * **Method:** `GET`
-* **URL:** `/api/books/content?title=BookTitle&username=user_username`
+* **URL:** `/api/books/content?title=BookTitle`
 * **Description:** Shows the content of a book to a user who has borrowed it.
 * **Parameters:**
     * `title`: The book's title.
-    * `username`: The user's name.
 * **Response:**
     * **Success (200 OK):** A note (JSON) with the book's content.
     * **Error:** If the book isn't found or the user hasn't borrowed it, we'll send an error.
@@ -209,7 +205,6 @@ All API endpoints now start with: `/api/carts`
 * **Request Body:** A special note (JSON) with your username and the book's title:
     ```json
     {
-      "username": "your_username",
       "title": "Book Title"
     }
     ```
@@ -227,10 +222,9 @@ All API endpoints now start with: `/api/carts`
 ### 2. Remove from Cart (remove_cart)
 
 * **Method:** `DELETE`
-* **URL:** `/api/carts/remove?username=your_username&title=BookTitle`
+* **URL:** `/api/carts/remove?title=BookTitle`
 * **Description:** Takes a book out of your shopping cart.
 * **Parameters:**
-    * `username`: your username.
     * `title`: The book's title.
 * **Response:**
     * **Success (200 OK):**
@@ -248,12 +242,6 @@ All API endpoints now start with: `/api/carts`
 * **Method:** `POST`
 * **URL:** `/api/carts/purchase`
 * **Description:** Buys all the books in your cart.
-* **Request Body:** A special note (JSON) with your username:
-    ```json
-    {
-      "username": "your_username"
-    }
-    ```
 * **Response:**
     * **Success (200 OK):**
         ```json
@@ -268,10 +256,8 @@ All API endpoints now start with: `/api/carts`
 ### 4. Show Cart (show_cart)
 
 * **Method:** `GET`
-* **URL:** `/api/carts/details?username=your_username`
+* **URL:** `/api/carts/details`
 * **Description:** Shows you what's in your shopping cart.
-* **Parameters:**
-    * `username`: your username.
 * **Response:**
     * **Success (200 OK):**
         ```json
@@ -299,13 +285,16 @@ All API endpoints now start with: `/api/users`
 * **Request Body:** A special note (JSON) with the user's details:
     ```json
     {
-      "role": "user",
-      "username": "new_user",
-      "password": "password123",
-      "email": "[email address removed]",
-      "address": "123 Main St"
-    }
-    ```
+        "role": "customer",
+        "username": "new_user",
+        "password": "password123",
+        "email": "email@xyz.com",
+        "address": {
+            "country": "Country",
+            "city": "City"
+        }
+  }
+  ```
 * **Response:**
     * **Success (201 Created):**
         ```json
@@ -325,8 +314,7 @@ All API endpoints now start with: `/api/users`
 * **Request Body:** A special note (JSON) with the username and credit amount:
     ```json
     {
-      "username": "existing_user",
-      "credit": 50
+      "credit": 1000
     }
     ```
 * **Response:**
@@ -343,10 +331,8 @@ All API endpoints now start with: `/api/users`
 ### 3. Show User Details (show_user_details)
 
 * **Method:** `GET`
-* **URL:** `/api/users/details?username=existing_user`
+* **URL:** `/api/users/details`
 * **Description:** Shows the details of a specific user.
-* **Parameters:**
-    * `username`: The user's username.
 * **Response:**
     * **Success (200 OK):** A note (JSON) with the user's details.
     * **Error:** If the user isn't found, we'll send an error.
@@ -354,10 +340,8 @@ All API endpoints now start with: `/api/users`
 ### 4. Show Purchase History (show_purchase_history)
 
 * **Method:** `GET`
-* **URL:** `/api/users/purchase_history?username=existing_user`
+* **URL:** `/api/users/purchase_history`
 * **Description:** Shows the purchase history of a specific user.
-* **Parameters:**
-    * `username`: The user's username.
 * **Response:**
     * **Success (200 OK):** A note (JSON) with the user's purchase history.
     * **Error:** If the user isn't found, we'll send an error.
@@ -365,10 +349,8 @@ All API endpoints now start with: `/api/users`
 ### 5. Show Purchased Books (show_purchased_books)
 
 * **Method:** `GET`
-* **URL:** `/api/users/purchased_books?username=existing_user`
+* **URL:** `/api/users/purchased_books`
 * **Description:** Shows the list of books purchased by a specific user.
-* **Parameters:**
-    * `username`: The user's username.
 * **Response:**
     * **Success (200 OK):** A note (JSON) with the list of purchased books.
     * **Error:** If the user isn't found, we'll send an error.
@@ -389,7 +371,6 @@ All API endpoints now start with: `/api/authors`
 * **Request Body:** A special note (JSON) with the author's details:
     ```json
     {
-      "username": "admin_username",
       "name": "Jane Doe",
       "penName": "J.D. Writer",
       "nationality": "American",
@@ -419,3 +400,56 @@ All API endpoints now start with: `/api/authors`
 * **Response:**
     * **Success (200 OK):** A note (JSON) with the author's details.
     * **Error:** If the author isn't found, we'll send an error.
+
+# Authentication API Documentation
+
+## Base URL
+
+All API endpoints now start with: `/api`
+
+## Endpoints
+
+### 1. User Login (userLogin)
+
+* **Method:** `POST`
+* **URL:** `/api/login`
+* **Description:** Allows a user to log in.
+* **Request Body:** A special note (JSON) with the user's login details:
+
+    ```json
+    {
+      "username": "user_username",
+      "password": "user_password"
+    }
+    ```
+
+* **Response:**
+  * **Success (200 OK):**
+
+      ```json
+      {
+        "status": "success",
+        "message": "User logged in successfully.",
+        "data": null
+      }
+      ```
+
+  * **Error:** If the username or password is incorrect, or if there's an existing active session, we'll send an error.
+
+### 2. User Logout (userLogout)
+
+* **Method:** `POST`
+* **URL:** `/api/logout`
+* **Description:** Logs out the currently logged-in user.
+* **Response:**
+  * **Success (200 OK):**
+
+      ```json
+      {
+        "status": "success",
+        "message": "User logged out successfully.",
+        "data": null
+      }
+      ```
+
+  * **Error:** If no user is currently logged in, we'll send an error.

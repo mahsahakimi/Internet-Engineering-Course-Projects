@@ -2,6 +2,7 @@ package ir.ac.ut.ece.ie.miobook.controller;
 
 import ir.ac.ut.ece.ie.miobook.dto.AddToCartRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
+import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class CartController {
         // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
         // Example: POST /carts/add with JSON body containing title.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
         request.validate();
 
         cartService.addToCart(request.getTitle());
@@ -53,7 +57,6 @@ public class CartController {
         String purchaseDetails = cartService.purchaseCart();
         Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     @GetMapping("/details") // (show_cart)

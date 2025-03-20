@@ -3,8 +3,7 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.AddCreditRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddUserRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
-import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
-import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
+import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,10 @@ public class UserController {
         // Parameters: role, username, password, email, address.
         // Returns: success message or error if the user already exists or input is invalid.
         // Example: POST /users/add with JSON body containing user details.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
+
         request.validate();
         userService.addUser(request.getRole(), request.getUsername(), request.getPassword(), request.getEmail(), request.getAddress());
         Response response = new Response("success", "User added successfully.", null);
@@ -36,6 +39,10 @@ public class UserController {
         // Parameters: credit amount.
         // Returns: success message or error if the user is not found or input is invalid.
         // Example: POST /users/credit with JSON body containing credit.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
+
         request.validate();
         userService.addCredit(request.getCredit());
         Response response = new Response("success", "Credit added successfully.", null);
@@ -73,20 +80,5 @@ public class UserController {
         String purchasedBooks = userService.getPurchasedBooks();
         Response response = new Response("success", "Purchased books retrieved.", purchasedBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Response> userLogin(@RequestBody UserLoginRequest request) {
-        request.validate();
-        userService.userLogin(request.getUsername(), request.getPassword());
-        Response response = new Response("success", "User logged in successfully.", null);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Response> userLogin() {
-        userService.userLogout();
-        Response response = new Response("success", "User logged out successfully.", null);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

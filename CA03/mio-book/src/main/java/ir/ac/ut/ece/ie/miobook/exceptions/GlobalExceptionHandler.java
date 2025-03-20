@@ -3,6 +3,7 @@ package ir.ac.ut.ece.ie.miobook.exceptions;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -239,7 +240,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidYearRangeException.class)
     public ResponseEntity<Response> handleInvalidYearRange(InvalidYearRangeException ex) {
         Response response = new Response("error", ex.getMessage(), null);
-        return ResponseEntity.badRequest().body(response);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -251,19 +252,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserSessionActiveException.class)
     public ResponseEntity<Response> handleUserSessionActiveException(UserSessionActiveException ex) {
         Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IncorrectPasswordException.class)
     public ResponseEntity<Response> handleIncorrectPasswordException(IncorrectPasswordException ex) {
         Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UserNotLoggedInException.class)
     public ResponseEntity<Response> handleUserNotLoggedInException(UserNotLoggedInException ex) {
         Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Response> handleMissingRequestBodyException(HttpMessageNotReadableException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -27,6 +27,9 @@ public class BookController {
         // Parameters: title, author, publisher, year, price, genres, synopsis, content.
         // Returns: success message or error if book already exists or input is invalid.
         // Example: POST /books/add with JSON body containing book details.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
         request.validate();
 
         String priceString = request.getPrice(); // Assuming it's a String
@@ -57,7 +60,11 @@ public class BookController {
         // Parameters: title, days (number of days to borrow).
         // Returns: success message or error if book is not available or user has insufficient credit.
         // Example: POST /books/borrow with JSON body containing username, title, and days.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
         request.validate();
+
         bookService.borrowBook(request.getTitle(), request.getDays());
         Response response = new Response("success", "Book added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -69,7 +76,11 @@ public class BookController {
         // Parameters: title, rate (1-5), comment.
         // Returns: success message or error if book or user not found or rate is invalid.
         // Example: POST /books/add_review with JSON body containing review details.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
         request.validate();
+
         bookService.addReview(request.getTitle(), request.getRate(), request.getComment());
         Response response = new Response("success", "Review added successfully", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -96,7 +107,6 @@ public class BookController {
         // Parameters: title (book title).
         // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
         // Example: GET /books/content?title=ExampleBookTitle.
-
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
@@ -134,6 +144,7 @@ public class BookController {
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
+
         String responseJson = bookService.searchByTitle(title, page, pageSize);
         Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);

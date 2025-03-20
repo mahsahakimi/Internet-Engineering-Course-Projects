@@ -14,15 +14,20 @@ import java.util.Optional;
 @Repository
 public class UserDatabase {
 
+    private User loggedInUser = null;
     private final List<User> users = new ArrayList<>();
 
     public List<User> getUsers() {
         return users;
     }
 
-    @Setter
-    @Getter
-    private User loggedInUser = null;
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(User loggedInUser) {
+        this.loggedInUser = loggedInUser;
+    }
 
     public void addUser(User user) {
         if (!isUsernameUnique(user.getUsername())) {

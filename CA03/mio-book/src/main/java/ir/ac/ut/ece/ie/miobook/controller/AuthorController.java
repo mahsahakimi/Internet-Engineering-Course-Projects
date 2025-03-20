@@ -3,6 +3,7 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.AddAuthorRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
+import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
@@ -26,6 +27,9 @@ public class AuthorController {
         // Parameters: name, penName, nationality, born (date), died (date, optional).
         // Returns: success message or error if the author already exists or input is invalid.
         // Example: POST /authors/add with JSON body containing author details.
+        if(request == null){
+            throw new MissingRequestBodyException();
+        }
         request.validate();
 
         MyLocalDate bornDate;

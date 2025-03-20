@@ -233,26 +233,4 @@ public class UserService {
         User user = new User(role, username, password, email, address);
         userDatabase.addUser(user);
     }
-
-    public void userLogin(String username, String password){
-        if(userDatabase.getLoggedInUser() != null) {
-            throw new UserSessionActiveException();
-        }
-        User user = userDatabase.findUserByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        if (user.getPassword() != password){
-            throw new IncorrectPasswordException();
-        }
-        userDatabase.setLoggedInUser(user);
-
-    }
-
-    public void userLogout(){
-        if(userDatabase.getLoggedInUser() == null){
-            throw new UserNotLoggedInException();
-        }
-        userDatabase.setLoggedInUser(null);
-    }
 }
