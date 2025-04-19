@@ -1,16 +1,12 @@
-
-
-.container.sign {
-            max-width: 680px;
-            padding: 50px 100px 50px;
-            border: 1px solid #ccc;
-            border-radius: 16px;
-            background-color: white;
-}
-
 .signin-link a {
     color: #16423C;
     text-decoration: none;
+}
+
+.container {
+    background-color: white;
+    padding: 1%;
+    border-radius: 15px;
 }
 
 .signin-link a:hover {
@@ -18,7 +14,7 @@
 }
 .role-btn {
     color: black;
-    background-color: #E2EAF2;
+    background-color: #F7F9FB;
     border-radius: 12px;
     padding: 10px 20px;
     display: flex;
@@ -29,6 +25,8 @@
     border: 2px solid #16423C;
     background-color: #F5EFE7;
     color: #16423C;
-    font-weight: bold;
 }
 
+.sign-btn {
+    background-color: #D3D3D3;
+}

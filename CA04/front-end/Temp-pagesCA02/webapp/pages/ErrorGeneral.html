@@ -10,31 +10,30 @@
 
 </head>
 <body>
-<nav class="navbar shadow-sm mb-5 ">
-    <div class="container-fluid d-flex align-items-center justify-content-between max-height-nav">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-            <div class="logo-container max-height-nav ms-5">
-                <img src="../images/LOGO.png" alt="Meow Logo" class="logo-cover">
+    <nav class="navbar bg-white shadow-sm mb-5 ">
+        <div class="container-fluid d-flex">
+            <a class="navbar-brand d-flex" href="#">
+                <div class="logo-container ms-5">
+                    <img src="../images/LOGO.png" alt="Meow Logo" class="logo-cover">
+                </div>
+            </a>
+            <div class="search-container d-flex col-6">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Author
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">Author</a></li>
+                        <li><a class="dropdown-item" href="#">Title</a></li>
+                        <li><a class="dropdown-item" href="#">Publisher</a></li>
+                    </ul>
+                </div>
+                <div class="border-start mx-3"></div>
+                <input type="text" class="form-control search-box" placeholder="Search">
             </div>
-        </a>
-        <div class="search-container max-height-nav d-flex w-50">
-            <div class="dropdown max-height-nav col-md-2">
-                <button class="btn dropdown-toggle max-height-nav" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    Author
-                </button>
-                <ul class="dropdown-menu max-height-nav" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Author</a></li>
-                    <li><a class="dropdown-item" href="#">Title</a></li>
-                    <li><a class="dropdown-item" href="#">Publisher</a></li>
-                </ul>
-            </div>
-            <div class="border-start mx-3 "></div>
-            <input type="text" class="form-control search-box max-height-nav" placeholder="Search">
+            <button class="btn green-btn ">Buy now</button>
         </div>
-
-        <button class="btn green-btn max-height-nav ">Buy now</button>
-    </div>
-</nav>
+    </nav>
 
 
 <div class="main-content p-2 mb-2 d-flex align-items-center justify-content-center">
