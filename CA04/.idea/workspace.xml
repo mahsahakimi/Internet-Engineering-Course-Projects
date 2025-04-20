@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ccc9d040-daa3-4aa2-a533-249019dfe5ec" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/mio-book/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/mio-book/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/mio-book/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/mio-book/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/mio-book/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/mio-book/src/main.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "mahsahakimi"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/mahsahakimi/Internet-Engineering-Course-Projects.git",
+    "accountId": "4d281117-8254-446a-b48b-b45fd8fd137f"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="2vzgqav3Pvbs5PkDbKNbS5K8paK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/maski/Documents/Internet Engineering/CA04/front-end/mio-book/src"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/front-end/mio-book/src" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ccc9d040-daa3-4aa2-a533-249019dfe5ec" name="Changes" comment="" />
+      <created>1745153507484</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745153507484</updated>
+    </task>
+    <servers />
+  </component>
+</project>
