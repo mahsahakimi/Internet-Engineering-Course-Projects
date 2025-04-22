@@ -7,6 +7,8 @@ import SearchResult from './pages/SearchResult';
 import BookPage from './pages/BookPage';
 import UserPage from './pages/UserPage';
 import BuyCartPage from './pages/BuyCartPage';
+import ErrorPage from './pages/ErrorPage';
+import Error404Page from './pages/Error404Page';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/book" element={<BookPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/cart" element={<BuyCartPage />} />
+        <Route path="/error" element={<ErrorPage />} />
+        <Route path="/404" element={<Error404Page />} />
       </Routes>
     </BrowserRouter>
   );
