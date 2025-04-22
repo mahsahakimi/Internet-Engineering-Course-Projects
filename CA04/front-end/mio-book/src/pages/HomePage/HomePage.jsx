@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
-import book from '../../../public/book.png';
+import book from '../../../src/images/book.png';
 import '../../stylesheets/HomePage.css';
 import '../../stylesheets/General.css';
 

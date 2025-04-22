@@ -1,5 +1,5 @@
 import React from 'react';
-import designBook from '../../../public/designBook.jpg';
+import designBook from '../../../src/images/designBook.jpg';
 
 function BookDetailsCard() {
   return (

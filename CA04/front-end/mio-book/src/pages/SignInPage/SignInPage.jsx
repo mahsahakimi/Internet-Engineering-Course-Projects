@@ -103,8 +103,9 @@ function SignInPage() {
   // View
   return (
     <div className="justify-content-center">
+      <div className='row'>""</div>
       <div className="row">
-        <div className="container col-sm-6">
+        <div className="container white-box col-sm-6">
           <h2 className="text-center">Login</h2>
           <p className="subtitle text-center mb-5">MioBook</p>
           <div className="row justify-content-center">

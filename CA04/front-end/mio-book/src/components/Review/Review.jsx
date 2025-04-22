@@ -2,7 +2,7 @@ import React from 'react';
 
 function Review() {
   return (
-    <div className="card">
+    <div className="review-card">
         <div className="card-body">
             <div className="row">
                 <div className="col-sm-1 col-2">

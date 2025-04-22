@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import Review from '../../components/Review';
-import book from '../../../public/book.png';
+import book from '../../../src/images/book.png';
 import '../../stylesheets/General.css';
 import '../../stylesheets/Book.css';
 
@@ -11,8 +11,7 @@ function BookPage() {
     <body>
         <Nav />
         <section className="d-flex justify-content-center">
-
-            <div className="container p-4 col-sm-10 row">
+            <div className="container white-box p-4 col-sm-10 row">
                 <div className="col-sm-4 d-flex justify-content-center">
                     <img src={book} className="book-main-img d-flex justify-content-center" alt="Book Cover" />
                 </div>
@@ -44,7 +43,7 @@ function BookPage() {
 
 
         <section className="d-flex justify-content-center">
-            <div className="container p-3 row col-sm-10 mt-5">
+            <div className="container white-box p-3 row col-sm-10 mt-5">
                 <div className="row mb-3">
                     <div className="col-sm-6">
                         <h5 className="fw-bold">Reviews <span className="fw-normal text-secondary">130</span></h5>
@@ -64,7 +63,7 @@ function BookPage() {
                 <hr />
                 <Review />
 
-                <div className="pagination-container">
+                <div className="pg-container">
                     <nav aria-label="Page navigation">
                         <ul className="pagination">
                             <li className="page-item"><a className="page-link" href="#" aria-label="Previous">&lsaquo;</a></li>

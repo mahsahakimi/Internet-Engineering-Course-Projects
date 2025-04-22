@@ -17,6 +17,7 @@
 .search-form{
     background-color : rgba(108, 117, 125, 0.25);
 }
-.card{
+.review-card{
+    margin-bottom: 1%;
     border: none;
 }

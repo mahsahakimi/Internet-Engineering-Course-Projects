@@ -9,7 +9,7 @@ function SearchResult() {
     <body>
         <Nav />
         <section class="container mb-5">
-            <h4 class="mb-4">Results for < serach parameter /> </h4>
+            <h4 class="mb-4">Results for  [serach parameter]  </h4>
             <div class="row row-cols-1 row-cols-sm-5 mb-5">
                 <div class="col">
                     <BookCard />
@@ -55,7 +55,7 @@ function SearchResult() {
             </div>
         </section>
 
-        <div class="pagination-container">
+        <div class="pg-container">
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" href="#" aria-label="Previous">&lsaquo;</a></li>

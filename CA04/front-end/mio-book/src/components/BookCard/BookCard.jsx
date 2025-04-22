@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../stylesheets/General.css';
-import book from '../../../public/book.png';
+import book from '../../../src/images/book.png';
 
 function BookCard() {
   return (
