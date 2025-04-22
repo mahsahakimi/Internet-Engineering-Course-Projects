@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './SignInPage.module.css';
+import '../../stylesheets/SignInPage.css';
+import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
 
 function SignInPage() {
@@ -147,7 +148,7 @@ function SignInPage() {
               {/* Login Button */}
               <button
                 type="submit"
-                className="btn btn-primary mb-3 col-12"
+                className="btn gray-btn mb-3 col-12"
                 disabled={!isFormFilled() || isSubmitting}
               >
                 {isSubmitting ? 'Logging In...' : <strong>Log In</strong>}

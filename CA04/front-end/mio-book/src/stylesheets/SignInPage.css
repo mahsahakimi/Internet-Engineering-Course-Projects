@@ -2,13 +2,6 @@
     color: #16423C;
     text-decoration: none;
 }
-
-.container {
-    background-color: white;
-    padding: 1%;
-    border-radius: 15px;
-}
-
 .signin-link a:hover {
     color: green;
 }
@@ -25,8 +18,4 @@
     border: 2px solid #16423C;
     background-color: #F5EFE7;
     color: #16423C;
-}
-
-.sign-btn {
-    background-color: #D3D3D3;
 }
