@@ -8,8 +8,11 @@
   
 .container{
     border-radius : 12px;
-    padding: 12px;
+    padding: 12px;    
 }
+.bb {
+    border-bottom: 2px solid #804900;
+  }
 
 .white-box{
 background-color : white;
