@@ -3,7 +3,7 @@ import '../../stylesheets/General.css';
 
 function BookContentHeader() {
   return (
-        <div className='container bb white-box'>
+        <div className='container col-sm-10 bb white-box'>
             <div className='row'>
                 <div className='col-sm-6'>
                     <h4 className="fw-bold">

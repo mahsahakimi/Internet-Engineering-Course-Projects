@@ -11,6 +11,7 @@ import UserPage from './pages/UserPage';
 import BuyCartPage from './pages/BuyCartPage';
 import ErrorPage from './pages/ErrorPage';
 import Error404Page from './pages/Error404Page';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/book-content" element={<BookContentPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/cart" element={<BuyCartPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/404" element={<Error404Page />} />
       </Routes>
