@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './SignUpPage.module.css';
+import '../../stylesheets/SignUpPage.css';
+import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
 
 function SignUpPage() {
@@ -260,7 +261,7 @@ function SignUpPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="btn sign-btn mb-3 col-12"
+                className="btn gray-btn mb-3 col-12"
                 disabled={!isFormValid() || isSubmitting}
               >
                 {isSubmitting ? 'Processing...' : <strong>Sign up</strong>}

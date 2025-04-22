@@ -1,7 +1,8 @@
 import React from 'react';
-import styles from './HomePage.module.css';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
+import '../../stylesheets/HomePage.css';
+import '../../stylesheets/General.css';
 
 function HomePage() {
     return (
