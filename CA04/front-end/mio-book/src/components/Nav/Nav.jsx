@@ -5,7 +5,7 @@ import logo from '../../../src/images/LOGO.png';
 function Nav() {
   return (
       <body>
-          <nav className="navbar bg-white shadow-sm mb-5 ">
+          <nav className="navbar bg-white shadow-sm">
               <div className="container-fluid d-flex">
                   <a className="navbar-brand d-flex" href="#">
                       <div className="logo-container ms-5">

@@ -5,6 +5,8 @@ import SignUpPage from './pages/SignUpPage';
 import HomePage from './pages/HomePage';
 import SearchResult from './pages/SearchResult';
 import BookPage from './pages/BookPage';
+import AuthorPage from './pages/AuthorPage';
+import BookContentPage from './pages/BookContentPage';
 import UserPage from './pages/UserPage';
 import BuyCartPage from './pages/BuyCartPage';
 import ErrorPage from './pages/ErrorPage';
@@ -19,6 +21,8 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/results" element={<SearchResult />} />
         <Route path="/book" element={<BookPage />} />
+        <Route path="/author" element={<AuthorPage />} />
+        <Route path="/book-content" element={<BookContentPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/cart" element={<BuyCartPage />} />
         <Route path="/error" element={<ErrorPage />} />
