@@ -1,6 +1,9 @@
 import React from 'react';
 import '../../stylesheets/General.css';
 import book from '../../../src/images/book.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 
 function BookCard() {
   return (
@@ -11,12 +14,13 @@ function BookCard() {
             <p className="text-muted mb-2">Author McName</p>
         </div>
         <div className="row">
-            <div className="star-rating mb-2 col-7">
-                <i className="fas fa-star fa-xs"></i>
-                <i className="fas fa-star fa-xs"></i>
-                <i className="fas fa-star fa-xs"></i>
-                <i className="fas fa-star fa-xs"></i>
-                <i className="far fa-star fa-xs"></i>
+        
+            <div className="star-rating mb-2 col-7 d-flex justify-content-center">
+                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
+                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
+                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
+                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
+                <FontAwesomeIcon icon={regularStar} className="fa-xs" />
             </div>
             <p className="col-5">$10.25</p>
         </div>
