@@ -12,24 +12,27 @@ import BuyCartPage from './pages/BuyCartPage';
 import ErrorPage from './pages/ErrorPage';
 import Error404Page from './pages/Error404Page';
 import AdminPage from './pages/AdminPage';
+import ErrorBoundary from './components/Error/ErrorBoundary.jsx';
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/results" element={<SearchResult />} />
-        <Route path="/book" element={<BookPage />} />
-        <Route path="/author" element={<AuthorPage />} />
-        <Route path="/book-content" element={<BookContentPage />} />
-        <Route path="/user" element={<UserPage />} />
-        <Route path="/cart" element={<BuyCartPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/error" element={<ErrorPage />} />
-        <Route path="/404" element={<Error404Page />} />
-      </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/results" element={<SearchResult />} />
+            <Route path="/book" element={<BookPage />} />
+            <Route path="/author" element={<AuthorPage />} />
+            <Route path="/content" element={<BookContentPage />} />
+            <Route path="/user" element={<UserPage />} />
+            <Route path="/cart" element={<BuyCartPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/error" element={<ErrorPage />} />
+            <Route path="*" element={<Error404Page />} />
+          </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
