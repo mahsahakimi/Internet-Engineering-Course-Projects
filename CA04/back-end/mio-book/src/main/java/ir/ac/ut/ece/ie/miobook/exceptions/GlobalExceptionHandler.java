@@ -10,6 +10,49 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Response> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(InvalidUsernameException.class)
+    public ResponseEntity<Response> handleInvalidUsernameException(InvalidUsernameException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Response> handleInvalidPasswordException(InvalidPasswordException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<Response> handleIncorrectPasswordException(IncorrectPasswordException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+ 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Response> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidEmailException.class)
+    public ResponseEntity<Response> handleInvalidEmailException(InvalidEmailException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<Response> handleInvalidRoleException(InvalidRoleException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Response> handleUserNotFoundException(UserNotFoundException ex) {
         Response response = new Response("error", ex.getMessage(), null);
@@ -70,18 +113,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<Response> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Response> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(MinimumCreditException.class)
     public ResponseEntity<Response> handleMinimumCreditException(MinimumCreditException ex) {
         Response response = new Response("error", ex.getMessage(), null);
@@ -96,30 +127,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidAddressFormatException.class)
     public ResponseEntity<Response> handleInvalidAddressFormatException(InvalidAddressFormatException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidRoleException.class)
-    public ResponseEntity<Response> handleInvalidRoleException(InvalidRoleException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidUsernameException.class)
-    public ResponseEntity<Response> handleInvalidUsernameException(InvalidUsernameException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<Response> handleInvalidPasswordException(InvalidPasswordException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidEmailException.class)
-    public ResponseEntity<Response> handleInvalidEmailException(InvalidEmailException ex) {
         Response response = new Response("error", ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -255,11 +262,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(IncorrectPasswordException.class)
-    public ResponseEntity<Response> handleIncorrectPasswordException(IncorrectPasswordException ex) {
-        Response response = new Response("error", ex.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
 
     @ExceptionHandler(UserNotLoggedInException.class)
     public ResponseEntity<Response> handleUserNotLoggedInException(UserNotLoggedInException ex) {

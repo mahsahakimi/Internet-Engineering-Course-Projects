@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../stylesheets/SignUpPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
+import EmptySpace from '../../components/EmptySpace';
 
 function SignUpPage() {
   // Model
@@ -118,31 +119,35 @@ function SignUpPage() {
             },
           }),
         });
-
-        const responseData = await response.json(); // Parse the response body
+        
+        const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          navigate('/'); // Redirect to / on successful registration
-        } else {
-          // Handle backend errors
-          if (responseData && responseData.errors) {
-            // If the backend sends an 'errors' object, process it
-            const backendErrors = {};
-            responseData.errors.forEach(error => {
-              backendErrors[error.field] = error.message;
-            });
-            setErrors(backendErrors);
-          } else if (responseData && responseData.message) {
+          navigate('/'); // Redirect to home on successful registration
+        } 
+        // if error occures
+        else {
+          if (responseData.status == "error") {           
+              if(responseData.message.toLowerCase().includes("username")){
+                setErrors({ username: responseData.message });
+              }
+              if(responseData.message.toLowerCase().includes("password")){
+                setErrors({ password: responseData.message });
+              }
+              if(responseData.message.toLowerCase().includes("email")){
+                setErrors({ email: responseData.message });
+              }
+          }
+          else if (responseData && responseData.message) {
             // If the backend sends a general 'message'
             setErrors({ general: responseData.message });
           } else {
-            // Generic error if no specific message
             setErrors({ general: 'Registration failed. Please try again.' });
           }
         }
       } catch (error) {
         console.error('Registration failed:', error);
-        setErrors({ general: 'Failed to connect to the server.' });
+        setErrors({ general: error.message });
       } finally {
         setIsSubmitting(false);
       }
@@ -163,7 +168,7 @@ function SignUpPage() {
 
   return (
     <div className="justify-content-center">
-      <div className='row'>""</div>
+      <EmptySpace />
       <div className="row">
         <div className="container white-box col-sm-6">
           <h2 className="text-center">Sign Up</h2>
