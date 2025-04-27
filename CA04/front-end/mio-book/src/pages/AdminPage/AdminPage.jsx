@@ -3,7 +3,7 @@ import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
 import '../../stylesheets/Author.css';
-import Person_circle from '../../components/Person_circle';
+import SVGPersonCircle from '../../components/SVGPersonCircle';
 import EmptySpace from '../../components/EmptySpace';
 import BookDetailsCard from '../../components/BookDetailsCard';
 import AuthorDetails from '../../components/AuthorDetails';
@@ -19,7 +19,7 @@ function AdminPage() {
         <div className='container white-box col-sm-10 p-3'>
             <div className='col-sm-6'>
                 <h5>
-                    <Person_circle/>
+                    <SVGPersonCircle/>
                     Sana Navaei
                 </h5>
                 <br/>

@@ -123,10 +123,10 @@ function SignUpPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          navigate('/'); // Redirect to home on successful registration
+          navigate('/signin');
         } 
         // if error occures
-        else {
+        else { 
           if (responseData.status == "error") {           
               if(responseData.message.toLowerCase().includes("username")){
                 setErrors({ username: responseData.message });

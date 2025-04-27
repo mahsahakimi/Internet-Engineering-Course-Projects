@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../stylesheets/SignInPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
+import EmptySpace from '../../components/EmptySpace';
+import SVGEyeSlash from '../../components/SVGEyeSlash';
+import SVGEyeIcon from '../../components/SVGEyeIcon';
 
 function SignInPage() {
   // Model
@@ -12,7 +15,7 @@ function SignInPage() {
   });
 
   const [errors, setErrors] = useState({});
-  const [isSubmitting, SignInPage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -59,7 +62,7 @@ function SignInPage() {
     if (validateForm()) {
       setIsSubmitting(true);
       setErrors({});
-
+      
       try {
         const response = await fetch('http://localhost:8080/api/login', {
           method: 'POST',
@@ -75,17 +78,29 @@ function SignInPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 200) {
-          // Login successful, redirect to home page
-          navigate('/home');
-          // You might also want to handle user session/token here
+          navigate('/');
           console.log(responseData.message); // "User logged in successfully."
-        } else {
-          // Handle login errors from the backend
-          if (responseData && responseData.message) {
-            setErrors({ general: responseData.message });
-          } else {
-            setErrors({ general: 'Login failed. Please check your credentials.' });
-          }
+        } 
+        else {
+            if (responseData.status == "error") {        
+                if(responseData.message.toLowerCase().includes("username")){
+                  setErrors({ username: responseData.message });
+                }
+                else if(responseData.message.toLowerCase().includes("password")){
+                  setErrors({ password: responseData.message });
+                }
+                else{
+                  setErrors({ general: responseData.message });
+                }
+            }
+            else {
+                // Handle login errors from the backend
+                if (responseData && responseData.message) {
+                  setErrors({ general: responseData.message });
+                } else {
+                  setErrors({ general: 'Login failed. Please check your credentials.' });
+                }
+            }
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -103,7 +118,7 @@ function SignInPage() {
   // View
   return (
     <div className="justify-content-center">
-      <div className='row'>""</div>
+      <EmptySpace />
       <div className="row">
         <div className="container white-box col-sm-6">
           <h2 className="text-center">Login</h2>
@@ -136,12 +151,13 @@ function SignInPage() {
                     onChange={handleChange}
                   />
                   <button
-                    className="btn btn-outline-secondary"
+                    className="btn gray-btn"
                     type="button"
                     onClick={togglePasswordVisibility}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? ( <SVGEyeSlash/> ) : (<SVGEyeIcon/>)}
                   </button>
+
                 </div>
                 {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
               </div>
@@ -158,7 +174,7 @@ function SignInPage() {
           </div>
 
           {/* Sign Up Link */}
-          <p className="text-center">
+          <p className="signin-link text-center">
             Don't have an account?
             <Link to="/signup">
               <strong>Sign up</strong>
