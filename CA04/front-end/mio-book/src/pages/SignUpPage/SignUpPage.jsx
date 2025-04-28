@@ -55,9 +55,6 @@ function SignUpPage() {
     if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
       isValid = false;
-    } else if (existingUsers.some(user => user.username === formData.username)) {
-      newErrors.username = 'Username already exists';
-      isValid = false;
     }
 
     // Email validation
@@ -66,9 +63,6 @@ function SignUpPage() {
       isValid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
-      isValid = false;
-    } else if (existingUsers.some(user => user.email === formData.email)) {
-      newErrors.email = 'Email already registered';
       isValid = false;
     }
 
@@ -103,7 +97,7 @@ function SignUpPage() {
       setErrors({}); // Clear previous errors before submitting
 
       try {
-        const response = await fetch('http://localhost:8080/api/users/add', {
+        const response = await fetch('/api/users/add', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -123,7 +117,7 @@ function SignUpPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          navigate('/signin');
+          navigate('/');
         } 
         // if error occures
         else { 

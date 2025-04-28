@@ -7,7 +7,7 @@ function Nav() {
       <body>
           <nav className="navbar bg-white shadow-sm">
               <div className="container-fluid d-flex">
-                  <a className="navbar-brand d-flex" href="#">
+                  <a className="navbar-brand d-flex" href="/">
                       <div className="logo-container ms-5">
                           <img src={logo} alt="Meow Logo" className="logo-cover" />
                       </div>

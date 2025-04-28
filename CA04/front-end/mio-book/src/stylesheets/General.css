@@ -5,7 +5,13 @@
     font-stretch: 75% 125%;
     font-style: normal;
   }
-  
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
 .container{
     border-radius : 12px;
     padding: 12px;    
