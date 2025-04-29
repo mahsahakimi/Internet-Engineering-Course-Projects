@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
 import '../../stylesheets/SignUpPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
 import EmptySpace from '../../components/EmptySpace';
+import SVGEyeIcon from '../../components/SVGEyeIcon';
+import SVGEyeSlash from '../../components/SVGEyeSlash';
 
 function SignUpPage() {
   // Model
@@ -18,6 +21,8 @@ function SignUpPage() {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Mock database of existing users (in a real app, this would be an API call)
@@ -45,6 +50,10 @@ function SignUpPage() {
       ...formData,
       role
     });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const validateForm = () => {
@@ -117,7 +126,25 @@ function SignUpPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          navigate('/');
+          const new_response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: formData.username,
+              password: formData.password,
+            }),
+          });
+          if (new_response.ok && new_response.status === 200){
+            const loggedUser = { name: formData.username };
+            setUser(loggedUser);
+            localStorage.setItem('user', JSON.stringify(loggedUser));
+            navigate('/');
+          }
+          else {
+            navigate('/signin')
+          }
         } 
         // if error occures
         else { 
@@ -169,7 +196,7 @@ function SignUpPage() {
           <p className="subtitle text-center mb-5">MioBook</p>
           <div className="row justify-content-center">
             <form onSubmit={handleSubmit} className="col-10 col-sm-8">
-              {errors.general && <div className="alert alert-danger">{errors.general}</div>}
+            {errors.general && <div className="alert alert-danger">{errors.general}</div>}
               {/* Username Field */}
               <div className="mb-3">
                 <input
@@ -185,14 +212,23 @@ function SignUpPage() {
 
               {/* Password Field */}
               <div className="mb-3">
-                <input
-                  type="password"
-                  className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div className="input-group">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    className="btn gray-btn"
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? ( <SVGEyeSlash/> ) : (<SVGEyeIcon/>)}
+                  </button>
+                </div>
                 {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
               </div>
 

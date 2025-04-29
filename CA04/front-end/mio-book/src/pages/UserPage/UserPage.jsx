@@ -4,15 +4,16 @@ import Nav from '../../components/Nav';
 import BookDetailsCard from '../../components/BookDetailsCard';
 import '../../stylesheets/UserPage.css';
 import '../../stylesheets/General.css';
+import EmptySpace from '../../components/EmptySpace';
 
 function UserPage() {
   return (
     <body>
         <Nav />
-
+        <EmptySpace />
         <div className="row justify-content-center">
             <div className="row col-sm-10">
-                <div className="account-box container white-box col-sm-8">
+                <div className="container white-box col-sm-8">
                     <div className="m-3"><h3>$1,000</h3></div>
                     <div className="d-flex">
                         <input type="text" className="form-control me-2" placeholder="$Amount" />
@@ -30,7 +31,8 @@ function UserPage() {
                     <button className="btn gray-btn col-sm-6">logout</button>
                 </div>
             </div>
-            <div className="cart-box container white-box col-sm-10">
+            <EmptySpace />
+            <div className="container white-box col-sm-10">
                 <h4 className="mb-4 ms-1 fw-bold">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="icon" viewBox="0 1 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5z"/>

@@ -5,13 +5,14 @@ import Nav from '../../components/Nav';
 import book from '../../../src/images/book.png';
 import '../../stylesheets/HomePage.css';
 import '../../stylesheets/General.css';
+import EmptySpace from '../../components/EmptySpace';
 
 
 function HomePage() {
     return (
         <body>
             <Nav />
-
+            <EmptySpace />
             <section className="intro-section py-5 mb-5">
                 <div className="container">
                     <div className="row">

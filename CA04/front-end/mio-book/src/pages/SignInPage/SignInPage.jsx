@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
 import '../../stylesheets/SignInPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
@@ -17,6 +18,7 @@ function SignInPage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Controller
@@ -66,7 +68,7 @@ function SignInPage() {
       try {
         const response = await fetch('/api/login', {
           method: 'POST',
-          headers: {
+          headers: {  
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -78,29 +80,18 @@ function SignInPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 200) {
+          const loggedUser = { name: formData.username };
+          setUser(loggedUser);
+          localStorage.setItem('user', JSON.stringify(loggedUser));
           navigate('/');
           console.log(responseData.message); // "User logged in successfully."
         } 
         else {
-            if (responseData.status == "error") {        
-                if(responseData.message.toLowerCase().includes("username")){
-                  setErrors({ username: responseData.message });
-                }
-                else if(responseData.message.toLowerCase().includes("password")){
-                  setErrors({ password: responseData.message });
-                }
-                else{
-                  setErrors({ general: responseData.message });
-                }
-            }
-            else {
-                // Handle login errors from the backend
-                if (responseData && responseData.message) {
-                  setErrors({ general: responseData.message });
-                } else {
-                  setErrors({ general: 'Login failed. Please check your credentials.' });
-                }
-            }
+          if (responseData && responseData.message) {
+            setErrors({ general: responseData.message });
+          } else {
+            setErrors({ general: 'Login failed. Please check your credentials.' });
+          }      
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -125,7 +116,6 @@ function SignInPage() {
           <p className="subtitle text-center mb-5">MioBook</p>
           <div className="row justify-content-center">
             <form onSubmit={handleUserLogin} className="col-10 col-sm-8">
-              {errors.general && <div className="alert alert-danger">{errors.general}</div>}
               {/* Username Field */}
               <div className="mb-3">
                 <input
@@ -136,7 +126,6 @@ function SignInPage() {
                   value={formData.username}
                   onChange={handleChange}
                 />
-                {errors.username && <div className="invalid-feedback text-danger">{errors.username}</div>}
               </div>
 
               {/* Password Field */}
@@ -159,7 +148,9 @@ function SignInPage() {
                   </button>
 
                 </div>
-                {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
+              </div>
+              <div>
+                {errors.general && <div className="text-danger">{errors.general}</div>}
               </div>
 
               {/* Login Button */}

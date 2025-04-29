@@ -24,7 +24,7 @@ public class AuthController {
         // Allows a user to log in.
         // Parameters: UserLoginRequest object containing username and password.
         // Returns: Success message if login is successful, or an error if login fails.
-        // Example: POST /users/login with UserLoginRequest in the request body.
+        // Example: POST /login with UserLoginRequest in the request body.
         if(request == null){
             throw new MissingRequestBodyException();
         }
@@ -39,7 +39,7 @@ public class AuthController {
     public ResponseEntity<Response> userLogin() {
         // Logs out the currently logged-in user.
         // Returns: Success message after successful logout.
-        // Example: POST /users/logout
+        // Example: POST /logout
 
         authService.userLogout();
         Response response = new Response("success", "User logged out successfully.", null);
