@@ -189,7 +189,7 @@ public class UserService {
         }
     }
 
-    public void addCredit(int credit) {
+    public int addCredit(int credit) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -205,6 +205,7 @@ public class UserService {
         }
 
         user.setBalance(user.getBalance() + credit);
+        return user.getBalance();
     }
 
     public void addUser(String role, String username, String password, String email, Address address) {

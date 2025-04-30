@@ -33,7 +33,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/credit") // (add_credit)
+    @PostMapping("/addcredit") // (add_credit)
     public ResponseEntity<Response> addCredit(@RequestBody AddCreditRequest request) {
         // Adds credit to a user's account.
         // Parameters: credit amount.
@@ -44,8 +44,8 @@ public class UserController {
         }
 
         request.validate();
-        userService.addCredit(request.getCredit());
-        Response response = new Response("success", "Credit added successfully.", null);
+        int new_balance = userService.addCredit(request.getCredit());
+        Response response = new Response("success", "Credit added successfully.", new_balance);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

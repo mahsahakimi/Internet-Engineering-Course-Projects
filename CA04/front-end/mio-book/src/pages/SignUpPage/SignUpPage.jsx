@@ -140,9 +140,9 @@ function SignUpPage() {
           const responseData = await new_response.json();
 
           if (new_response.ok && new_response.status === 200){
-            const loggedUser = { userInfo: responseData.data };
-            setUser(loggedUser);
-            localStorage.setItem('logged_user', JSON.stringify(loggedUser));
+            const activeUser = { userInfo: responseData.data };
+            setUser(activeUser);
+            localStorage.setItem('activeUser', JSON.stringify(activeUser));
             navigate('/');
           }
           else {

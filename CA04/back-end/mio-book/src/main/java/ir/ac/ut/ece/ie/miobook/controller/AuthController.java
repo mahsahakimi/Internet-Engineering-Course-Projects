@@ -22,8 +22,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Response> userLogin(@RequestBody UserLoginRequest request) {
-        System.out.println("Login endpoint called.");
-
         // Allows a user to log in.
         // Parameters: UserLoginRequest object containing username and password.
         // Returns: Success message if login is successful, or an error if login fails.

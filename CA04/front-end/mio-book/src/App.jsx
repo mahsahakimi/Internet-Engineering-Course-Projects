@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './UserContex.jsx';
 import SignInPage from './pages/SignInPage';
@@ -18,6 +18,10 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 
 
 function App() {
+  // useEffect(() => {
+  //   localStorage.clear();
+  // }, []);
+
   return (
     <BrowserRouter>
       <UserProvider>

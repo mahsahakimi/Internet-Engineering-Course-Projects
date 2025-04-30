@@ -7,24 +7,57 @@ import '../../stylesheets/General.css';
 import EmptySpace from '../../components/EmptySpace';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../UserContex';
+import SVGPersonCircle from '../../components/SVGPersonCircle';
+import SVGMail from '../../components/SVGMail';
+import SVGBook from '../../components/SVGBook';
+import SVGCoin from '../../components/SVGCoin';
 
 function UserPage() {
     const [formData, setFormData] = useState({
         amount: '',
     });
-
+    const [errors, setErrors] = useState({});
     const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
-    const localUser = !user ? JSON.parse(localStorage.getItem('logged_user')) : null;
-    const displayUser = user || localUser;
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    if(!user){
+        setUser(localUser)
+    }
 
-    const handleChange = (e) => {
+    const handleChange = (e) => {    
         const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
         });
+        if (errors[name]) {
+            setErrors({
+                ...errors,
+                [name]: null,
+            });
+        }
+        
     };
+
+    const validateForm = () => {
+        const newErrors = {};
+        let isValid = true;
+    
+        if (!formData.amount.trim()) {
+            newErrors.amount = 'Enter a value';
+            isValid = false;
+        } else if (isNaN(Number(formData.amount))) {
+            newErrors.amount = 'Enter a valid number';
+            isValid = false;
+        } else if (Number(formData.amount) <= 0) {
+            newErrors.amount = 'Amount must be greater than zero';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+    
 
     const handleLogout = async () => {
         try{
@@ -35,7 +68,7 @@ function UserPage() {
             
             if(response.ok){
                 setUser(null);
-                localStorage.removeItem('logged_user');
+                localStorage.removeItem('activeUser');
                 navigate('/signin');
             } else {
                 console.error('Logout failed.');
@@ -53,6 +86,52 @@ function UserPage() {
         }
     };
 
+    const handleAddCredit = async () => {
+        if (validateForm()) {
+            setErrors({});
+            try{
+                const response = await fetch('/api/users/addcredit', {
+                    method: 'POST',
+                    headers: {  
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        credit: formData.amount,
+                    }),
+                });
+                
+                const responseData = await response.json();
+
+                if(responseData.status === "success"){
+                    const newBalance = responseData.data;
+
+                    const currentUser = user || JSON.parse(localStorage.getItem('activeUser'));
+                    const updatedUser = {
+                        ...currentUser,
+                        userInfo: {
+                            ...currentUser.userInfo,
+                            balance: newBalance,
+                        },
+                    };
+                    
+                    setUser(updatedUser);
+                    localStorage.setItem('activeUser', JSON.stringify(updatedUser));
+    
+                } else {
+                    // const newErrors = {};
+                    // newErrors.amount = responseData.message;
+                    // setErrors(newErrors);
+                    console.error('Failed :', responseData.message);
+                }
+            } catch (error) {
+                // const newErrors = {};
+                // newErrors.amount = error;
+                // setErrors(newErrors);
+                console.error('Error while adding credit:', error);
+            }
+        }
+    }
+
     return (
         <div>
             <Nav />
@@ -60,39 +139,39 @@ function UserPage() {
             <div className="row justify-content-center">
                 <div className="row col-sm-10">
                     <div className="container white-box col-sm-8">
-                        <div className="m-3"><h3>$  {displayUser?.userInfo?.balance}</h3></div>
+                        <div className="m-3"><h3> <SVGCoin size="28"/> {user?.userInfo?.balance}</h3></div>
                         <div className="d-flex">
                         <input 
                             type="number" 
                             name="amount"
                             value={formData.amount}
                             onChange={handleChange}
-                            className="form-control me-2"
+                            className={`form-control me-2 ${errors.amount ? 'is-invalid' : ''}`}
                             placeholder="$Amount"
                         />
-                            <button className="btn col-sm-3 gray-btn">Add more credit</button>
+                            <button 
+                            className="btn col-sm-3 gray-btn"
+                            onClick={handleAddCredit}
+                            >
+                                Add more credit
+                            </button>
                         </div>
+                        {errors.amount && <div className="text-danger">{errors.amount}</div>}
                     </div>
                     <div className="col-sm-1"></div>
                     <div className="user-info container white-box col-sm-3">
                         <p>
-                            <strong>👤 {displayUser?.userInfo?.username} </strong>
+                            <strong><SVGPersonCircle size="20"/> {user?.userInfo?.username} </strong>
                             </p>
                         <p>
-                            📧 {displayUser?.userInfo?.email}
+                            <SVGMail size="20"/> {user?.userInfo?.email}
                             </p>
                         <button  onClick={handleLogout} className="btn gray-btn col-sm-6">logout</button>
                     </div>
                 </div>
                 <EmptySpace />
                 <div className="container white-box col-sm-10">
-                    <h4 className="mb-4 ms-1 fw-bold">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="icon" viewBox="0 1 16 16">
-                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5z"/>
-                            <path d="M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                        </svg>
-                        My Books
-                    </h4>
+                    <h4 className="mb-4 ms-1 fw-bold"> <SVGBook size="32" /> My Books </h4>
                     <table className="table">
                         <thead className="table-light">
                         <tr>

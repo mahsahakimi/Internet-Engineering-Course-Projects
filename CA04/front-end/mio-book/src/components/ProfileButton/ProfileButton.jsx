@@ -21,7 +21,7 @@ function ProfileButton() {
     //     "ownedBooks": [],
     //     "borrowedBooks": []
     //   }
-    const localUser = !user ? JSON.parse(localStorage.getItem('logged_user')) : null;
+    const localUser = !user ? JSON.parse(localStorage.getItem('activeUser')) : null;
     const displayUser = user || localUser;
     const firstLetter = displayUser?.userInfo?.username?.charAt(0).toUpperCase() || '?';
 

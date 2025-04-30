@@ -15,7 +15,7 @@ function ProfileDropdown({ name }) {
 
             if (response.ok) {
                 setUser(null);
-                localStorage.removeItem('logged_user');
+                localStorage.removeItem('activeUser');
                 navigate('/signin');
             } else {
                 console.error('Logout failed.');

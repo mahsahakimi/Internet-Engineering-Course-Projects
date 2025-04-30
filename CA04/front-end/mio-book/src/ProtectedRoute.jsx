@@ -4,7 +4,7 @@ import { UserContext } from './UserContex';
 
 function ProtectedRoute({ children }) {
     const { user } = useContext(UserContext);
-    const localUser = !user ? JSON.parse(localStorage.getItem('logged_user')) : null;
+    const localUser = !user ? JSON.parse(localStorage.getItem('activeUser')) : null;
     const displayUser = user || localUser;
 
     if (!displayUser) {
