@@ -6,10 +6,24 @@ import ProfileDropdown from '../ProfileDropdown';
 
 function ProfileButton() {
     const { user } = useContext(UserContext);
-
-    const localUser = !user ? JSON.parse(localStorage.getItem('user')) : null;
+    // userInfo : {
+    //     "role": "customer",
+    //     "username": "user22",
+    //     "password": "user22",
+    //     "email": "test@test.ir",
+    //     "address": {
+    //       "country": "iran",
+    //       "city": "iran"
+    //     },
+    //     "balance": 0,
+    //     "cart": [],
+    //     "purchases": [],
+    //     "ownedBooks": [],
+    //     "borrowedBooks": []
+    //   }
+    const localUser = !user ? JSON.parse(localStorage.getItem('logged_user')) : null;
     const displayUser = user || localUser;
-    const firstLetter = displayUser?.name?.charAt(0).toUpperCase() || '?';
+    const firstLetter = displayUser?.userInfo?.username?.charAt(0).toUpperCase() || '?';
 
     const [menuOpen, setMenuOpen] = useState(false);
     const buttonRef = useRef(null);
@@ -36,7 +50,7 @@ function ProfileButton() {
                 {firstLetter}
             </button>
 
-            {menuOpen && ( <ProfileDropdown name={displayUser?.name} />)}
+            {menuOpen && ( <ProfileDropdown name={displayUser?.userInfo?.username} />)}
         </div>
     );
 }

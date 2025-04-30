@@ -6,7 +6,7 @@ import ProfileButton from '../ProfileButton';
 
 function Nav() {
   return (
-      <body>
+      <div>
           <nav className="navbar bg-white shadow-sm">
               <div className="container-fluid d-flex col-11">
                   <a className="navbar-brand d-flex logo-container" href="/">
@@ -28,7 +28,7 @@ function Nav() {
                   <ProfileButton />
               </div>
           </nav>
-    </body>
+    </div>
   );
 }
 

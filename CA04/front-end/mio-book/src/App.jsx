@@ -23,7 +23,7 @@ function App() {
       <UserProvider>
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/results" element={<ProtectedRoute><SearchResult /></ProtectedRoute>} />

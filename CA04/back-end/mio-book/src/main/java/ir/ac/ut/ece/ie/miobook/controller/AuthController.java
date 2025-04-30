@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ir.ac.ut.ece.ie.miobook.model.User;
 
 @RestController
 public class AuthController {
@@ -21,6 +22,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Response> userLogin(@RequestBody UserLoginRequest request) {
+        System.out.println("Login endpoint called.");
+
         // Allows a user to log in.
         // Parameters: UserLoginRequest object containing username and password.
         // Returns: Success message if login is successful, or an error if login fails.
@@ -30,8 +33,8 @@ public class AuthController {
         }
         request.validate();
 
-        authService.userLogin(request.getUsername(), request.getPassword());
-        Response response = new Response("success", "User logged in successfully.", null);
+        User logged_in = authService.userLogin(request.getUsername(), request.getPassword());
+        Response response = new Response("success", "User logged in successfully.", logged_in);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

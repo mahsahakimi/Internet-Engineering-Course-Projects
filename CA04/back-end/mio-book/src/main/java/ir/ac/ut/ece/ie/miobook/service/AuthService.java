@@ -17,7 +17,7 @@ public class AuthService {
         this.userDatabase = userDatabase;
     }
 
-    public void userLogin(String username, String password){
+    public User userLogin(String username, String password){
         if(userDatabase.getLoggedInUser() != null) {
             throw new UserSessionActiveException();
         }
@@ -29,6 +29,7 @@ public class AuthService {
             throw new IncorrectPasswordException();
         }
         userDatabase.setLoggedInUser(user);
+        return user;
     }
 
     public void userLogout(){

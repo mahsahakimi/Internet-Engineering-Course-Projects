@@ -136,10 +136,13 @@ function SignUpPage() {
               password: formData.password,
             }),
           });
+
+          const responseData = await new_response.json();
+
           if (new_response.ok && new_response.status === 200){
-            const loggedUser = { name: formData.username };
+            const loggedUser = { userInfo: responseData.data };
             setUser(loggedUser);
-            localStorage.setItem('user', JSON.stringify(loggedUser));
+            localStorage.setItem('logged_user', JSON.stringify(loggedUser));
             navigate('/');
           }
           else {
