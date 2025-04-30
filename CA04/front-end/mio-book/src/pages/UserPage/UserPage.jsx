@@ -165,24 +165,61 @@ function UserPage() {
                 <EmptySpace />
                 <div className="container white-box col-sm-10">
                     <h4 className="mb-4 ms-1 fw-bold"> <SVGBook size="32" /> My Books </h4>
-                    <table className="table">
-                        <thead className="table-light">
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Author</th>
-                            <th>Genre</th>
-                            <th>Publisher</th>
-                            <th>Published Year</th>
-                            <th>Status</th>
-                            <th> </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <BookDetailsCard />
-                        <BookDetailsCard />
-                        </tbody>
-                    </table>
+                    {user?.userInfo?.ownedBooks?.length + user?.userInfo?.borrowedBooks?.length !== 0 ? (
+                        <ul>
+                            
+                            {/* <table className="table">
+                                    <thead className="table-light">
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Author</th>
+                                        <th>Genre</th>
+                                        <th>Publisher</th>
+                                        <th>Published Year</th>
+                                        <th>Status</th>
+                                        <th> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <BookDetailsCard />
+                                    <BookDetailsCard />
+                                    </tbody>
+                                </table> */}
+
+                            {user?.userInfo?.ownedBooks.map((book, index) => (
+                                <li key={index}>{book.title}</li>
+                            ))}
+                        </ul>
+
+                    ) : ( 
+                        <div class="empty-state">
+                            <svg class="empty-illustration" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
+                                <circle cx="100" cy="100" r="80" fill="#f5f5f5"/>
+                            
+                                <path d="M70 70 H130 A4 4 0 0 1 134 74 V126 A4 4 0 0 1 130 130 H70 A4 4 0 0 1 66 126 V74 A4 4 0 0 1 70 70 Z" 
+                                    fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                                <line x1="85" y1="70" x2="85" y2="130" stroke="#e0e0e0" stroke-width="2"/>
+                            
+                                <line x1="90" y1="85" x2="125" y2="85" stroke="#e0e0e0" stroke-width="1"/>
+                                <line x1="90" y1="95" x2="125" y2="95" stroke="#e0e0e0" stroke-width="1"/>
+                                <line x1="90" y1="105" x2="125" y2="105" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                                <circle cx="95" cy="115" r="2" fill="#b0b0b0"/>
+                                <circle cx="115" cy="115" r="2" fill="#b0b0b0"/>
+                                <path d="M98 122 Q105 115 112 122" stroke="#b0b0b0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                            
+                                <path d="M138 68 Q138 64 142 64 Q145 64 145 68 Q145 70 142 71 Q140 72 140 74" stroke="#e0e0e0" stroke-width="1.5" fill="none"/>
+                                <circle cx="140" cy="77" r="1.5" fill="#e0e0e0"/>
+                            </svg>
+                            <p class="empty-message">No book available!</p>
+                        </div>
+
+
+
+                    )}
+
+                    
                 </div>
             </div>
 
