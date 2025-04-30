@@ -5,6 +5,7 @@ import ir.ac.ut.ece.ie.miobook.dto.AddReviewRequest;
 import ir.ac.ut.ece.ie.miobook.dto.BorrowBookRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
+import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/books")
@@ -244,4 +246,19 @@ public class BookController {
         Response response = new Response("success", "Books retrieved successfully.", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @GetMapping("/newRelease")
+    public ResponseEntity<Response> newRelease() {
+        List<Map<String, Object>> newestBooks = bookService.newRelease();
+        Response response = new Response("success", "Books retrieved successfully.", newestBooks);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/topRated")
+    public ResponseEntity<Response> topRated() {
+        List<Map<String, Object>> topBooks = bookService.topRated(1, 5);
+        Response response = new Response("success", "Books retrieved successfully.", topBooks);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

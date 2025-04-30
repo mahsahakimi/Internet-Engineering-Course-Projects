@@ -81,6 +81,16 @@ function SignInPage() {
 
         if (response.ok && response.status === 200) {
           const activeUser = { userInfo: responseData.data };
+
+          // SAVE the response data into a file
+          // const blob = new Blob([JSON.stringify(activeUser, null, 2)], { type: 'text/plain' });
+          // const url = URL.createObjectURL(blob);
+          // const a = document.createElement('a');
+          // a.href = url;
+          // a.download = 'backend_response.txt'; // file name
+          // a.click();
+          // URL.revokeObjectURL(url);
+
           setUser(activeUser);
           localStorage.setItem('activeUser', JSON.stringify(activeUser));
           navigate('/');

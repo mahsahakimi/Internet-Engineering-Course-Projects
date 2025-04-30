@@ -1,34 +1,53 @@
 import React from 'react';
 import '../../stylesheets/General.css';
-import book from '../../../src/images/book.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
-import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
+import bookpng from '../../../src/images/book.png';
+import SVGStar from '../../components/SVGStar';
+import SVGStarFill from '../../components/SVGStarFill';
+import SVGStarHalfFill from '../SVGStarHalfFill';
 
-function BookCard() {
-  return (
-    <div className="book-card">
-        <a href=""><img src={book} className="book-img book-cover col-12" alt="Book Cover" /></a>
-        <div className="p-3 text-center">
-            <h5 className="mb-1">Book Title</h5>
-            <p className="text-muted mb-2">Author McName</p>
-        </div>
-        <div className="row">
-        
-            <div className="star-rating mb-2 col-7 d-flex justify-content-center">
-                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
-                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
-                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
-                <FontAwesomeIcon icon={solidStar} className="fa-xs" />
-                <FontAwesomeIcon icon={regularStar} className="fa-xs" />
+
+function BookCard({book}) {
+
+    const rating = book?.averageRating || 0;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    const renderStars = () => {
+        const stars = [];
+
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<SVGStarFill size="14" />);
+        }
+        if (hasHalfStar) {
+            stars.push(<SVGStarHalfFill size="14" />);
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(<SVGStar size="14" />);
+        }
+        return stars;
+    };
+
+    return (
+        <div className="book-card">
+            <a href=""><img src={bookpng} className="book-img book-cover col-12" alt="Book Cover" /></a>
+            <div className="p-3 text-center">
+                <h5 className="mb-1">{book?.title}</h5>
+                <p className="text-muted mb-2">{book?.author}</p>
             </div>
-            <p className="col-5">$10.25</p>
+            <div className="row align-items-center mb-3 px-3">
+                <div className="col-8">
+                    {renderStars()}
+                </div>
+                <div className="col-4">
+                    <span className="fs-6">${book?.price}</span>
+                </div>
+            </div>
+            <div className="row justify-content-center">
+                <button className="green-btn col-10 mb-2 ">Add to Cart</button>
+            </div>
         </div>
-        <div className="row justify-content-center">
-            <button className="green-btn col-10 mb-2 ">Add to Cart</button>
-        </div>
-    </div>
-  );
+    );
 };
 
 export default BookCard;

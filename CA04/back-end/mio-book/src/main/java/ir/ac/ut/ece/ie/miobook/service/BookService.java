@@ -406,4 +406,20 @@ public class BookService {
         if (searchString.length() > 2) searchString.setLength(searchString.length() - 2); // Remove trailing comma and space
         return searchString.toString();
     }
+
+    public List<Map<String, Object>> newRelease() {
+        List<Book> books =  bookDatabase.getBooks();
+        books = books.stream()
+            .sorted((b1, b2) -> Integer.compare(b2.getYear(), b1.getYear())) // Newest first
+            .limit(5)
+            .collect(Collectors.toList());
+        return formatBooks(books);
+    }
+
+    public List<Map<String, Object>> topRated(int page, int pageSize){
+        List<Book> books =  bookDatabase.getBooks();
+        books = sortBooksByAverageRating(books, "dec");
+        return formatBooks(PaginationUtils.paginate(books, page, pageSize));
+    }
+    
 }

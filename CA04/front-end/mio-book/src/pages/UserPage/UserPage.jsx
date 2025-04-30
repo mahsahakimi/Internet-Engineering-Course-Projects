@@ -75,13 +75,6 @@ function UserPage() {
             }
             
         } catch (error) {
-            const blob = new Blob([JSON.stringify('error', null, 2)], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'backend_response.txt'; // file name
-            a.click();
-            URL.revokeObjectURL(url);
             console.error('Error while logging out:', error);
         }
     };
@@ -118,15 +111,15 @@ function UserPage() {
                     localStorage.setItem('activeUser', JSON.stringify(updatedUser));
     
                 } else {
-                    // const newErrors = {};
-                    // newErrors.amount = responseData.message;
-                    // setErrors(newErrors);
+                    const newErrors = {};
+                    newErrors.amount = responseData.message;
+                    setErrors(newErrors);
                     console.error('Failed :', responseData.message);
                 }
             } catch (error) {
-                // const newErrors = {};
-                // newErrors.amount = error;
-                // setErrors(newErrors);
+                const newErrors = {};
+                newErrors.amount = error;
+                setErrors(newErrors);
                 console.error('Error while adding credit:', error);
             }
         }
@@ -142,7 +135,7 @@ function UserPage() {
                         <div className="m-3"><h3> <SVGCoin size="28"/> {user?.userInfo?.balance}</h3></div>
                         <div className="d-flex">
                         <input 
-                            type="number" 
+                            type="text" 
                             name="amount"
                             value={formData.amount}
                             onChange={handleChange}
