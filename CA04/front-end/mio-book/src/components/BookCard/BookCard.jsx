@@ -4,6 +4,7 @@ import bookpng from '../../../src/images/book.png';
 import SVGStar from '../../components/SVGStar';
 import SVGStarFill from '../../components/SVGStarFill';
 import SVGStarHalfFill from '../SVGStarHalfFill';
+import { Link } from 'react-router-dom';
 
 
 function BookCard({book}) {
@@ -30,7 +31,9 @@ function BookCard({book}) {
 
     return (
         <div className="book-card">
-            <a href=""><img src={bookpng} className="book-img book-cover col-12" alt="Book Cover" /></a>
+            <Link to={`/book-details?title=${encodeURIComponent(book?.title)}`}>
+                <img src={bookpng} className="book-img book-cover col-12" alt="Book Cover" />
+            </Link>            
             <div className="p-3 text-center">
                 <h5 className="mb-1">{book?.title}</h5>
                 <p className="text-muted mb-2">{book?.author}</p>
@@ -51,12 +54,3 @@ function BookCard({book}) {
 };
 
 export default BookCard;
-
-
-
-
-
-
-
-
-

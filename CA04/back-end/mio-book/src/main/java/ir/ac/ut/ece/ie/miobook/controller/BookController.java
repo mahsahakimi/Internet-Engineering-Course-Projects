@@ -97,8 +97,7 @@ public class BookController {
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
-
-        String bookDetails = bookService.getBookDetails(title);
+        Map<String, Object> bookDetails = bookService.getBookDetails(title);
         Response response = new Response("success", "Book details retrieved.", bookDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -130,7 +129,7 @@ public class BookController {
             throw new MissingRequiredFieldsException("title");
         }
 
-        String bookReviews = bookService.getBookReviews(title, page, pageSize);
+        Map<String, Object> bookReviews = bookService.getBookReviews(title, page, pageSize);
         Response response = new Response("success", "Book reviews retrieved.", bookReviews);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -112,7 +112,7 @@ public class BookService {
         reviewDatabase.addReview(review);
     }
 
-    public String getBookDetails(String title) {
+    public Map<String, Object> getBookDetails(String title) {
         Book book = bookDatabase.findBookByTitle(title);
         if (book == null) {
             throw new BookNotFoundException(title);
@@ -127,13 +127,7 @@ public class BookService {
         bookData.put("price", book.getPrice());
         bookData.put("synopsis", book.getSynopsis());
         bookData.put("averageRating", reviewDatabase.calculateAverageRating(book));
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(bookData);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert book details to JSON.", e);
-        }
+        return bookData;
     }
 
     public String showBookContent(String title) {
@@ -185,17 +179,18 @@ public class BookService {
         throw new BookAccessDeniedException();
     }
 
-    public String getBookReviews(String title, int page, int pageSize){
+    public Map<String, Object> getBookReviews(String title, int page, int pageSize){
         Book book = bookDatabase.findBookByTitle(title);
-        List<Review> allReviews = reviewDatabase.getReviews();
+        List<Review> allReviews = reviewDatabase.getReviewsByBook(book);
+        int length = allReviews.size();
         if (book == null) {
             throw new BookNotFoundException(title);
         }
         if (allReviews.isEmpty()) {
             throw new NoReviewsException(title);
         }
-
         List<Review> paginatedReviews = PaginationUtils.paginate(allReviews, page, pageSize);
+
         List<Map<String, Object>> outputReviews = paginatedReviews.stream()
                 .filter(r -> r.getTitle().equals(title))
                 .map(r -> {
@@ -203,23 +198,17 @@ public class BookService {
                     newResponse.put("username", r.getUsername());
                     newResponse.put("rate", r.getRate());
                     newResponse.put("comment", r.getComment());
+                    newResponse.put("date", r.getDate());
                     return newResponse;
                 })
                 .collect(Collectors.toList());
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", title);
+        data.put("length", length);
         data.put("reviews", outputReviews);
         data.put("averageRating", reviewDatabase.calculateAverageRating(book));
 
-        // TODO: add page and page size if needed!
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(data);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert book reviews to JSON.", e);
-        }
+        return data;
     }
 
 
@@ -395,6 +384,19 @@ public class BookService {
         return formattedBooks;
     }
 
+    private List<Map<String, Object>> shortFormatBooks(List<Book> books) {
+        List<Map<String, Object>> formattedBooks = new ArrayList<>();
+        for (Book book : books) {
+            Map<String, Object> formattedBook = new HashMap<>();
+            formattedBook.put("title", book.getTitle());
+            formattedBook.put("author", book.getAuthor().getName());
+            formattedBook.put("price", book.getPrice());
+            formattedBook.put("averageRating", reviewDatabase.calculateAverageRating(book));
+            formattedBooks.add(formattedBook);
+        }
+        return formattedBooks;
+    }
+
     private static String buildSearchString(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder) {
         StringBuilder searchString = new StringBuilder();
         if (title != null) searchString.append("title:").append(title).append(", ");
@@ -413,13 +415,13 @@ public class BookService {
             .sorted((b1, b2) -> Integer.compare(b2.getYear(), b1.getYear())) // Newest first
             .limit(5)
             .collect(Collectors.toList());
-        return formatBooks(books);
+        return shortFormatBooks(books);
     }
 
     public List<Map<String, Object>> topRated(int page, int pageSize){
         List<Book> books =  bookDatabase.getBooks();
         books = sortBooksByAverageRating(books, "dec");
-        return formatBooks(PaginationUtils.paginate(books, page, pageSize));
+        return shortFormatBooks(PaginationUtils.paginate(books, page, pageSize));
     }
     
 }
