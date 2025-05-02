@@ -7,6 +7,12 @@ import '../../stylesheets/General.css';
 import '../../stylesheets/Book.css';
 import { useLocation } from 'react-router-dom';
 import BookDetails from '../../components/BookDetails';
+import SVGNoComments from '../../components/SVGNoComments';
+import ModalAddReview from '../../components/ModalAddReview';
+
+
+
+
 
 function BookPage() {
 
@@ -14,11 +20,18 @@ function BookPage() {
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
     const [error, setError] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
   
+
+
     const getQueryParam = (key) => {
         const params = new URLSearchParams(location.search);
         return params.get(key);
     };
+
     const title = getQueryParam('title');
 
     const fetchBookDetails = async () => {
@@ -94,13 +107,13 @@ function BookPage() {
                         </div>
                         <div className="col-sm-4"></div>
                         <div className="col-sm-2">
-                            <button className="btn gray-btn col-sm-12s">
-                                Add reviews  
+                            <button className="btn gray-btn col-sm-12" onClick={handleOpenModal}>
+                                Add review
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
                                     <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
                                     <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
                                 </svg>
-                                </button>
+                            </button>
                         </div>
                     </div>
                     {bookreviews?.reviews?.length > 0 ? (
@@ -111,7 +124,10 @@ function BookPage() {
                         </React.Fragment>
                     ))
                     ) : (
-                    <p>No reviews yet.</p>
+                        <div className="empty-state">
+                            <SVGNoComments />
+                            <p className='text-secondary'>No comments yet.</p>
+                        </div>
                     )}
 
                     {/* <div className="pg-container">
@@ -131,6 +147,11 @@ function BookPage() {
                 </div>
             </section>
             <Footer />
+            <ModalAddReview 
+                show={showModal} 
+                onClose={handleCloseModal} 
+                bookTitle={bookDetails?.title} 
+            />
         </div>
   );
 };
