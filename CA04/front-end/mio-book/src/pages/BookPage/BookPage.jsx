@@ -8,7 +8,7 @@ import '../../stylesheets/Book.css';
 import { useLocation } from 'react-router-dom';
 import BookDetails from '../../components/BookDetails';
 import SVGNoComments from '../../components/SVGNoComments';
-import ModalAddReview from '../../components/ModalAddReview';
+import ModalAddReview from '../../components/ModalAddReview/ModalAddReview';
 
 
 
@@ -20,12 +20,6 @@ function BookPage() {
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
     const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-
-    const handleOpenModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
-  
-
 
     const getQueryParam = (key) => {
         const params = new URLSearchParams(location.search);
@@ -84,6 +78,28 @@ function BookPage() {
         }
     };
 
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+
+    const handleReviewSubmit = async ({ rating, reviewText }) => {
+        try {
+        const res = await fetch('/api/books/review', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, rating, review: reviewText })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+            fetchReviews(); // refresh reviews after submitting
+        }
+        } catch (err) {
+        console.error('Review submit error:', err);
+        }
+    };
+
     useEffect(() => {
         fetchReviews();
         fetchBookDetails();
@@ -114,6 +130,13 @@ function BookPage() {
                                     <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
                                 </svg>
                             </button>
+                            {/* Modal */}
+                            <ModalAddReview
+                                show={showModal}
+                                onClose={handleCloseModal}
+                                onSubmit={handleReviewSubmit}
+                                bookTitle={bookDetails?.title}
+                            />
                         </div>
                     </div>
                     {bookreviews?.reviews?.length > 0 ? (
@@ -130,28 +153,10 @@ function BookPage() {
                         </div>
                     )}
 
-                    {/* <div className="pg-container">
-                        <nav aria-label="Page navigation">
-                            <ul className="pagination">
-                                <li className="page-item"><a className="page-link" href="#" aria-label="Previous">&lsaquo;</a></li>
-                                <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                                <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                <li className="page-item"><a className="page-link" href="#">4</a></li>
-                                <li className="page-item"><a className="page-link" href="#">5</a></li>
-                                <li className="page-item"><a className="page-link" href="#" aria-label="Next">&rsaquo;</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div> */}
+
                 </div>
             </section>
             <Footer />
-            <ModalAddReview 
-                show={showModal} 
-                onClose={handleCloseModal} 
-                bookTitle={bookDetails?.title} 
-            />
         </div>
   );
 };

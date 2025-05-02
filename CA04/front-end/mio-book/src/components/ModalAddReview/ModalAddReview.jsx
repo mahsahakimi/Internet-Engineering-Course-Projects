@@ -2,74 +2,100 @@ import React, { useState } from 'react';
 import SVGStar from '../SVGStar';
 import SVGStarFill from '../SVGStarFill';
 import '../../stylesheets/Modal.css';
-import bookPNG from '../../images/book.png'
+import bookCover from '../../images/book.png'
 
-const ReviewModal = ({ show, onClose, bookTitle, bookCover }) => {
-  const [rating, setRating] = useState(2);
+const ModalAddReview = ({ show, onClose, bookTitle }) => {
+  const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
 
-  if (!show) return null;
+  const handleRating = (value) => setRating(value);
 
-  const handleSubmit = () => {
-    console.log({
-      title: bookTitle,
-      rating,
-      review: reviewText
-    });
-
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('/api/books/add_review', {
+          method: 'POST',
+          headers: {  
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: bookTitle,
+            rate: rating,
+            comment: reviewText,
+          }),
+      });
+      const responseData = await response.json();
+      if (responseData.status === 'success') {
+        // SAVE the response data into a file
+        const blob = new Blob([JSON.stringify(responseData, null, 2)], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'backend_response.txt'; // file name
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+      }
+    } catch (error) {
+    }
     setRating(0);
     setReviewText('');
     onClose();
   };
 
-  const handleRatingClick = (value) => {
-    setRating(value);
-  };
+
+  if (!show) return null;
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content bg-white">
-        <button className="btn-close position-absolute top-0 end-0 m-3" onClick={onClose}></button>
-        <div className="text-center">
-          <p className="fw-semibold">Add Review</p>
-          <img src={bookPNG || ""} alt="Book" className="img-modal" />
-          <h5 className="fw-bold">{bookTitle || 'Book Title'}</h5>
+    <>
+      <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Add Review</h5>
+              <button type="button" className="close" onClick={onClose}>
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="mb-1">Rating:</p>
+              <div className="mb-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span key={star} style={{ cursor: 'pointer', fontSize: '1.5rem' }} onClick={() => handleRating(star)}>
+                    {rating >= star ? '★' : '☆'}
+                  </span>
+                ))}
+              </div>
 
-          {/* <div className="d-flex justify-content-center mb-2 mt-3">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span key={star} onClick={() => handleRatingClick(star)} style={{ cursor: 'pointer' }}>
-                {rating >= star ? <SVGStarFill /> : <SVGStar />}
-              </span>
-            ))}
-          </div> */}
+              <textarea
+                className="form-control"
+                rows="6"
+                placeholder="Write your review here..."
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+              />
+            </div>
 
-          <p className="text-center text-secondary small">Tap to Rate</p>
-
-          <textarea
-            className="form-control comment-area"
-            rows="8"
-            placeholder="Type your review..."
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-          />
-
-          {/* Buttons */}
-          <div className="d-flex flex-column align-items-center w-100">
+            <div className="d-flex flex-column align-items-center w-100">
             <button
                 className="btn gray-btn mb-3 col-12"
                 onClick={handleSubmit}
-                disabled={reviewText.trim() === ''}
+                disabled={rating === 0 || reviewText.trim() === ''}
             >
                 Submit Review
             </button>
             <button className="btn gray-btn col-12" onClick={onClose}>
                 Cancel
             </button>
+ 
+
+          </div>
           </div>
         </div>
       </div>
-    </div>
+      {/* Backdrop */}
+      <div className="modal-backdrop fade show"></div>
+    </>
   );
 };
 
-export default ReviewModal;
+export default ModalAddReview;

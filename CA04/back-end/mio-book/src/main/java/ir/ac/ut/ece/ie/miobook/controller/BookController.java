@@ -82,7 +82,6 @@ public class BookController {
             throw new MissingRequestBodyException();
         }
         request.validate();
-
         bookService.addReview(request.getTitle(), request.getRate(), request.getComment());
         Response response = new Response("success", "Review added successfully", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
