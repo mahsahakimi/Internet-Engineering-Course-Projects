@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { UserProvider } from './UserContex.jsx';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';

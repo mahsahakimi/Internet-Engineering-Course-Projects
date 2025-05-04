@@ -8,6 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddToCartRequest {
     private String title;
+    private int days;
 
     public void validate() {
         if (title == null || title.isEmpty()) {

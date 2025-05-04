@@ -5,11 +5,8 @@ import '../../stylesheets/SignInPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
 import EmptySpace from '../../components/EmptySpace';
-import SVGEyeSlash from '../../components/SVGEyeSlash';
-import SVGEyeIcon from '../../components/SVGEyeIcon';
 
 function SignInPage() {
-  // Model
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -82,15 +79,6 @@ function SignInPage() {
         if (response.ok && response.status === 200) {
           const activeUser = { userInfo: responseData.data };
 
-          // SAVE the response data into a file
-          // const blob = new Blob([JSON.stringify(activeUser, null, 2)], { type: 'text/plain' });
-          // const url = URL.createObjectURL(blob);
-          // const a = document.createElement('a');
-          // a.href = url;
-          // a.download = 'backend_response.txt'; // file name
-          // a.click();
-          // URL.revokeObjectURL(url);
-
           setUser(activeUser);
           localStorage.setItem('activeUser', JSON.stringify(activeUser));
           navigate('/');
@@ -154,7 +142,7 @@ function SignInPage() {
                     type="button"
                     onClick={togglePasswordVisibility}
                   >
-                    {showPassword ? ( <SVGEyeSlash/> ) : (<SVGEyeIcon/>)}
+                    {showPassword ? ( <i class="bi bi-eye-slash-fill"></i> ) : (<i class="bi bi-eye-fill"></i>)}
                   </button>
 
                 </div>

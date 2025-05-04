@@ -100,9 +100,9 @@ public class BookService {
         if (book == null) {
             throw new BookNotFoundException(title);
         }
-        if (!user.getOwnedBooks().contains(book) && user.getBorrowedBooks().stream().noneMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
-            throw new BookNotOwnedException();
-        }
+        // if (!user.getOwnedBooks().contains(book) && user.getBorrowedBooks().stream().noneMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
+        //     throw new BookNotOwnedException();
+        // }
         if (rate < 1 || rate > 5) {
             throw new InvalidRatingException();
         }

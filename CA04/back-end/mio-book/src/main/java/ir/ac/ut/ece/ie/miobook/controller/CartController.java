@@ -27,8 +27,7 @@ public class CartController {
             throw new MissingRequestBodyException();
         }
         request.validate();
-
-        cartService.addToCart(request.getTitle());
+        cartService.addToCart(request.getTitle(), request.getDays());
         Response response = new Response("success", "Book added to cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

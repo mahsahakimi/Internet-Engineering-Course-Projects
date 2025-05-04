@@ -81,4 +81,13 @@ public class UserController {
         Response response = new Response("success", "Purchased books retrieved.", purchasedBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/book_status")
+    public ResponseEntity<Response> bookStatus(@RequestParam("title") String title) {
+        // in cart, buy, borrow, nothing!
+
+        String Status = userService.getBookStatus(title);
+        Response response = new Response("success", "Purchased books retrieved.", Status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -1,33 +1,13 @@
 import React from 'react';
 import '../../stylesheets/General.css';
 import bookpng from '../../../src/images/book.png';
-import SVGStar from '../../components/SVGStar';
-import SVGStarFill from '../../components/SVGStarFill';
-import SVGStarHalfFill from '../SVGStarHalfFill';
 import { Link } from 'react-router-dom';
+import StarRatingRenderer from '../StarRatingRenderer';
 
 
 function BookCard({book}) {
 
     const rating = book?.averageRating || 0;
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    const renderStars = () => {
-        const stars = [];
-
-        for (let i = 0; i < fullStars; i++) {
-            stars.push(<SVGStarFill size="14" />);
-        }
-        if (hasHalfStar) {
-            stars.push(<SVGStarHalfFill size="14" />);
-        }
-        for (let i = 0; i < emptyStars; i++) {
-            stars.push(<SVGStar size="14" />);
-        }
-        return stars;
-    };
 
     return (
         <div className="book-card">
@@ -40,7 +20,7 @@ function BookCard({book}) {
             </div>
             <div className="row align-items-center mb-3 px-3">
                 <div className="col-8">
-                    {renderStars()}
+                    {<StarRatingRenderer rating={rating}/>}
                 </div>
                 <div className="col-4">
                     <span className="fs-6">${book?.price}</span>

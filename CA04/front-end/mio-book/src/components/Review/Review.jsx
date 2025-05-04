@@ -24,7 +24,7 @@ function Review({br}) {
                         <p className="text-secondary">{br?.comment}</p>
                     </div>
                     <div className="col-sm-3 col-4 text-end">
-                        <StarRatingRenderer rating={br?.rate} size={16} />
+                        <StarRatingRenderer rating={br?.rate}/>
                         <small className="text-secondary">{formatted}</small>
                     </div>
                 </div>

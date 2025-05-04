@@ -7,10 +7,7 @@ import '../../stylesheets/General.css';
 import EmptySpace from '../../components/EmptySpace';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../UserContex';
-import SVGPersonCircle from '../../components/SVGPersonCircle';
-import SVGMail from '../../components/SVGMail';
-import SVGBook from '../../components/SVGBook';
-import SVGCoin from '../../components/SVGCoin';
+
 
 function UserPage() {
     const [formData, setFormData] = useState({
@@ -132,7 +129,7 @@ function UserPage() {
             <div className="row justify-content-center">
                 <div className="row col-sm-10">
                     <div className="container white-box col-sm-8">
-                        <div className="m-3"><h3> <SVGCoin size="28"/> {user?.userInfo?.balance}</h3></div>
+                        <div className="m-3"><h3> <i class="bi bi-coin"></i> {user?.userInfo?.balance}</h3></div>
                         <div className="d-flex">
                         <input 
                             type="text" 
@@ -153,18 +150,14 @@ function UserPage() {
                     </div>
                     <div className="col-sm-1"></div>
                     <div className="user-info container white-box col-sm-3">
-                        <p>
-                            <strong><SVGPersonCircle size="20"/> {user?.userInfo?.username} </strong>
-                            </p>
-                        <p>
-                            <SVGMail size="20"/> {user?.userInfo?.email}
-                            </p>
+                        <p><strong><i class="bi bi-person-circle"></i> {user?.userInfo?.username} </strong></p>
+                        <p><i class="bi bi-envelope"></i> {user?.userInfo?.email} </p>
                         <button  onClick={handleLogout} className="btn gray-btn col-sm-6">logout</button>
                     </div>
                 </div>
                 <EmptySpace />
                 <div className="container white-box col-sm-10">
-                    <h4 className="mb-4 ms-1 fw-bold"> <SVGBook size="32" /> My Books </h4>
+                    <h4 className="mb-4 ms-1 fw-bold"> <i class="bi bi-book"></i> My Books </h4>
                     {user?.userInfo?.ownedBooks?.length + user?.userInfo?.borrowedBooks?.length !== 0 ? (
                         <ul>
                             

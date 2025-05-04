@@ -5,8 +5,6 @@ import '../../stylesheets/SignUpPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
 import EmptySpace from '../../components/EmptySpace';
-import SVGEyeIcon from '../../components/SVGEyeIcon';
-import SVGEyeSlash from '../../components/SVGEyeSlash';
 
 function SignUpPage() {
   // Model
@@ -229,7 +227,7 @@ function SignUpPage() {
                     type="button"
                     onClick={togglePasswordVisibility}
                   >
-                    {showPassword ? ( <SVGEyeSlash/> ) : (<SVGEyeIcon/>)}
+                    {showPassword ? ( <i class="bi bi-eye-slash-fill"></i> ) : (<i class="bi bi-eye-fill"></i>)}
                   </button>
                 </div>
                 {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
