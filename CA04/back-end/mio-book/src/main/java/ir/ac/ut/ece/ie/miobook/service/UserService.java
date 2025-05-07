@@ -38,7 +38,6 @@ public class UserService {
         }
 
         List<Map<String, Object>> books = new ArrayList<>();
-
         // Add owned books
         for (Book book : user.getOwnedBooks()) {
             Map<String, Object> bookData = new HashMap<>();
@@ -83,6 +82,38 @@ public class UserService {
         } catch (IOException e) {
             throw new RuntimeException("Could not convert purchased books to JSON.", e);
         }
+    }
+
+    public String getBookStatus(String title) {
+        User user = userDatabase.getLoggedInUser();
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+        if (user.getRole() == Role.admin) {
+            throw new PermissionDeniedException(Role.admin.toString());
+        }
+        String status = null;
+        for (Book book : user.getOwnedBooks()) {
+            if(book.getTitle() == title){
+                status = "buy";
+                return status;
+            }
+        }
+        for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
+            if (borrowedBook.canAccessBook()) {
+                Book book = borrowedBook.getBook();
+                if(book.getTitle() == title){
+                    status = "borrow";
+                    return status;
+                }
+            }
+        }
+        Book book = bookDatabase.findBookByTitle(title);
+        if (user.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
+            status = "cart";
+            return status;
+        }
+        return status;
     }
 
     public String getPurchaseHistory() {
@@ -189,7 +220,7 @@ public class UserService {
         }
     }
 
-    public void addCredit(int credit) {
+    public int addCredit(int credit) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -205,6 +236,7 @@ public class UserService {
         }
 
         user.setBalance(user.getBalance() + credit);
+        return user.getBalance();
     }
 
     public void addUser(String role, String username, String password, String email, Address address) {

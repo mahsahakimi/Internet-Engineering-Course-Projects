@@ -1,18 +1,18 @@
 import React from 'react';
 import '../../stylesheets/General.css';
+import '../../stylesheets/navbar.css';
 import logo from '../../../src/images/LOGO.png';
+import ProfileButton from '../ProfileButton';
 
 function Nav() {
   return (
-      <body>
+      <div>
           <nav className="navbar bg-white shadow-sm">
-              <div className="container-fluid d-flex">
-                  <a className="navbar-brand d-flex" href="#">
-                      <div className="logo-container ms-5">
-                          <img src={logo} alt="Meow Logo" className="logo-cover" />
-                      </div>
+              <div className="container-fluid d-flex col-11">
+                  <a className="navbar-brand d-flex logo-container" href="/">
+                        <img src={logo} alt="Meow Logo" className="logo-cover" />
                   </a>
-                  <div className="search-container d-flex col-6">
+                  <div className="search-container d-flex col-7">
                       <div className="dropdown">
                           <button className="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                               Author
@@ -23,13 +23,12 @@ function Nav() {
                               <li><a className="dropdown-item" href="#">Publisher</a></li>
                           </ul>
                       </div>
-                      <div className="border-start mx-3"></div>
                       <input type="text" className="form-control search-box" placeholder="Search" />
                   </div>
-                  <button className="btn green-btn ">Buy now</button>
+                  <ProfileButton />
               </div>
           </nav>
-    </body>
+    </div>
   );
 }
 

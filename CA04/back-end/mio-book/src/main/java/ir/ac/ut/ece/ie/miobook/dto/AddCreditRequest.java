@@ -8,7 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddCreditRequest {
     private Integer credit;
-
+    
     public void validate() {
         if (credit == null) {
             throw new MissingRequiredFieldsException("credit");

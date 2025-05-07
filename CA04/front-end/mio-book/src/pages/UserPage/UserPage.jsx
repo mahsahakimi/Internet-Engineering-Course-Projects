@@ -1,68 +1,225 @@
-import React from 'react';
+import React , { useContext, useState } from 'react';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import BookDetailsCard from '../../components/BookDetailsCard';
 import '../../stylesheets/UserPage.css';
 import '../../stylesheets/General.css';
+import EmptySpace from '../../components/EmptySpace';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
+
 
 function UserPage() {
-  return (
-    <body>
-        <Nav />
+    const [formData, setFormData] = useState({
+        amount: '',
+    });
+    const [errors, setErrors] = useState({});
+    const { user, setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    if(!user){
+        setUser(localUser)
+    }
 
-        <div className="row justify-content-center">
-            <div className="row col-sm-10">
-                <div className="account-box container white-box col-sm-8">
-                    <div className="m-3"><h3>$1,000</h3></div>
-                    <div className="d-flex">
-                        <input type="text" className="form-control me-2" placeholder="$Amount" />
-                        <button className="btn col-sm-3 gray-btn">Add more credit</button>
+    const handleChange = (e) => {    
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+        if (errors[name]) {
+            setErrors({
+                ...errors,
+                [name]: null,
+            });
+        }
+        
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        let isValid = true;
+    
+        if (!formData.amount.trim()) {
+            newErrors.amount = 'Enter a value';
+            isValid = false;
+        } else if (isNaN(Number(formData.amount))) {
+            newErrors.amount = 'Enter a valid number';
+            isValid = false;
+        } else if (Number(formData.amount) <= 0) {
+            newErrors.amount = 'Amount must be greater than zero';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+    
+
+    const handleLogout = async () => {
+        try{
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                // credentials: 'include', // Important if your backend uses cookies/session
+            });
+            
+            if(response.ok){
+                setUser(null);
+                localStorage.removeItem('activeUser');
+                navigate('/signin');
+            } else {
+                console.error('Logout failed.');
+            }
+            
+        } catch (error) {
+            console.error('Error while logging out:', error);
+        }
+    };
+
+    const handleAddCredit = async () => {
+        if (validateForm()) {
+            setErrors({});
+            try{
+                const response = await fetch('/api/users/addcredit', {
+                    method: 'POST',
+                    headers: {  
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        credit: formData.amount,
+                    }),
+                });
+                
+                const responseData = await response.json();
+
+                if(responseData.status === "success"){
+                    const newBalance = responseData.data;
+
+                    const currentUser = user || JSON.parse(localStorage.getItem('activeUser'));
+                    const updatedUser = {
+                        ...currentUser,
+                        userInfo: {
+                            ...currentUser.userInfo,
+                            balance: newBalance,
+                        },
+                    };
+                    
+                    setUser(updatedUser);
+                    localStorage.setItem('activeUser', JSON.stringify(updatedUser));
+    
+                } else {
+                    const newErrors = {};
+                    newErrors.amount = responseData.message;
+                    setErrors(newErrors);
+                    console.error('Failed :', responseData.message);
+                }
+            } catch (error) {
+                const newErrors = {};
+                newErrors.amount = error;
+                setErrors(newErrors);
+                console.error('Error while adding credit:', error);
+            }
+        }
+    }
+
+    return (
+        <div>
+            <Nav />
+            <EmptySpace />
+            <div className="row justify-content-center">
+                <div className="row col-sm-10">
+                    <div className="container white-box col-sm-8">
+                        <div className="m-3"><h3> <i class="bi bi-coin"></i> {user?.userInfo?.balance}</h3></div>
+                        <div className="d-flex">
+                        <input 
+                            type="text" 
+                            name="amount"
+                            value={formData.amount}
+                            onChange={handleChange}
+                            className={`form-control me-2 ${errors.amount ? 'is-invalid' : ''}`}
+                            placeholder="$Amount"
+                        />
+                            <button 
+                            className="btn col-sm-3 gray-btn"
+                            onClick={handleAddCredit}
+                            >
+                                Add more credit
+                            </button>
+                        </div>
+                        {errors.amount && <div className="text-danger">{errors.amount}</div>}
+                    </div>
+                    <div className="col-sm-1"></div>
+                    <div className="user-info container white-box col-sm-3">
+                        <p><strong><i class="bi bi-person-circle"></i> {user?.userInfo?.username} </strong></p>
+                        <p><i class="bi bi-envelope"></i> {user?.userInfo?.email} </p>
+                        <button  onClick={handleLogout} className="btn gray-btn col-sm-6">logout</button>
                     </div>
                 </div>
-                <div className="col-sm-1"></div>
-                <div className="user-info container white-box col-sm-3">
-                    <p>
-                        <strong>👤 SanaNavaei</strong>
-                        </p>
-                    <p>
-                        📧 sana.sarinavaei@gmail.com
-                        </p>
-                    <button className="btn gray-btn col-sm-6">logout</button>
+                <EmptySpace />
+                <div className="container white-box col-sm-10">
+                    <h4 className="mb-4 ms-1 fw-bold"> <i class="bi bi-book"></i> My Books </h4>
+                    {user?.userInfo?.ownedBooks?.length + user?.userInfo?.borrowedBooks?.length !== 0 ? (
+                        <ul>
+                            
+                            {/* <table className="table">
+                                    <thead className="table-light">
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Author</th>
+                                        <th>Genre</th>
+                                        <th>Publisher</th>
+                                        <th>Published Year</th>
+                                        <th>Status</th>
+                                        <th> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <BookDetailsCard />
+                                    <BookDetailsCard />
+                                    </tbody>
+                                </table> */}
+
+                            {user?.userInfo?.ownedBooks.map((book, index) => (
+                                <li key={index}>{book.title}</li>
+                            ))}
+                        </ul>
+
+                    ) : ( 
+                        <div class="empty-state">
+                            <svg class="empty-illustration" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
+                                <circle cx="100" cy="100" r="80" fill="#f5f5f5"/>
+                            
+                                <path d="M70 70 H130 A4 4 0 0 1 134 74 V126 A4 4 0 0 1 130 130 H70 A4 4 0 0 1 66 126 V74 A4 4 0 0 1 70 70 Z" 
+                                    fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                                <line x1="85" y1="70" x2="85" y2="130" stroke="#e0e0e0" stroke-width="2"/>
+                            
+                                <line x1="90" y1="85" x2="125" y2="85" stroke="#e0e0e0" stroke-width="1"/>
+                                <line x1="90" y1="95" x2="125" y2="95" stroke="#e0e0e0" stroke-width="1"/>
+                                <line x1="90" y1="105" x2="125" y2="105" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                                <circle cx="95" cy="115" r="2" fill="#b0b0b0"/>
+                                <circle cx="115" cy="115" r="2" fill="#b0b0b0"/>
+                                <path d="M98 122 Q105 115 112 122" stroke="#b0b0b0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                            
+                                <path d="M138 68 Q138 64 142 64 Q145 64 145 68 Q145 70 142 71 Q140 72 140 74" stroke="#e0e0e0" stroke-width="1.5" fill="none"/>
+                                <circle cx="140" cy="77" r="1.5" fill="#e0e0e0"/>
+                            </svg>
+                            <p class="empty-message">No book available!</p>
+                        </div>
+
+
+
+                    )}
+
+                    
                 </div>
             </div>
-            <div className="cart-box container white-box col-sm-10">
-                <h4 className="mb-4 ms-1 fw-bold">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="icon" viewBox="0 1 16 16">
-                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5z"/>
-                        <path d="M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                    </svg>
-                    My Books
-                </h4>
-                <table className="table">
-                    <thead className="table-light">
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Author</th>
-                        <th>Genre</th>
-                        <th>Publisher</th>
-                        <th>Published Year</th>
-                        <th>Status</th>
-                        <th> </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <BookDetailsCard />
-                    <BookDetailsCard />
-                    </tbody>
-                </table>
-            </div>
+
+            <Footer />
+
         </div>
-
-        <Footer />
-
-    </body>
-  );
+    );
 };
 
 export default UserPage;

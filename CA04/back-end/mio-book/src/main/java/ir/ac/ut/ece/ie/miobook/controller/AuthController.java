@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ir.ac.ut.ece.ie.miobook.model.User;
 
 @RestController
 public class AuthController {
@@ -24,14 +25,14 @@ public class AuthController {
         // Allows a user to log in.
         // Parameters: UserLoginRequest object containing username and password.
         // Returns: Success message if login is successful, or an error if login fails.
-        // Example: POST /users/login with UserLoginRequest in the request body.
+        // Example: POST /login with UserLoginRequest in the request body.
         if(request == null){
             throw new MissingRequestBodyException();
         }
         request.validate();
 
-        authService.userLogin(request.getUsername(), request.getPassword());
-        Response response = new Response("success", "User logged in successfully.", null);
+        User logged_in = authService.userLogin(request.getUsername(), request.getPassword());
+        Response response = new Response("success", "User logged in successfully.", logged_in);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -39,7 +40,7 @@ public class AuthController {
     public ResponseEntity<Response> userLogin() {
         // Logs out the currently logged-in user.
         // Returns: Success message after successful logout.
-        // Example: POST /users/logout
+        // Example: POST /logout
 
         authService.userLogout();
         Response response = new Response("success", "User logged out successfully.", null);

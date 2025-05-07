@@ -25,7 +25,7 @@ public class CartService {
         this.bookDatabase = bookDatabase;
     }
 
-    public void addToCart(String title) {
+    public void addToCart(String title, int day) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -51,7 +51,7 @@ public class CartService {
         if (user.getBorrowedBooks().stream().anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
             throw new BookAlreadyBorrowedException(title);
         }
-        CartElement newElement = new CartElement(book, 0);
+        CartElement newElement = new CartElement(book, day);
         user.getCart().add(newElement);
     }
 

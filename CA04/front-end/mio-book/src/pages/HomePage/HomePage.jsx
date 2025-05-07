@@ -1,17 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
 import book from '../../../src/images/book.png';
 import '../../stylesheets/HomePage.css';
 import '../../stylesheets/General.css';
+import EmptySpace from '../../components/EmptySpace';
 
 
 function HomePage() {
+    
+    const [newReleases, setNewReleases] = useState([]);
+    const [topRated, setTopRated] = useState([]);
+
+    const fetchNewReleases = async () => {
+        try {
+            const response = await fetch('/api/books/newRelease');
+            const responseData = await response.json();
+
+            if (responseData.status === "success") {
+                setNewReleases(responseData.data);
+            } else {
+                console.error("Failed to fetch new releases.");
+            }
+        } catch (error) {
+            console.error("Error fetching new releases:", error);
+        }
+    };
+
+    const fetchTopRated = async () => {
+        try {
+            const response = await fetch('/api/books/topRated');
+            const responseData = await response.json();
+            
+            if (responseData.status === "success") {
+                setTopRated(responseData.data);
+            } else {
+                console.error("Failed to fetch yop rated.");
+            }
+        } catch (error) {
+            console.error("Error fetching top rated:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchNewReleases();
+        fetchTopRated();
+    }, []);
+
+
+
     return (
         <body>
             <Nav />
-
+            <EmptySpace />
             <section className="intro-section py-5 mb-5">
                 <div className="container">
                     <div className="row">
@@ -33,52 +75,32 @@ function HomePage() {
 
             <section className="container mb-5">
                 <h2 className="mb-4">New Releases</h2>
-                <div className="row row-cols-1 row-cols-sm-5 ">
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
+                <div className="row row-cols-1 row-cols-sm-5">
+                    {newReleases.length > 0 ? (
+                        newReleases.map((book, index) => (
+                            <div className="col" key={index}>
+                                <BookCard book={book} />
+                            </div>
+                        ))
+                    ) : (
+                        <p>Loading...</p>
+                    )}
                 </div>
             </section>
 
 
             <section className="container mb-5">
-                <h2 className="mb-4">Related</h2>
+                <h2 className="mb-4">Top Rated</h2>
                 <div className="row row-cols-1 row-cols-sm-5 ">
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
-
-                    <div className="col">
-                        <BookCard />
-                    </div>
+                {topRated.length > 0 ? (
+                        topRated.map((book, index) => (
+                            <div className="col" key={index}>
+                                <BookCard book={book} />
+                            </div>
+                        ))
+                    ) : (
+                        <p>Loading...</p>
+                    )}
                 </div>
             </section>
 

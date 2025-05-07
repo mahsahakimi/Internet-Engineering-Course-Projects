@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import '../../stylesheets/General.css';
 import '../../stylesheets/Book.css';
 
@@ -37,6 +38,37 @@ function Review({ review }) {
           <div className="col-sm-1 col-2">
             <div className="avatar d-flex align-items-center justify-content-center bg-secondary text-white rounded-circle">
               <span className="fw-bold">{firstTwoLetters}</span>
+{/* ======= */}
+{/* import StarRatingRenderer from '../StarRatingRenderer'; */}
+
+
+{/* function Review({br}) { */}
+
+{/*     const formatted = new Date(`${br?.date?.year}-${br?.date?.month}-${br?.date?.day}`).toLocaleDateString('en-US', { */}
+{/*         year: 'numeric', */}
+{/*         month: 'long', */}
+{/*         day: 'numeric' */}
+{/*     }); */}
+
+{/*     return ( */}
+{/*         <div className="review-card"> */}
+{/*             <div className="card-body"> */}
+{/*                 <div className="row"> */}
+{/*                     <div className="col-sm-1 col-2"> */}
+{/*                         <div className="avatar d-flex align-items-center justify-content-center"> */}
+{/*                             <h3 className="fw-bold">{br?.username?.charAt(0)}</h3> */}
+{/*                         </div> */}
+{/*                     </div> */}
+{/*                     <div className="col-sm-8 col-6"> */}
+{/*                         <p className="fw-bold mb-1">{br?.username}</p> */}
+{/*                         <p className="text-secondary">{br?.comment}</p> */}
+{/*                     </div> */}
+{/*                     <div className="col-sm-3 col-4 text-end"> */}
+{/*                         <StarRatingRenderer rating={br?.rate}/> */}
+{/*                         <small className="text-secondary">{formatted}</small> */}
+{/*                     </div> */}
+{/*                 </div> */}
+{/* >>>>>>> refs/remotes/origin/main */}
             </div>
           </div>
           <div className="col-sm-8 col-6">
@@ -48,9 +80,14 @@ function Review({ review }) {
             <small className="text-secondary">{formatDate()}</small>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+// <<<<<<< HEAD
+//       </div>
+//     </div>
+//   );
+// }
+// =======
+    );
+};
+{/* >>>>>>> refs/remotes/origin/main */}
 
 export default Review;

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
 import '../../stylesheets/SignInPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
+import EmptySpace from '../../components/EmptySpace';
 
 function SignInPage() {
-  // Model
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -14,6 +15,7 @@ function SignInPage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Controller
@@ -59,11 +61,11 @@ function SignInPage() {
     if (validateForm()) {
       setIsSubmitting(true);
       setErrors({});
-
+      
       try {
-        const response = await fetch('http://localhost:8080/api/login', {
+        const response = await fetch('/api/login', {
           method: 'POST',
-          headers: {
+          headers: {  
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -75,19 +77,19 @@ function SignInPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 200) {
-          // Login successful, redirect to home page
+          const activeUser = { userInfo: responseData.data };
+
+          setUser(activeUser);
+          localStorage.setItem('activeUser', JSON.stringify(activeUser));
           navigate('/');
-          // You might also want to handle user session/token here
           console.log(responseData.message); // "User logged in successfully."
-        } else {
-          // Handle login errors from the backend
+        } 
+        else {
           if (responseData && responseData.message) {
             setErrors({ general: responseData.message });
           } else {
             setErrors({ general: 'Login failed. Please check your credentials.' });
-          }
-          // Navigate to the error page on login failure
-          navigate('/error', { state: { message: errors.general || 'Login failed.' } });
+          }      
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -107,14 +109,13 @@ function SignInPage() {
   // View
   return (
     <div className="justify-content-center">
-      <div className='row'>""</div>
+      <EmptySpace />
       <div className="row">
         <div className="container white-box col-sm-6">
           <h2 className="text-center">Login</h2>
           <p className="subtitle text-center mb-5">MioBook</p>
           <div className="row justify-content-center">
             <form onSubmit={handleUserLogin} className="col-10 col-sm-8">
-              {errors.general && <div className="alert alert-danger">{errors.general}</div>}
               {/* Username Field */}
               <div className="mb-3">
                 <input
@@ -125,7 +126,6 @@ function SignInPage() {
                   value={formData.username}
                   onChange={handleChange}
                 />
-                {errors.username && <div className="invalid-feedback text-danger">{errors.username}</div>}
               </div>
 
               {/* Password Field */}
@@ -140,14 +140,17 @@ function SignInPage() {
                     onChange={handleChange}
                   />
                   <button
-                    className="btn btn-outline-secondary"
+                    className="btn gray-btn"
                     type="button"
                     onClick={togglePasswordVisibility}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? ( <i class="bi bi-eye-slash-fill"></i> ) : (<i class="bi bi-eye-fill"></i>)}
                   </button>
+
                 </div>
-                {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
+              </div>
+              <div>
+                {errors.general && <div className="text-danger">{errors.general}</div>}
               </div>
 
               {/* Login Button */}
@@ -162,7 +165,7 @@ function SignInPage() {
           </div>
 
           {/* Sign Up Link */}
-          <p className="text-center">
+          <p className="signin-link text-center">
             Don't have an account?
             <Link to="/signup">
               <strong>Sign up</strong>

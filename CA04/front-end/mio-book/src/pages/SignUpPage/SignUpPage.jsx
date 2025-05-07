@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
 import '../../stylesheets/SignUpPage.css';
 import '../../stylesheets/General.css';
 import Footer from '../../components/Footer';
+import EmptySpace from '../../components/EmptySpace';
 
 function SignUpPage() {
   // Model
@@ -17,6 +19,8 @@ function SignUpPage() {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Mock database of existing users (in a real app, this would be an API call)
@@ -46,6 +50,10 @@ function SignUpPage() {
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
@@ -53,9 +61,6 @@ function SignUpPage() {
     // Username validation
     if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
-      isValid = false;
-    } else if (existingUsers.some(user => user.username === formData.username)) {
-      newErrors.username = 'Username already exists';
       isValid = false;
     }
 
@@ -65,9 +70,6 @@ function SignUpPage() {
       isValid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
-      isValid = false;
-    } else if (existingUsers.some(user => user.email === formData.email)) {
-      newErrors.email = 'Email already registered';
       isValid = false;
     }
 
@@ -102,7 +104,7 @@ function SignUpPage() {
       setErrors({}); // Clear previous errors before submitting
 
       try {
-        const response = await fetch('http://localhost:8080/api/users/add', {
+        const response = await fetch('/api/users/add', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -118,31 +120,56 @@ function SignUpPage() {
             },
           }),
         });
-
-        const responseData = await response.json(); // Parse the response body
+        
+        const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          navigate('/'); // Redirect to / on successful registration
-        } else {
-          // Handle backend errors
-          if (responseData && responseData.errors) {
-            // If the backend sends an 'errors' object, process it
-            const backendErrors = {};
-            responseData.errors.forEach(error => {
-              backendErrors[error.field] = error.message;
-            });
-            setErrors(backendErrors);
-          } else if (responseData && responseData.message) {
+          const new_response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: formData.username,
+              password: formData.password,
+            }),
+          });
+
+          const responseData = await new_response.json();
+
+          if (new_response.ok && new_response.status === 200){
+            const activeUser = { userInfo: responseData.data };
+            setUser(activeUser);
+            localStorage.setItem('activeUser', JSON.stringify(activeUser));
+            navigate('/');
+          }
+          else {
+            navigate('/signin')
+          }
+        } 
+        // if error occures
+        else { 
+          if (responseData.status == "error") {           
+              if(responseData.message.toLowerCase().includes("username")){
+                setErrors({ username: responseData.message });
+              }
+              if(responseData.message.toLowerCase().includes("password")){
+                setErrors({ password: responseData.message });
+              }
+              if(responseData.message.toLowerCase().includes("email")){
+                setErrors({ email: responseData.message });
+              }
+          }
+          else if (responseData && responseData.message) {
             // If the backend sends a general 'message'
             setErrors({ general: responseData.message });
           } else {
-            // Generic error if no specific message
             setErrors({ general: 'Registration failed. Please try again.' });
           }
         }
       } catch (error) {
         console.error('Registration failed:', error);
-        setErrors({ general: 'Failed to connect to the server.' });
+        setErrors({ general: error.message });
       } finally {
         setIsSubmitting(false);
       }
@@ -163,14 +190,14 @@ function SignUpPage() {
 
   return (
     <div className="justify-content-center">
-      <div className='row'>""</div>
+      <EmptySpace />
       <div className="row">
         <div className="container white-box col-sm-6">
           <h2 className="text-center">Sign Up</h2>
           <p className="subtitle text-center mb-5">MioBook</p>
           <div className="row justify-content-center">
             <form onSubmit={handleSubmit} className="col-10 col-sm-8">
-              {errors.general && <div className="alert alert-danger">{errors.general}</div>}
+            {errors.general && <div className="alert alert-danger">{errors.general}</div>}
               {/* Username Field */}
               <div className="mb-3">
                 <input
@@ -186,14 +213,23 @@ function SignUpPage() {
 
               {/* Password Field */}
               <div className="mb-3">
-                <input
-                  type="password"
-                  className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div className="input-group">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    className="btn gray-btn"
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? ( <i class="bi bi-eye-slash-fill"></i> ) : (<i class="bi bi-eye-fill"></i>)}
+                  </button>
+                </div>
                 {errors.password && <div className="invalid-feedback text-danger">{errors.password}</div>}
               </div>
 
