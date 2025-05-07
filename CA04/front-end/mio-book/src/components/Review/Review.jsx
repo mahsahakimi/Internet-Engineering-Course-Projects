@@ -1,33 +1,56 @@
 import React from 'react';
+import '../../stylesheets/General.css';
+import '../../stylesheets/Book.css';
 
-function Review() {
+function Review({ review }) {
+  if (!review) {
+    return null;
+  }
+
+  const { rate, comment, username } = review;
+  const firstTwoLetters = username ? username.substring(0, 2).toUpperCase() : 'XX'; // For the avatar
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < rating) {
+        stars.push(<i key={i} className="fas fa-star fa-sm text-warning"></i>);
+      } else {
+        stars.push(<i key={i} className="far fa-star fa-sm text-warning"></i>);
+      }
+    }
+    return stars;
+  };
+
+  const formatDate = () => {
+    const now = new Date();
+    const month = now.toLocaleString('default', { month: 'long' });
+    const day = now.getDate();
+    const year = now.getFullYear();
+    return `${month} ${day}, ${year}`;
+  };
+
   return (
     <div className="review-card">
-        <div className="card-body">
-            <div className="row">
-                <div className="col-sm-1 col-2">
-                    <div className="avatar d-flex align-items-center justify-content-center">
-                        <span className="text-secondary fw-bold">TW</span>
-                    </div>
-                </div>
-                <div className="col-sm-8 col-6">
-                    <p className="fw-bold mb-1">The Person</p>
-                    <p className="text-secondary">I bought it 3 weeks ago and now come back just to say "Awesome". I really enjoyed it.</p>
-                </div>
-                <div className="col-sm-3 col-4 text-end">
-                    <div className="text-warning mb-1">
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="far fa-star"></i>
-                    </div>
-                    <small className="text-secondary">February 20, 2025</small>
-                </div>
+      <div className="card-body">
+        <div className="row">
+          <div className="col-sm-1 col-2">
+            <div className="avatar d-flex align-items-center justify-content-center bg-secondary text-white rounded-circle">
+              <span className="fw-bold">{firstTwoLetters}</span>
             </div>
+          </div>
+          <div className="col-sm-8 col-6">
+            <p className="fw-bold mb-1">{username || 'User'}</p>
+            <p className="text-secondary">{comment || 'No comment provided.'}</p>
+          </div>
+          <div className="col-sm-3 col-4 text-end">
+            <div className="text-warning mb-1">{renderStars(rate)}</div>
+            <small className="text-secondary">{formatDate()}</small>
+          </div>
         </div>
+      </div>
     </div>
   );
-};
+}
 
 export default Review;

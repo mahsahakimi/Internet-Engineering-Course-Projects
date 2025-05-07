@@ -25,7 +25,7 @@ function App() {
             <Route path="/results" element={<SearchResult />} />
             <Route path="/book" element={<BookPage />} />
             <Route path="/author" element={<AuthorPage />} />
-            <Route path="/content" element={<BookContentPage />} />
+            <Route path="/book/content" element={<BookContentPage />} />
             <Route path="/user" element={<UserPage />} />
             <Route path="/cart" element={<BuyCartPage />} />
             <Route path="/admin" element={<AdminPage />} />

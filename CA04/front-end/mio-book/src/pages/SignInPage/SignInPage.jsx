@@ -12,7 +12,7 @@ function SignInPage() {
   });
 
   const [errors, setErrors] = useState({});
-  const [isSubmitting, SignInPage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ function SignInPage() {
 
         if (response.ok && response.status === 200) {
           // Login successful, redirect to home page
-          navigate('/home');
+          navigate('/');
           // You might also want to handle user session/token here
           console.log(responseData.message); // "User logged in successfully."
         } else {
@@ -86,10 +86,14 @@ function SignInPage() {
           } else {
             setErrors({ general: 'Login failed. Please check your credentials.' });
           }
+          // Navigate to the error page on login failure
+          navigate('/error', { state: { message: errors.general || 'Login failed.' } });
         }
       } catch (error) {
         console.error('Login error:', error);
         setErrors({ general: 'Failed to connect to the server.' });
+        // Navigate to the error page on network error
+        navigate('/error', { state: { message: 'Failed to connect to the server.' } });
       } finally {
         setIsSubmitting(false);
       }
