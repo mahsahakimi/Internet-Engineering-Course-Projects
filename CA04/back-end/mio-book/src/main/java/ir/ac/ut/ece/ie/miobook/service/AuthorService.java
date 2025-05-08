@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,22 +27,22 @@ public class AuthorService {
         this.userDatabase = userDatabase;
     }
 
-    public void addAuthor(String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
+    public List<Author> addAuthor(String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
         User whoAdded = userDatabase.getLoggedInUser();
-
         if (whoAdded == null) {
             throw new UserNotLoggedInException();
         }
-        if (whoAdded.getRole() == Role.customer) {
-            throw new PermissionDeniedException(Role.customer.toString());
-        }
+        // if (whoAdded.getRole() == Role.customer) {
+        //     throw new PermissionDeniedException(Role.customer.toString());
+        // }
 
-        if (!BornDiedValidator.validateBornDied(born.toLocalDate(), died.toLocalDate())) {
+        if (!BornDiedValidator.validateBornDied(born.toLocalDate(), died != null ? died.toLocalDate() : null)) {
             throw new InvalidDatesException();
         }
 
         Author author = new Author(name, penName, nationality, born, died);
         authorDatabase.addAuthor(author);
+        return authorDatabase.getAuthors();
     }
 
     public String getAuthorDetails(String authorName) {

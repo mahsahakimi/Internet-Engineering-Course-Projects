@@ -15,7 +15,9 @@ function BookCard({book}) {
                 <img src={bookpng} className="book-img book-cover col-12" alt="Book Cover" />
             </Link>            
             <div className="p-3 text-center">
-                <h5 className="mb-1">{book?.title}</h5>
+                <Link to={`/book-details?title=${encodeURIComponent(book?.title)}`}>
+                    <h5 className="mb-1">{book?.title}</h5>
+                </Link>  
                 <p className="text-muted mb-2">{book?.author}</p>
             </div>
             <div className="row align-items-center mb-3 px-3">

@@ -10,16 +10,11 @@ function AuthorInfo({ author, bookCount }) {
   const { name, penName, nationality, born } = author;
   const died = author.died ? new Date(author.died).toLocaleDateString() : 'Still Alive';
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
 
   return (
     <div className="container mb-5">
       <div className="row justify-content-center">
-        <div className="col-4">
+        <div className="col-3">
           <h2 className="fw-bold">{name || 'Author Name'}</h2>
         </div>
         <div className="col-6 col-sm-2 mb-2">
@@ -42,7 +37,7 @@ function AuthorInfo({ author, bookCount }) {
           <br />
           <strong className="text-dark">{died}</strong>
         </div>
-        <div className="col-6 col-sm-2 mb-2">
+        <div className="col-6 col-sm-1 mb-2">
           <small>Books</small>
           <br />
           <strong className="text-dark">{bookCount}</strong>

@@ -7,6 +7,7 @@ import AuthorInfo from '../../components/AuthorInfo';
 import AuthorHeader from '../../components/AuthorHeader';
 import '../../stylesheets/General.css';
 import '../../stylesheets/Author.css';
+import EmptySpace from '../../components/EmptySpace';
 
 function AuthorPage() {
   const location = useLocation();
@@ -33,7 +34,7 @@ function AuthorPage() {
       try {
         // Fetch author details
         const detailsResponse = await fetch(
-          `http://localhost:8080/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`
+          `/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`
         );
 
         if (!detailsResponse.ok) {
@@ -60,7 +61,7 @@ function AuthorPage() {
 
         // Fetch author's books
         const booksResponse = await fetch(
-          `http://localhost:8080/api/books/search_by_author?name=${encodeURIComponent(
+          `/api/books/search_by_author?name=${encodeURIComponent(
             authorNameFromURL
           )}&page=1&pageSize=10`
         );
@@ -97,47 +98,51 @@ function AuthorPage() {
 
   if (loading) {
     return (
-      <body>
+      <>
         <Nav />
         <div className="container mt-5">
           <p>Loading author details and books...</p>
         </div>
         <Footer />
-      </body>
+      </>
     );
   }
 
   if (error) {
     return (
-      <body>
+      <>
         <Nav />
         <div className="container mt-5">
           <p className="text-danger">{error}</p>
         </div>
         <Footer />
-      </body>
+      </>
     );
   }
 
   if (!authorDetails) {
     return (
-      <body>
+      <>
         <Nav />
         <div className="container mt-5">
           <p>Could not load author details.</p>
         </div>
         <Footer />
-      </body>
+      </>
     );
   }
 
   return (
-      <body>
+      <>
           <Nav />
 
           <AuthorHeader name={authorDetails.name} />
 
+          <EmptySpace />
+          <EmptySpace />
+
           <AuthorInfo author={authorDetails} bookCount={authorBooks.length} />
+          <EmptySpace />
 
           <section className="container mb-5">
               <div className="row row-cols-1 row-cols-sm-5">
@@ -149,7 +154,7 @@ function AuthorPage() {
               </div>
           </section>
           <Footer />
-      </body>
+      </>
     );
 }
 

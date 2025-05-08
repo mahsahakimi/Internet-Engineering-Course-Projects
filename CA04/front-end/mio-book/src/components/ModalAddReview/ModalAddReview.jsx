@@ -79,7 +79,7 @@ const ModalAddReview = ({ show, onClose, onSubmit, bookTitle }) => {
 
                       <div className="d-flex flex-column align-items-center w-100">
                       <button
-                          className="btn gray-btn mb-3 col-12"
+                          className={`btn ${rating === 0 || reviewText.trim() === '' ? 'gray-btn' : 'green-btn'} mb-3 col-12`}
                           onClick={handleSubmit}
                           disabled={rating === 0 || reviewText.trim() === ''}
                       >

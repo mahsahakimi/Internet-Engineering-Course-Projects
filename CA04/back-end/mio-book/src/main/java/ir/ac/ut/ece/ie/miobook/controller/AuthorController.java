@@ -5,6 +5,7 @@ import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
+import ir.ac.ut.ece.ie.miobook.model.Author;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.PrintStream;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
@@ -41,9 +44,9 @@ public class AuthorController {
             throw new InvalidDateFormatException();
         }
 
-        authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
+        List<Author> newList = authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
 
-        Response response = new Response("success", "Author added successfully.", null);
+        Response response = new Response("success", "Author added successfully.", newList);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
