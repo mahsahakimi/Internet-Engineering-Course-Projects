@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @Service
 public class BookService {
@@ -32,14 +34,14 @@ public class BookService {
         this.reviewDatabase = reviewDatabase;
     }
 
-    public void addBook(String title, String authorName, String publisher, int year, int price, List<String> genres, String synopsis, String content) {
+    public void addBook(String title, String authorName, String publisher, int year, int price, String genres, String synopsis, String content) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.customer) {
-            throw new PermissionDeniedException(Role.customer.toString());
-        }
+        // if (user.getRole() == Role.customer) {
+        //     throw new PermissionDeniedException(Role.customer.toString());
+        // }
         Author author = authorDatabase.findAuthorByName(authorName);
         if (author == null) {
             throw new AuthorNotFoundException(authorName);
@@ -51,7 +53,8 @@ public class BookService {
                 (author.getDied() != null && author.getDied().getYear() < year)) {
             throw new AuthorLifespanException();
         }
-        Book book = new Book(title, author, publisher, year, genres, price, synopsis, content);
+        List<String> genres_list = Stream.of(genres.split(",")).map(String::trim).toList();
+        Book book = new Book(title, author, publisher, year, genres_list, price, synopsis, content);
         bookDatabase.addBook(book);
     }
 

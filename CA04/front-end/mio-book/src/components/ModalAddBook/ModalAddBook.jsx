@@ -5,18 +5,18 @@ const ModalAddBook = ({ show, onClose, onSubmit }) => {
     const [step, setStep] = useState(1);
 
     const [formData, setFormData] = useState({
-        name: '',
-        author: '',
-        publisher: '',
-        genres: '',
-        year: '',
-        price: '',
-        imageLink: '',
-        synopsis: '',
-        content: ''
+        title: null,
+        author: null,
+        publisher: null,
+        genres: null,
+        year: null,
+        price: null,
+        imageLink: null,
+        synopsis: null,
+        content: null
     });
 
-    const isStepOneComplete = formData.name && formData.author && formData.publisher && formData.genres && formData.year && formData.price && formData.imageLink;
+    const isStepOneComplete = formData.title && formData.author && formData.publisher && formData.genres && formData.year && formData.price && formData.imageLink;
     const isStepTwoComplete = formData.synopsis && formData.content;
 
     const handleChange = (e) => {
@@ -29,22 +29,22 @@ const ModalAddBook = ({ show, onClose, onSubmit }) => {
     const handleClose = () => {
         setStep(1);
         setFormData({
-            name: '',
-            author: '',
-            publisher: '',
-            genres: '',
-            year: '',
-            price: '',
-            imageLink: '',
-            synopsis: '',
-            content: ''
+            title: null,
+            author: null,
+            publisher: null,
+            genres: null,
+            year: null,
+            price: null,
+            imageLink: null,
+            synopsis: null,
+            content: null
         });
         onClose();
     };
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('/api/books/add_book', {
+            const response = await fetch('/api/books/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -76,7 +76,7 @@ const ModalAddBook = ({ show, onClose, onSubmit }) => {
                         <div className="modal-body">
                             {step === 1 ? (
                                 <>
-                                    <input className="form-control mb-2" placeholder="Name" name="name" value={formData.name} onChange={handleChange} />
+                                    <input className="form-control mb-2" placeholder="Name" name="title" value={formData.title} onChange={handleChange} />
                                     <input className="form-control mb-2" placeholder="Author" name="author" value={formData.author} onChange={handleChange} />
                                     <input className="form-control mb-2" placeholder="Publisher" name="publisher" value={formData.publisher} onChange={handleChange} />
                                     <input className="form-control mb-2" placeholder="Genres" name="genres" value={formData.genres} onChange={handleChange} />

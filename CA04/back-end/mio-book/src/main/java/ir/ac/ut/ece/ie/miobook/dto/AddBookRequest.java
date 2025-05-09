@@ -16,7 +16,7 @@ public class AddBookRequest {
     private String price;
     private String synopsis;
     private String content;
-    private List<String> genres;
+    private String genres;
 
     public void validate() {
         if (author == null || author.isEmpty()) {
