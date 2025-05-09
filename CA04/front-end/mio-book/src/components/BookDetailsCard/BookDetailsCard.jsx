@@ -1,19 +1,17 @@
 import React from 'react';
 import designBook from '../../../src/images/designBook.jpg';
 
-function BookDetailsCard() {
+function BookDetailsCard({book}) {
   return (
       <tr>
           <td><img src={designBook} className="product-img" /></td>
-          <td>The Design of Books</td>
-          <td>Debbie Berne</td>
-          <td>Guide</td>
-          <td>The Publishers</td>
-          <td>2024</td>
-          <td>Owned</td>
-          <th>
-              <button className="btn gray-btn col-sm-12">Read</button>
-          </th>
+          <td>{book?.title}</td>
+          <td>{book?.author}</td>
+          <td>{book?.genre?.join(", ")}</td>
+          <td>{book?.publisher}</td>
+          <td>{book?.year}</td>
+          <td>{book?.price}</td>
+          <th>{10}</th>
       </tr>
   );
 };

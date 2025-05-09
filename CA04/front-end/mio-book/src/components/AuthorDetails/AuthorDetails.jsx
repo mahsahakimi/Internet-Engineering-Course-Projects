@@ -1,15 +1,18 @@
 import React from 'react';
-import author from '../../../src/images/author.jpg';
+import authorPNG from '../../../src/images/author.jpg';
 
-function AuthorDetails() {
+function AuthorDetails({author}) {
   return (
       <tr>
-          <td><img src={author} className="product-img" /></td>
-          <td>Stephen King</td>
-          <td>DRichard Bachman</td>
-          <td>American</td>
-          <td>1947-09-21</td>
-          <td>-</td>
+          <td><img src={authorPNG} className="product-img" /></td>
+          <td>{author?.name}</td>
+          <td>{author?.penName}</td>
+          <td>{author?.nationality}</td>
+          <td>{author?.born?.year}-{author?.born?.month}-{author?.born?.day}</td>
+          <td> {author?.died
+                ? `${author.died.year}-${author.died.month}-${author.died.day}`
+                : "alive"}
+          </td>
 
       </tr>
   );

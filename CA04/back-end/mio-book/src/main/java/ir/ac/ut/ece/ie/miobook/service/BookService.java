@@ -212,6 +212,8 @@ public class BookService {
         data.put("averageRating", reviewDatabase.calculateAverageRating(book));
 
         return data;
+
+    
     }
 
 
@@ -400,6 +402,22 @@ public class BookService {
         return formattedBooks;
     }
 
+    private List<Map<String, Object>> adminPageFormatBooks(List<Book> books) {
+        List<Map<String, Object>> formattedBooks = new ArrayList<>();
+        for (Book book : books) {
+            Map<String, Object> formattedBook = new HashMap<>();
+            formattedBook.put("title", book.getTitle());
+            formattedBook.put("author", book.getAuthor().getName());
+            formattedBook.put("genre", book.getGenres());
+            formattedBook.put("publisher", book.getPublisher());
+            formattedBook.put("year", book.getYear());
+            formattedBook.put("price", book.getPrice());
+            // formattedBook.put("total_buys", book.getTotalBuys());
+            formattedBooks.add(formattedBook);
+        }
+        return formattedBooks;
+    }
+
     private static String buildSearchString(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder) {
         StringBuilder searchString = new StringBuilder();
         if (title != null) searchString.append("title:").append(title).append(", ");
@@ -425,6 +443,11 @@ public class BookService {
         List<Book> books =  bookDatabase.getBooks();
         books = sortBooksByAverageRating(books, "dec");
         return shortFormatBooks(PaginationUtils.paginate(books, page, pageSize));
+    }
+
+    public List<Map<String, Object>> adminPageBooks(int page, int pageSize){
+        List<Book> books =  bookDatabase.getBooks();
+        return adminPageFormatBooks(PaginationUtils.paginate(books, page, pageSize));
     }
     
 }

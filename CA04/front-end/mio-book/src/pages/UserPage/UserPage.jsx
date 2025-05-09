@@ -1,4 +1,4 @@
-import React , { useContext, useState } from 'react';
+import React , { useContext, useState, useEffect } from 'react';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import BookDetailsCard from '../../components/BookDetailsCard';
@@ -10,16 +10,25 @@ import { UserContext } from '../../UserContex';
 
 
 function UserPage() {
+
     const [formData, setFormData] = useState({
         amount: '',
     });
     const [errors, setErrors] = useState({});
     const { user, setUser } = useContext(UserContext);
-    const navigate = useNavigate();
     const localUser = JSON.parse(localStorage.getItem('activeUser'));
     if(!user){
         setUser(localUser)
     }
+    
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user?.userInfo?.role === "admin") {
+            navigate("/admin", { replace: true });
+        }
+    }, [user, navigate]);
+
 
     const handleChange = (e) => {    
         const { name, value } = e.target;

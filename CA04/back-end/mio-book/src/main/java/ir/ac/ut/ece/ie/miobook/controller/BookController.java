@@ -258,5 +258,11 @@ public class BookController {
         Response response = new Response("success", "Books retrieved successfully.", topBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/adminPageBooks")
+    public ResponseEntity<Response> adminPageBooks() {
+        List<Map<String, Object>> adminPageBooks = bookService.adminPageBooks(1, 10);
+        Response response = new Response("success", "Books retrieved successfully.", adminPageBooks);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

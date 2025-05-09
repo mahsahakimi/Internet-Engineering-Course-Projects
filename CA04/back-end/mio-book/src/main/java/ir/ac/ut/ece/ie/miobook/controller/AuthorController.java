@@ -64,4 +64,13 @@ public class AuthorController {
         Response response = new Response("success", "Author details retrieved successfully.", authorDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/getAll") // (show_author_details)
+    public ResponseEntity<Response> getAuthors() {
+        List<Author> authors = authorService.getAllAuthors(1,10);
+        Response response = new Response("success", "Authors retrieved successfully.", authors);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    
 }

@@ -68,7 +68,7 @@ function BookDetails({book}) {
                     <div className="col">{book?.author?.name}</div>
                     <div className="col">{book?.publisher}</div>
                     <div className="col">{book?.year}</div>
-                    <div className="col">{book?.genres}</div>
+                    <div className="col">{book?.genres?.join(", ")}</div>
                 </div>
 
                 <div className="bright-titles"> About </div>

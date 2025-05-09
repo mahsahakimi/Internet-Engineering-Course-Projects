@@ -5,9 +5,11 @@ import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.Author;
+import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.model.Role;
 import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import ir.ac.ut.ece.ie.miobook.validator.BornDiedValidator;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +71,10 @@ public class AuthorService {
         } catch (IOException e) {
             throw new RuntimeException("Could not convert author details to JSON.", e);
         }
+    }
+
+    public List<Author> getAllAuthors(int page, int pageSize){
+        List<Author> authors =  authorDatabase.getAuthors();
+        return PaginationUtils.paginate(authors, page, pageSize);
     }
 }

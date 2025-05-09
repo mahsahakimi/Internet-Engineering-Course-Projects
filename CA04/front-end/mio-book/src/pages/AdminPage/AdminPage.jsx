@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
@@ -16,11 +17,22 @@ import { UserContext } from '../../UserContex';
 function AdminPage() {
     const [showBookModal, setShowBookModal] = useState(false);
     const [showAddAuthorModal, setShowAddAuthorModal] = useState(false);
+    const [books, setBooks] = useState([]);
+    const [authors, setAuthors] = useState([]);
+
     const { user, setUser } = useContext(UserContext);
     if(!user){
         const localUser = JSON.parse(localStorage.getItem('activeUser'));
         setUser(localUser)
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user?.userInfo?.role === "customer") {
+            navigate("/user", { replace: true });
+        }
+    }, [user, navigate]);
 
 
     const handleLogout = async () => {
@@ -41,6 +53,40 @@ function AdminPage() {
             console.error('Error while logging out:', error);
         }
     };
+
+    const fetchBooks = async () => {
+        try {
+            const response = await fetch('/api/books/adminPageBooks');
+            const responseData = await response.json();
+            
+            if (responseData.status === "success") {
+                setBooks(responseData.data);
+            } else {
+                console.error("Failed to fetch yop rated.");
+            }
+        } catch (error) {
+            console.error("Error fetching top rated:", error);
+        }
+    };
+    const fetchAuthors = async () => {
+        try {
+            const response = await fetch('/api/authors/getAll');
+            const responseData = await response.json();
+            
+            if (responseData.status === "success") {
+                setAuthors(responseData.data);
+            } else {
+                console.error("Failed to fetch yop rated.");
+            }
+        } catch (error) {
+            console.error("Error fetching top rated:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchBooks();
+        fetchAuthors();
+    }, []);
 
     return (
         <>
@@ -87,8 +133,13 @@ function AdminPage() {
                         </tr>
                         </thead>
                         <tbody>
-                        <BookDetailsCard />
-                        <BookDetailsCard />
+                        {books.length > 0 ? (
+                            books.map((book, index) => (
+                                    <BookDetailsCard book={book} />
+                            ))
+                        ) : (
+                            <p>Loading...</p>
+                        )}
                         </tbody>
                     </table>
                 </div>
@@ -109,8 +160,13 @@ function AdminPage() {
                         </tr>
                         </thead>
                         <tbody>
-                            <AuthorDetails />
-                            <AuthorDetails />
+                        {authors.length > 0 ? (
+                            authors.map((author, index) => (
+                                    <AuthorDetails author={author} />
+                            ))
+                        ) : (
+                            <p>Loading...</p>
+                        )}
                         </tbody>
                     </table>
                 </div>
