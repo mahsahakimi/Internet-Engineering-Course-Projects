@@ -5,6 +5,9 @@ import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.service.CartService;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +36,17 @@ public class CartController {
     }
 
     @DeleteMapping("/remove") // (remove_cart)
-    public ResponseEntity<Response> removeFromCart(@RequestParam String title){
+    public ResponseEntity<Response> removeFromCart(@RequestBody Map<String, String> payload){
         // Removes a book from the user's shopping cart.
         // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
         // Example: DELETE /carts/remove?title=book_title.
+        String title = payload.get("title");
         if (title == null){
             throw new MissingRequiredFieldsException("username, title.");
         }
-
+        System.out.println("hello");
+        System.out.println(title);
         cartService.removeFromCart(title);
         Response response = new Response("success", "Book removed from cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -53,7 +58,7 @@ public class CartController {
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
         // Example: POST /carts/purchase with a JSON empty body.
 
-        String purchaseDetails = cartService.purchaseCart();
+        Map<String, Object> purchaseDetails = cartService.purchaseCart();
         Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -64,7 +69,7 @@ public class CartController {
         // Returns: cart details (list of books) in JSON format.
         // Example: GET /carts/details.
 
-        String cartDetails = cartService.showCart();
+        Map<String, Object> cartDetails = cartService.showCart();
         Response response = new Response("success", "Cart details retrieved successfully", cartDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

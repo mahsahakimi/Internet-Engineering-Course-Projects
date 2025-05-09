@@ -82,7 +82,7 @@ public class CartService {
         user.removeBookFromCart(book);
     }
 
-    public String purchaseCart() {
+    public Map<String, Object> purchaseCart() {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -133,15 +133,10 @@ public class CartService {
         data.put("totalCost", totalCost);
         data.put("date", now);
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(data);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert purchase details to JSON.", e);
-        }
+        return data;
     }
 
-    public String showCart() {
+    public Map<String, Object> showCart() {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -163,9 +158,6 @@ public class CartService {
             Map<String, Object> item = new HashMap<>();
             item.put("title", book.getTitle());
             item.put("author", book.getAuthor().getName());
-            item.put("publisher", book.getPublisher());
-            item.put("genres", book.getGenres());
-            item.put("year", book.getYear());
             item.put("price", book.getPrice());
             item.put("isBorrowed", days != 0);
             item.put("finalPrice", finalPrice);
@@ -176,15 +168,9 @@ public class CartService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
         data.put("totalCost", totalCost);
         data.put("items", items);
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(data);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert cart details to JSON.", e);
-        }
+        return data;
     }
 }
