@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import EmptySpace from '../../components/EmptySpace';
 import Review from '../../components/Review';
 import '../../stylesheets/General.css';
 import '../../stylesheets/Book.css';
-import { useLocation } from 'react-router-dom';
 import BookDetails from '../../components/BookDetails';
 import SVGNoComments from '../../components/SVGNoComments';
 import ModalAddReview from '../../components/ModalAddReview/ModalAddReview';
 
-
-
-
 function BookPage() {
-
     const location = useLocation();
+    const navigate = useNavigate();
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
-    const [error, setError] = useState(null);
 
     const getQueryParam = (key) => {
         const params = new URLSearchParams(location.search);
@@ -30,7 +25,7 @@ function BookPage() {
 
     const fetchBookDetails = async () => {
         if (!title) {
-            setError('No book title provided in the URL.');
+            console.error('No book title provided in the URL.');
             return;
         }
 
@@ -41,21 +36,31 @@ function BookPage() {
                     'Content-Type': 'application/json',
                 },
             });
+
+            if (!response.ok) {
+                console.error(`Failed to fetch book details: ${response.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
+            }
+
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 setBookDetails(responseData.data);
             } else {
-                setError(responseData.message || 'Failed to fetch book details.');
+                console.error(responseData.message || 'Failed to fetch book details.');
+                navigate('/error', { state: { message: responseData.message || 'Failed to fetch book details.' } });
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            setError('An error occurred while fetching book details.');
+            navigate('/error', { state: { message: 'An error occurred while fetching book details.' } });
         }
     };
-    const fetchReviews = async () => {        
+
+    const fetchReviews = async () => {
         if (!title) {
-            setError('No book title provided in the URL.');
-            return;
+            console.error('No book title provided in the URL.');
+]            return;
         }
         try {
             const response = await fetch(`/api/books/reviews?title=${title}`, {
@@ -64,20 +69,22 @@ function BookPage() {
                     'Content-Type': 'application/json',
                 },
             });
-            
+
+            if (!response.ok) {
+                console.warn(`Failed to fetch book reviews: ${response.status}`);
+                return;
+            }
+
             const responseData = await response.json();
             if (responseData.status === 'success') {
-                
                 setBookreviews(responseData.data);
             } else {
-                setError(responseData.message || 'Failed to fetch book details.');
+                console.warn(responseData.message || 'Failed to fetch book reviews.');
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            setError('An error occurred while fetching book details.');
         }
     };
-    
 
     const [showRevModal, setshowRevModal] = useState(false);
 
@@ -91,8 +98,8 @@ function BookPage() {
     useEffect(() => {
         fetchReviews();
         fetchBookDetails();
-    }, []);
-        
+    }, [title, navigate]);
+
     return (
         <div>
             <Nav />
@@ -100,7 +107,6 @@ function BookPage() {
             <section className="d-flex justify-content-center">
                 <BookDetails book={bookDetails}/>
             </section>
-
 
             <section className="d-flex justify-content-center">
                 <div className="container bb white-box p-3 row col-sm-10 mt-5">
@@ -111,7 +117,7 @@ function BookPage() {
                         <div className="col-sm-4"></div>
                         <div className="col-sm-2">
                             <button className="btn gray-btn col-sm-12" onClick={handleOpenModal}>
-                                Add review <i class="bi bi-chat-square-text"></i>
+                                Add review <i className="bi bi-chat-square-text"></i>
                             </button>
                             {/* Modal */}
                             <ModalAddReview
@@ -123,12 +129,12 @@ function BookPage() {
                         </div>
                     </div>
                     {bookreviews?.reviews?.length > 0 ? (
-                    bookreviews.reviews.map((review, index) => (
-                        <React.Fragment key={index}>
-                        <Review br={review} />
-                        <hr />
-                        </React.Fragment>
-                    ))
+                        bookreviews.reviews.map((review, index) => (
+                            <React.Fragment key={index}>
+                            <Review br={review} />
+                            <hr />
+                            </React.Fragment>
+                        ))
                     ) : (
                         <div className="empty-state">
                             <SVGNoComments />
@@ -136,12 +142,11 @@ function BookPage() {
                         </div>
                     )}
 
-
                 </div>
             </section>
             <Footer />
         </div>
-  );
+    );
 }
 
 export default BookPage;

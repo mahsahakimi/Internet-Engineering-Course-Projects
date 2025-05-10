@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
 import BookCard from '../../components/BookCard';
@@ -16,29 +16,29 @@ function AuthorPage() {
   const [authorDetails, setAuthorDetails] = useState(null);
   const [authorBooks, setAuthorBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAuthorData = async () => {
       setLoading(true);
-      setError(null);
       setAuthorDetails(null);
       setAuthorBooks([]);
 
       if (!authorNameFromURL) {
-        setError('Author name is missing from the URL.');
+        console.error('Author name is missing from the URL.');
         setLoading(false);
         return;
       }
 
       try {
-        // Fetch author details
         const detailsResponse = await fetch(
           `/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`
         );
 
         if (!detailsResponse.ok) {
-          setError(`Failed to fetch author details: ${detailsResponse.status}`);
+          console.error(`Failed to fetch author details: ${detailsResponse.status}`);
+          const responseData = await response.json();
+          navigate('/error', { state: { message: responseData.message } });
           return;
         }
 
@@ -51,11 +51,11 @@ function AuthorPage() {
             setAuthorDetails(parsedDetailsData);
           } catch (parseError) {
             console.error('Error parsing author details:', parseError);
-            setError('Failed to parse author details.');
+            navigate('/error', { state: { message: 'Failed to parse author details.' } });
             return;
           }
         } else {
-          setError(detailsResponseJson.message || 'Failed to retrieve author details.');
+          navigate('/error', { state: { message: detailsResponseJson.message || 'Failed to retrieve author details.' } });
           return;
         }
 
@@ -68,6 +68,7 @@ function AuthorPage() {
 
         if (!booksResponse.ok) {
           console.warn(`Failed to fetch author's books: ${booksResponse.status}`);
+          navigate('/error', { state: { message: `Failed to fetch author's books: ${booksResponse.status}` } });
           return;
         }
 
@@ -80,21 +81,24 @@ function AuthorPage() {
             setAuthorBooks(parsedBooksData);
           } catch (parseError) {
             console.error('Error parsing author books:', parseError);
-            setError('Failed to parse author books.');
+            navigate('/error', { state: { message: 'Failed to parse author books.' } });
+            return;
           }
         } else {
           console.warn(booksResponseJson.message || 'Failed to retrieve author\'s books.');
+          navigate('/error', { state: { message: booksResponseJson.message || 'Failed to retrieve author\'s books.' } });
+          return;
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load author data.');
+        navigate('/error', { state: { message: 'Failed to load author data.' } });
       } finally {
         setLoading(false);
       }
     };
 
     fetchAuthorData();
-  }, [authorNameFromURL]);
+  }, [authorNameFromURL, navigate]);
 
   if (loading) {
     return (
@@ -102,18 +106,6 @@ function AuthorPage() {
         <Nav />
         <div className="container mt-5">
           <p>Loading author details and books...</p>
-        </div>
-        <Footer />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Nav />
-        <div className="container mt-5">
-          <p className="text-danger">{error}</p>
         </div>
         <Footer />
       </>
@@ -147,7 +139,7 @@ function AuthorPage() {
           <section className="container mb-5">
               <div className="row row-cols-1 row-cols-sm-5">
               {authorBooks.map((book) => (
-                  <div className="col">
+                  <div className="col" key={book._id}> {/* Added a key for mapping */}
                    <BookCard book={book} />
                 </div>
                 ))}

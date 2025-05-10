@@ -3,13 +3,8 @@ import '../../stylesheets/General.css';
 import '../../stylesheets/Author.css';
 
 function AuthorInfo({ author, bookCount }) {
-  if (!author) {
-    return null; // Or a loading/error state
-  }
-
   const { name, penName, nationality, born } = author;
   const died = author.died ? new Date(author.died).toLocaleDateString() : 'Still Alive';
-
 
   return (
     <div className="container mb-5">

@@ -1,19 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import bookpng from '../../../src/images/book.png';
+import { useNavigate } from 'react-router-dom';
+import bookPNG from '../../../src/images/book.png';
 import StarRatingRenderer from '../StarRatingRenderer';
 import { UserContext } from '../../UserContex';
 import ModalAddToCart from '../ModalAddToCart/ModalAddToCart';
 
-
 function BookDetails({book}) {
     const [showCartModal, setshowCartModal] = useState(false);
     const [bookstatus, setBookstatus] = useState(null);
-    
+    const navigate = useNavigate();
+
     const handleOpenModal = () => setshowCartModal(true);
     const handleCloseModal = () => setshowCartModal(false);
+
     const fetchBookStatus = async () => {
         if (!book?.title) {
-            setError('No book title provided in the URL.');
+            console.error('No book title provided to fetch status.');
             return;
         }
 
@@ -24,27 +26,35 @@ function BookDetails({book}) {
                     'Content-Type': 'application/json',
                 },
             });
+            if (!response.ok) {
+                console.error(`Failed to fetch book status: ${response.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
+            }
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 setBookstatus(responseData.data);
             } else {
-                setError(responseData.message || 'Failed to fetch book status.');
+                console.error(`Failed to fetch book status: ${responseData.message}`);
+                navigate('/error', { state: { message: responseData.message || 'Failed to fetch book status.' } });
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            setError('An error occurred while fetching book status.');
+            navigate('/error', { state: { message: 'An error occurred while fetching book status.' } });
         }
     }
+
     useEffect(() => {
         if (book?.title) {
             fetchBookStatus();
         }
-    }, [book]);
+    }, [book, navigate]);
 
     return (
         <div className="container white-box bb p-4 col-sm-10 row">
             <div className="col-sm-4 d-flex justify-content-center position-relative">
-                <img src={bookpng} className="book-main-img d-flex justify-content-center" alt="Book Cover" />
+                <img src={bookPNG} className="book-main-img d-flex justify-content-center" alt="Book Cover" />
                 {bookstatus && (
                     <span className="badge bg-success position-absolute bottom-0 start-50 translate-middle-x mb-2">
                         {bookstatus}
@@ -54,7 +64,7 @@ function BookDetails({book}) {
 
             <div className="col-sm-8">
                 <h2 className="book-title fw-bold">{book?.title}</h2>
-                <div className="d-flex align-items-center gap-4  mb-4"> 
+                <div className="d-flex align-items-center gap-4  mb-4">
                     <StarRatingRenderer rating={book?.averageRating}/>  {book?.averageRating}
                 </div>
                 <div className="row bright-titles">
@@ -80,7 +90,7 @@ function BookDetails({book}) {
                     disabled={!!bookstatus} // disables the button if bookStatus is not null
                     >
                     Add to Cart
-                </button>                
+                </button>
                 <ModalAddToCart
                     show={showCartModal}
                     onClose={handleCloseModal}

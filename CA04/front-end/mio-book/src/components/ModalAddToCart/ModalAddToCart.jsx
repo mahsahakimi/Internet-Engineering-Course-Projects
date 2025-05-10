@@ -1,9 +1,11 @@
 import React, { useState , useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
 
 const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}) => {
     const [borrowChecked, setBorrowChecked] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
+    const navigate = useNavigate();
 
     if (!show) return null;
 
@@ -11,46 +13,39 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
         if (!borrowChecked) return bookPrice?.toFixed(2);
         return (bookPrice * selectedDay / 10).toFixed(2);
     };
-    
+
     const handleAdd = async () => {
-        if(!borrowChecked){
-            try {
-                const res = await fetch('/api/carts/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title: bookTitle, days:0, })
-                });
-        
-                const result = await res.json();
-                if (result.status === 'success') {
-                    updateBookStatus('cart');
-                    onClose();
-                }
-                } catch (err) {
-                console.error('Add to Cart error:', err);
-                }
-            
-        }
-        else{
-            try {
-                const res = await fetch('/api/carts/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title:bookTitle, days:selectedDay })
-                });
-                
-                const result = await res.json();
-                if (result.status === 'success') {
-                    updateBookStatus('cart');
-                    setBorrowChecked(false);
-                    setSelectedDay(null);
-                    onClose();
-                }
-            } catch (err) {
-                console.error('Review submit error:', err);
+        const endpoint = '/api/carts/add';
+        const payload = borrowChecked ? { title:bookTitle, days:selectedDay } : { title: bookTitle, days: 0 };
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                console.error(`Failed to add to cart: ${res.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
             }
+
+            const result = await res.json();
+            if (result.status === 'success') {
+                updateBookStatus('cart');
+                setBorrowChecked(false);
+                setSelectedDay(null);
+                onClose();
+            } else {
+                console.error(result.message || 'Failed to add to cart.');
+                navigate('/error', { state: { message: result.message || 'Failed to add to cart.' } });
+            }
+        } catch (err) {
+            console.error('Add to Cart error:', err);
+            navigate('/error', { state: { message: 'An error occurred while adding to the cart.' } });
         }
-        
     };
 
     return (
@@ -97,7 +92,7 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
                     </div>
                     ))}
                 </div>
-                )} 
+                )}
             </div>
 
             <div className="modal-footer d-flex justify-content-between">

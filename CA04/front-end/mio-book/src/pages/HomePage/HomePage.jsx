@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
@@ -9,37 +10,53 @@ import EmptySpace from '../../components/EmptySpace';
 
 
 function HomePage() {
-    
+
     const [newReleases, setNewReleases] = useState([]);
     const [topRated, setTopRated] = useState([]);
+    const navigate = useNavigate();
 
     const fetchNewReleases = async () => {
         try {
             const response = await fetch('/api/books/newRelease');
+            if (!response.ok) {
+                console.error(`Failed to fetch new releases: ${response.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
+            }
             const responseData = await response.json();
 
             if (responseData.status === "success") {
                 setNewReleases(responseData.data);
             } else {
                 console.error("Failed to fetch new releases.");
+                navigate('/error', { state: { message: responseData.message || "Failed to fetch new releases." } });
             }
         } catch (error) {
             console.error("Error fetching new releases:", error);
+            navigate('/error', { state: { message: "Error fetching new releases." } });
         }
     };
 
     const fetchTopRated = async () => {
         try {
             const response = await fetch('/api/books/topRated');
+            if (!response.ok) {
+                console.error(`Failed to fetch top rated: ${response.status}`);
+                navigate('/error', { state: { message: `Failed to fetch top rated: ${response.status}` } });
+                return;
+            }
             const responseData = await response.json();
-            
+
             if (responseData.status === "success") {
                 setTopRated(responseData.data);
             } else {
-                console.error("Failed to fetch yop rated.");
+                console.error("Failed to fetch top rated.");
+                navigate('/error', { state: { message: responseData.message || "Failed to fetch top rated." } });
             }
         } catch (error) {
             console.error("Error fetching top rated:", error);
+            navigate('/error', { state: { message: "Error fetching top rated." } });
         }
     };
 
@@ -47,8 +64,6 @@ function HomePage() {
         fetchNewReleases();
         fetchTopRated();
     }, []);
-
-
 
     return (
         <body>
@@ -83,7 +98,7 @@ function HomePage() {
                             </div>
                         ))
                     ) : (
-                        <p>Loading...</p>
+                        <p>Loading new releases...</p>
                     )}
                 </div>
             </section>
@@ -99,7 +114,7 @@ function HomePage() {
                             </div>
                         ))
                     ) : (
-                        <p>Loading...</p>
+                        <p>Loading top rated books...</p>
                     )}
                 </div>
             </section>

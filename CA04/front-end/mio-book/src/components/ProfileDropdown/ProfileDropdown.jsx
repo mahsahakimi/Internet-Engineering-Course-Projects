@@ -19,9 +19,11 @@ function ProfileDropdown({ name }) {
                 navigate('/signin');
             } else {
                 console.error('Logout failed.');
+                navigate('/error', { state: { message: 'Logout failed.' } });
             }
         } catch (error) {
             console.error('Error while logging out:', error);
+            navigate('/error', { state: { message: 'Error occurred during logout.' } });
         }
     };
 

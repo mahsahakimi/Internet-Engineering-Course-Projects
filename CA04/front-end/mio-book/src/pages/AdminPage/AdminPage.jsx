@@ -11,14 +11,13 @@ import ModalAddAuthor from '../../components/ModalAddAuthor';
 import ModalAddBook from '../../components/ModalAddBook';
 import { UserContext } from '../../UserContex';
 
-
-
-
 function AdminPage() {
     const [showBookModal, setShowBookModal] = useState(false);
     const [showAddAuthorModal, setShowAddAuthorModal] = useState(false);
     const [books, setBooks] = useState([]);
     const [authors, setAuthors] = useState([]);
+    const [loadingBooks, setLoadingBooks] = useState(true);
+    const [loadingAuthors, setLoadingAuthors] = useState(true);
 
     const { user, setUser } = useContext(UserContext);
     if(!user){
@@ -34,7 +33,6 @@ function AdminPage() {
         }
     }, [user, navigate]);
 
-
     const handleLogout = async () => {
         try {
             const response = await fetch('/api/logout', {
@@ -48,38 +46,65 @@ function AdminPage() {
                 navigate('/signin');
             } else {
                 console.error('Logout failed.');
+                navigate('/error', { state: { message: 'Logout failed.' } });
             }
         } catch (error) {
             console.error('Error while logging out:', error);
+            navigate('/error', { state: { message: 'Error occurred during logout.' } });
         }
     };
 
     const fetchBooks = async () => {
+        setLoadingBooks(true);
+        setErrorBooks(null);
         try {
             const response = await fetch('/api/books/adminPageBooks');
+            if (!response.ok) {
+                 console.error(`Failed to fetch: ${response.status}`);
+                 const responseData = await response.json();
+                 navigate('/error', { state: { message: responseData.message } });
+                 return;
+            }
+
             const responseData = await response.json();
-            
+
             if (responseData.status === "success") {
                 setBooks(responseData.data);
             } else {
-                console.error("Failed to fetch yop rated.");
+                console.error("Failed to fetch books for admin page.");
+                navigate('/error', { state: { message: responseData.message || "Failed to fetch books." } });
             }
         } catch (error) {
-            console.error("Error fetching top rated:", error);
+            console.error("Error fetching books for admin:", error);
+            navigate('/error', { state: { message: "Failed to load books." } });
+        } finally {
+            setLoadingBooks(false);
         }
     };
+
     const fetchAuthors = async () => {
+        setLoadingAuthors(true);
         try {
             const response = await fetch('/api/authors/getAll');
+            if (!response.ok) {
+                 console.error(`Failed to fetch: ${response.status}`);
+                 const responseData = await response.json();
+                 navigate('/error', { state: { message: responseData.message } });
+                 return;
+            }
             const responseData = await response.json();
-            
+
             if (responseData.status === "success") {
                 setAuthors(responseData.data);
             } else {
-                console.error("Failed to fetch yop rated.");
+                console.error("Failed to fetch authors.");
+                navigate('/error', { state: { message: responseData.message || "Failed to fetch authors." } });
             }
         } catch (error) {
-            console.error("Error fetching top rated:", error);
+            console.error("Error fetching authors:", error);
+            navigate('/error', { state: { message: "Failed to load authors." } });
+        } finally {
+            setLoadingAuthors(false);
         }
     };
 
@@ -91,16 +116,16 @@ function AdminPage() {
     return (
         <>
             <Nav />
-            
+
             <EmptySpace />
 
             <div className='container white-box col-sm-10 p-3'>
                 <div className='col-sm-6'>
-                    <h5><i class="bi bi-person-circle"></i> {user?.userInfo?.username} </h5>
+                    <h5><i className="bi bi-person-circle"></i> {user?.userInfo?.username} </h5>
                     <br/>
-                    <h5> <i class="bi bi-envelope"></i> {user?.userInfo?.email} </h5>
+                    <h5> <i className="bi bi-envelope"></i> {user?.userInfo?.email} </h5>
                 </div>
-                
+
                 <div className='text-end'>
                     <button onClick={handleLogout} className="btn gray-btn col-2">
                         Logout
@@ -118,7 +143,7 @@ function AdminPage() {
             </div>
 
             <div className="cart-box container white-box col-sm-10">
-                    <h4 className="mb-4 ms-1 fw-bold"><i class="bi bi-book"></i> Books</h4>
+                    <h4 className="mb-4 ms-1 fw-bold"><i className="bi bi-book"></i> Books</h4>
                     <table className="table">
                         <thead className="table-light">
                         <tr>
@@ -133,12 +158,14 @@ function AdminPage() {
                         </tr>
                         </thead>
                         <tbody>
-                        {books.length > 0 ? (
+                        {loadingBooks ? (
+                            <tr><td colSpan="8">Loading books...</td></tr>
+                        ) : books.length > 0 ? (
                             books.map((book, index) => (
-                                    <BookDetailsCard book={book} />
+                                    <BookDetailsCard book={book} key={index} />
                             ))
                         ) : (
-                            <p>Loading...</p>
+                            <tr><td colSpan="8">No books available.</td></tr>
                         )}
                         </tbody>
                     </table>
@@ -147,7 +174,7 @@ function AdminPage() {
                 <EmptySpace />
 
                 <div className="cart-box container white-box col-sm-10">
-                    <h4 className="mb-4 ms-1 fw-bold"><i class="bi bi-person-lines-fill"></i> Authors</h4>
+                    <h4 className="mb-4 ms-1 fw-bold"><i className="bi bi-person-lines-fill"></i> Authors</h4>
                     <table className="table">
                         <thead className="table-light">
                         <tr>
@@ -160,19 +187,21 @@ function AdminPage() {
                         </tr>
                         </thead>
                         <tbody>
-                        {authors.length > 0 ? (
+                        {loadingAuthors ? (
+                            <tr><td colSpan="6">Loading authors...</td></tr>
+                        ) : authors.length > 0 ? (
                             authors.map((author, index) => (
-                                    <AuthorDetails author={author} />
+                                    <AuthorDetails author={author} key={index} />
                             ))
                         ) : (
-                            <p>Loading...</p>
+                            <tr><td colSpan="6">No authors available.</td></tr>
                         )}
                         </tbody>
                     </table>
                 </div>
 
             <ModalAddAuthor show={showAddAuthorModal} onClose={() => setShowAddAuthorModal(false)} />
-            <ModalAddBook show={showBookModal} onClose={() => setShowBookModal(false)} onSubmit={() => {setShowBookModal(false);}}
+            <ModalAddBook show={showBookModal} onClose={() => setShowBookModal(false)} onSubmit={() => {setShowBookModal(false); fetchBooks();}}
 />
 
             <Footer />

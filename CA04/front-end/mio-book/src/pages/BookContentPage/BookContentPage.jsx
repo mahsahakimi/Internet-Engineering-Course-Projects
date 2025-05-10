@@ -31,7 +31,7 @@ function BookContentPage() {
       try {
         // Fetch book content
         const contentResponse = await fetch(
-          `http://localhost:8080/api/books/content?title=${encodeURIComponent(bookTitleFromURL)}`,
+          `/api/books/content?title=${encodeURIComponent(bookTitleFromURL)}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ function BookContentPage() {
 
         // Fetch book details for author
         const detailsResponse = await fetch(
-          `http://localhost:8080/api/books/details?title=${encodeURIComponent(bookTitleFromURL)}`,
+          `/api/books/details?title=${encodeURIComponent(bookTitleFromURL)}`,
           {
             headers: {
               'Content-Type': 'application/json',

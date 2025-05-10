@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
 
 const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: null,
-    penName: null,
-    nationality: null,
-    born: null,
-    died: null,
-    image: null,
+    name: '',
+    penName: '',
+    nationality: '',
+    born: '',
+    died: '',
+    image: '',
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,13 +30,24 @@ const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
+      if (!response.ok) {
+        console.error(`Failed to add author: ${response.status}`);
+        const responseData = await response.json();
+        navigate('/error', { state: { message: responseData.message } });
+        return;
+      }
+
       const result = await response.json();
       if (result.status === 'success') {
-
         onSubmit();
+      } else {
+        console.error(result.message || 'Failed to add author.');
+        navigate('/error', { state: { message: result.message || 'Failed to add author.' } });
       }
     } catch (err) {
       console.error('Submission error:', err);
+      navigate('/error', { state: { message: 'An error occurred while adding the author.' } });
     }
     handleClose();
   };

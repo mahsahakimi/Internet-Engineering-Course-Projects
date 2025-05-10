@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import designBook from '../../../src/images/designBook.jpg';
 
 function CartBookDetailsCard({cartElement, onRemove}) {
+    const navigate = useNavigate();
+
     const removeHandler = async () => {
         try {
             const response = await fetch(`/api/carts/remove`, {
@@ -11,7 +14,14 @@ function CartBookDetailsCard({cartElement, onRemove}) {
                 },
                 body: JSON.stringify({ title: cartElement?.title }),
             });
-            
+
+            if (!response.ok) {
+                console.error(`Failed to remove cart item: ${response.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
+            }
+
             const responseData = await response.json();
             // SAVE the response data into a file
             const blob = new Blob([JSON.stringify(responseData, null, 2)], { type: 'text/plain' });
@@ -25,11 +35,13 @@ function CartBookDetailsCard({cartElement, onRemove}) {
                 onRemove();
             } else {
                 console.error(responseData.message || 'Failed to remove cart item.');
+                navigate('/error', { state: { message: responseData.message || 'Failed to remove cart item.' } });
             }
         } catch (err) {
             console.error('Fetch error:', err);
+            navigate('/error', { state: { message: 'An error occurred while trying to remove the cart item.' } });
         }
-    };    
+    };
 
     return (
         <tr>

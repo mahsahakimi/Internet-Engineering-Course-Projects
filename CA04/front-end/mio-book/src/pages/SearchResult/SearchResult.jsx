@@ -4,8 +4,6 @@ import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
 
-
-
 function SearchResult() {
   return (
     <body>

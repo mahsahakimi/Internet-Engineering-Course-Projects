@@ -23,5 +23,4 @@ function BookContentHeader({ title, author }) {
   );
 }
 
-
 export default BookContentHeader;

@@ -8,16 +8,16 @@ import '../../stylesheets/General.css';
 import EmptySpace from '../../components/EmptySpace';
 import SVGCartIsEmpty from '../../components/SVGCartIsEmpty';
 
-
 function BuyCartPage() {
     const { user, setUser } = useContext(UserContext);
     const [cart, setCart] = useState([]);
+    const navigate = useNavigate();
+
     if(!user){
         const localUser = JSON.parse(localStorage.getItem('activeUser'));
         setUser(localUser)
     }
 
-    const navigate = useNavigate();
     useEffect(() => {
         if (user?.userInfo?.role === "admin") {
             navigate("/admin", { replace: true });
@@ -27,15 +27,23 @@ function BuyCartPage() {
     const fetchCart = async () => {
         try {
             const response = await fetch('/api/carts/details');
+            if (!response.ok) {
+                console.error(`Failed to fetch cart details: ${response.status}`);
+                const responseData = await response.json();
+                navigate('/error', { state: { message: responseData.message } });
+                return;
+            }
             const responseData = await response.json();
-            
+
             if (responseData.status === "success") {
                 setCart(responseData.data);
             } else {
                 console.error("Failed to fetch Cart details.");
+                navigate('/error', { state: { message: responseData.message || "Failed to fetch Cart details." } });
             }
         } catch (error) {
             console.error("Error fetching Cart details:", error);
+            navigate('/error', { state: { message: "Error fetching Cart details." } });
         }
     };
 
@@ -53,15 +61,22 @@ function BuyCartPage() {
                 method: 'POST',
                 // credentials: 'include', // Important if your backend uses cookies/session
             });
+            if (!response.ok) {
+                console.error(`Purchase failed: ${response.status}`);
+                navigate('/error', { state: { message: `Purchase failed: ${response.status}` } });
+                return;
+            }
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 fetchCart();
                 // show success message
             } else {
-                console.error('Logout failed.');
+                console.error('Purchase failed.');
+                navigate('/error', { state: { message: responseData.message || 'Purchase failed.' } });
             }
         } catch (error) {
-            console.error('Error while logging out:', error);
+            console.error('Error during purchase:', error);
+            navigate('/error', { state: { message: 'Error occurred during purchase.' } });
         }
     };
 
@@ -91,7 +106,7 @@ function BuyCartPage() {
                         <tbody>
                         {cart?.items?.length > 0 ? (
                             cart.items.map((item, index) => (
-                                    <CartBookDetailsCard cartElement={item} onRemove={handleRemoveItem} />
+                                    <CartBookDetailsCard cartElement={item} onRemove={handleRemoveItem} key={index} />
                             ))
                         ) : (
                                 <SVGCartIsEmpty />
@@ -100,7 +115,7 @@ function BuyCartPage() {
                     </table>
                     <div className="d-flex justify-content-center">
                         <button className="btn col-sm-4 green-btn" onClick={handlePurchase}>Purchase</button>
-                        
+
                     </div>
                 </div>
             </div>
