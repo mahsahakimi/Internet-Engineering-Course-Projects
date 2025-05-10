@@ -18,12 +18,6 @@ function HomePage() {
     const fetchNewReleases = async () => {
         try {
             const response = await fetch('/api/books/newRelease');
-            if (!response.ok) {
-                console.error(`Failed to fetch new releases: ${response.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
             const responseData = await response.json();
 
             if (responseData.status === "success") {
@@ -41,11 +35,6 @@ function HomePage() {
     const fetchTopRated = async () => {
         try {
             const response = await fetch('/api/books/topRated');
-            if (!response.ok) {
-                console.error(`Failed to fetch top rated: ${response.status}`);
-                navigate('/error', { state: { message: `Failed to fetch top rated: ${response.status}` } });
-                return;
-            }
             const responseData = await response.json();
 
             if (responseData.status === "success") {
@@ -66,7 +55,7 @@ function HomePage() {
     }, []);
 
     return (
-        <body>
+        <>
             <Nav />
             <EmptySpace />
             <section className="intro-section py-5 mb-5">
@@ -120,7 +109,7 @@ function HomePage() {
             </section>
 
             <Footer />
-        </body>
+        </>
     );
 };
 

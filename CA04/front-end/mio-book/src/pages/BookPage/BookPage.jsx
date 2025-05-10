@@ -36,14 +36,6 @@ function BookPage() {
                     'Content-Type': 'application/json',
                 },
             });
-
-            if (!response.ok) {
-                console.error(`Failed to fetch book details: ${response.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
-
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 setBookDetails(responseData.data);
@@ -60,7 +52,7 @@ function BookPage() {
     const fetchReviews = async () => {
         if (!title) {
             console.error('No book title provided in the URL.');
-]            return;
+            return;
         }
         try {
             const response = await fetch(`/api/books/reviews?title=${title}`, {
@@ -69,11 +61,6 @@ function BookPage() {
                     'Content-Type': 'application/json',
                 },
             });
-
-            if (!response.ok) {
-                console.warn(`Failed to fetch book reviews: ${response.status}`);
-                return;
-            }
 
             const responseData = await response.json();
             if (responseData.status === 'success') {
