@@ -11,6 +11,7 @@ import AuthorPage from './pages/AuthorPage';
 import BookContentPage from './pages/BookContentPage';
 import UserPage from './pages/UserPage';
 import BuyCartPage from './pages/BuyCartPage';
+import PurchaseHistoryPage from './pages/PurchaseHistoryPage';
 import ErrorPage from './pages/ErrorPage';
 import Error404Page from './pages/Error404Page';
 import AdminPage from './pages/AdminPage';
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/results" element={<ProtectedRoute><SearchResult /></ProtectedRoute>} />
                 <Route path="/book-details" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
+                <Route path="/purchase-history" element={<ProtectedRoute><PurchaseHistoryPage /></ProtectedRoute>} />
                 <Route path="/author" element={<ProtectedRoute><AuthorPage /></ProtectedRoute>} />
                 <Route path="/book/content" element={<ProtectedRoute><BookContentPage /></ProtectedRoute>} />
                 <Route path="/user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />

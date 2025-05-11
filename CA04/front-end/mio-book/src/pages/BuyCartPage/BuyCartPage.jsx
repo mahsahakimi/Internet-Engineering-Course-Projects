@@ -27,12 +27,6 @@ function BuyCartPage() {
     const fetchCart = async () => {
         try {
             const response = await fetch('/api/carts/details');
-            if (!response.ok) {
-                console.error(`Failed to fetch cart details: ${response.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
             const responseData = await response.json();
 
             if (responseData.status === "success") {
@@ -88,29 +82,43 @@ function BuyCartPage() {
                         </h4>
                         <h6 className="mb-0 me-5">Total Price : ${cart?.totalCost}</h6>
                     </div>
+
+                    {cart?.items?.length > 0 ? (
                     <table className="table">
                         <thead className="table-light">
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Author</th>
-                            <th>Price</th>
-                            <th>Borrow Days</th>
-                            <th> </th>
-                        </tr>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Author</th>
+                                <th>Price</th>
+                                <th>Borrow Days</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {cart?.items?.length > 0 ? (
-                            cart.items.map((item, index) => (
-                                    <CartBookDetailsCard cartElement={item} onRemove={handleRemoveItem} key={index} />
-                            ))
-                        ) : (
-                                <SVGCartIsEmpty />
-                        )}
+                            {cart.items.map((item, index) => (
+                                <CartBookDetailsCard
+                                    cartElement={item}
+                                    onRemove={handleRemoveItem}
+                                    key={index}
+                                />
+                            ))}
                         </tbody>
                     </table>
+                ) : (
+                    <div className="empty-state">
+                        <SVGCartIsEmpty />
+                        <p className='text-secondary'>No book selected!</p>
+                    </div>
+                )}
+
+                    
                     <div className="d-flex justify-content-center">
-                        <button className="btn col-sm-4 green-btn" onClick={handlePurchase}>Purchase</button>
+                        <button 
+                            className={`btn col-sm-4 ${cart?.items?.length === 0 ? 'gray-btn' : 'green-btn'}`}
+                            onClick={handlePurchase}
+                            disabled={cart?.items?.length == 0}
+                        >Purchase</button>
 
                     </div>
                 </div>

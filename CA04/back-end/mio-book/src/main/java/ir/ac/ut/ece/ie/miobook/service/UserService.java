@@ -28,7 +28,7 @@ public class UserService {
         this.bookDatabase = bookDatabase;
     }
 
-    public String getPurchasedBooks() throws UserNotFoundException {
+    public Map<String, Object> getPurchasedBooks() {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -36,54 +36,39 @@ public class UserService {
         if (user.getRole() == Role.admin) {
             throw new PermissionDeniedException(Role.admin.toString());
         }
-
-        List<Map<String, Object>> books = new ArrayList<>();
-        // Add owned books
-        for (Book book : user.getOwnedBooks()) {
-            Map<String, Object> bookData = new HashMap<>();
-            bookData.put("title", book.getTitle());
-            bookData.put("author", book.getAuthor().getName());
-            bookData.put("publisher", book.getPublisher());
-            bookData.put("category", book.getGenres());
-            bookData.put("year", book.getYear());
-            bookData.put("price", book.getPrice());
-            bookData.put("isBorrowed", false);
-            books.add(bookData);
-        }
-
-        // Add borrowed books that are not expired
+        Map<String, Object> userBooks = new HashMap<>();
+    
+        List<Map<String, Object>> borrowedBooksInfo = new ArrayList<>();
         for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
             if (borrowedBook.canAccessBook()) {
                 Book book = borrowedBook.getBook();
-                Map<String, Object> bookData = new HashMap<>();
-                bookData.put("title", book.getTitle());
-                bookData.put("author", book.getAuthor().getName());
-                bookData.put("publisher", book.getPublisher());
-                bookData.put("category", book.getGenres());
-                bookData.put("year", book.getYear());
-                bookData.put("price", book.getPrice());
-                bookData.put("isBorrowed", true);
-                books.add(bookData);
+                Map<String, Object> bookInfo = new HashMap<>();
+                bookInfo.put("title", book.getTitle());
+                bookInfo.put("author", book.getAuthor().getName());
+                bookInfo.put("genres", book.getGenres());
+                bookInfo.put("publisher", book.getPublisher());
+                bookInfo.put("year", book.getYear());
+                bookInfo.put("dueDate", borrowedBook.getDueDate().toString());
+                borrowedBooksInfo.add(bookInfo);
             }
         }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
-        data.put("books", books);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Purchased books retrieved successfully.");
-        response.put("data", data);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(response);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert purchased books to JSON.", e);
+        userBooks.put("borrowed", borrowedBooksInfo);
+    
+        List<Map<String, Object>> ownedBooksInfo = new ArrayList<>();
+        for (Book book : user.getOwnedBooks()) {
+            Map<String, Object> bookInfo = new HashMap<>();
+            bookInfo.put("title", book.getTitle());
+            bookInfo.put("author", book.getAuthor().getName());
+            bookInfo.put("genres", book.getGenres());
+            bookInfo.put("publisher", book.getPublisher());
+            bookInfo.put("year", book.getYear());
+            ownedBooksInfo.add(bookInfo);
         }
+        userBooks.put("owned", ownedBooksInfo);
+    
+        return userBooks;
     }
-
+    
     public String getBookStatus(String title) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {

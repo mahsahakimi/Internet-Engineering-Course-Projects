@@ -1,7 +1,7 @@
 import React from 'react';
 import designBook from '../../../src/images/designBook.jpg';
 
-function BookDetailsCard({ book }) {
+function AdminBookDetailsCard({ book }) {
   const {
     title = 'Untitled Book',
     author = 'Unknown Author',
@@ -39,4 +39,4 @@ function BookDetailsCard({ book }) {
   );
 }
 
-export default BookDetailsCard;
+export default AdminBookDetailsCard;

@@ -15,13 +15,6 @@ function CartBookDetailsCard({cartElement, onRemove}) {
                 body: JSON.stringify({ title: cartElement?.title }),
             });
 
-            if (!response.ok) {
-                console.error(`Failed to remove cart item: ${response.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
-
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 onRemove();

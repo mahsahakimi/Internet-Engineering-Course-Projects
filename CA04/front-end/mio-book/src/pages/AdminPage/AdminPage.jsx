@@ -5,7 +5,7 @@ import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
 import '../../stylesheets/Author.css';
 import EmptySpace from '../../components/EmptySpace';
-import BookDetailsCard from '../../components/BookDetailsCard';
+import AdminBookDetailsCard from '../../components/AdminBookDetailsCard';
 import AuthorDetails from '../../components/AuthorDetails';
 import ModalAddAuthor from '../../components/ModalAddAuthor';
 import ModalAddBook from '../../components/ModalAddBook';
@@ -56,20 +56,13 @@ function AdminPage() {
 
     const fetchBooks = async () => {
         setLoadingBooks(true);
-        setErrorBooks(null);
         try {
             const response = await fetch('/api/books/adminPageBooks');
-            if (!response.ok) {
-                 console.error(`Failed to fetch: ${response.status}`);
-                 const responseData = await response.json();
-                 navigate('/error', { state: { message: responseData.message } });
-                 return;
-            }
-
             const responseData = await response.json();
 
             if (responseData.status === "success") {
                 setBooks(responseData.data);
+                
             } else {
                 console.error("Failed to fetch books for admin page.");
                 navigate('/error', { state: { message: responseData.message || "Failed to fetch books." } });
@@ -86,14 +79,8 @@ function AdminPage() {
         setLoadingAuthors(true);
         try {
             const response = await fetch('/api/authors/getAll');
-            if (!response.ok) {
-                 console.error(`Failed to fetch: ${response.status}`);
-                 const responseData = await response.json();
-                 navigate('/error', { state: { message: responseData.message } });
-                 return;
-            }
             const responseData = await response.json();
-
+            
             if (responseData.status === "success") {
                 setAuthors(responseData.data);
             } else {
@@ -162,7 +149,7 @@ function AdminPage() {
                             <tr><td colSpan="8">Loading books...</td></tr>
                         ) : books.length > 0 ? (
                             books.map((book, index) => (
-                                    <BookDetailsCard book={book} key={index} />
+                                    <AdminBookDetailsCard book={book} key={index} />
                             ))
                         ) : (
                             <tr><td colSpan="8">No books available.</td></tr>

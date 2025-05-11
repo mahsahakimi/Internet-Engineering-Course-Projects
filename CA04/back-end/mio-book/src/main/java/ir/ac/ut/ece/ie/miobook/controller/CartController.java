@@ -46,8 +46,6 @@ public class CartController {
         if (title == null){
             throw new MissingRequiredFieldsException("username, title.");
         }
-        System.out.println("hello");
-        System.out.println(title);
         cartService.removeFromCart(title);
         Response response = new Response("success", "Book removed from cart successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);

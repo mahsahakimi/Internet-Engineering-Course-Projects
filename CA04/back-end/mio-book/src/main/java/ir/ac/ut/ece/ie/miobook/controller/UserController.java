@@ -5,6 +5,10 @@ import ir.ac.ut.ece.ie.miobook.dto.AddUserRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.service.UserService;
+
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,7 +81,7 @@ public class UserController {
         // Returns: list of purchased books in JSON format or error if the user is not found.
         // Example: GET /users/purchased_books.
 
-        String purchasedBooks = userService.getPurchasedBooks();
+        Map<String, Object> purchasedBooks = userService.getPurchasedBooks();
         Response response = new Response("success", "Purchased books retrieved.", purchasedBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -90,4 +94,5 @@ public class UserController {
         Response response = new Response("success", "Book status retrieved.", Status);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }
