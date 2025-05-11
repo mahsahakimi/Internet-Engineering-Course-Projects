@@ -82,7 +82,7 @@ public class CartService {
         user.removeBookFromCart(book);
     }
 
-    public Map<String, Object> purchaseCart() {
+    public Purchase purchaseCart() {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -128,12 +128,9 @@ public class CartService {
         user.getPurchases().add(purchase);
         user.getCart().clear();
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("bookCount", cartSize);
-        data.put("totalCost", totalCost);
-        data.put("date", now);
+        
 
-        return data;
+        return purchase;
     }
 
     public Map<String, Object> showCart() {

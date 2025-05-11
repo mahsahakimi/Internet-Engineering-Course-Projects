@@ -61,12 +61,8 @@ function BuyCartPage() {
                 method: 'POST',
                 // credentials: 'include', // Important if your backend uses cookies/session
             });
-            if (!response.ok) {
-                console.error(`Purchase failed: ${response.status}`);
-                navigate('/error', { state: { message: `Purchase failed: ${response.status}` } });
-                return;
-            }
             const responseData = await response.json();
+
             if (responseData.status === 'success') {
                 fetchCart();
                 // show success message

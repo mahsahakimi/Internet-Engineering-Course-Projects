@@ -94,15 +94,16 @@ public class UserService {
         }
         String status = null;
         for (Book book : user.getOwnedBooks()) {
-            if(book.getTitle() == title){
+            if(book.getTitle().equals(title)){
                 status = "buy";
                 return status;
             }
         }
+            
         for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
             if (borrowedBook.canAccessBook()) {
                 Book book = borrowedBook.getBook();
-                if(book.getTitle() == title){
+                if(book.getTitle().equals(title)){
                     status = "borrow";
                     return status;
                 }

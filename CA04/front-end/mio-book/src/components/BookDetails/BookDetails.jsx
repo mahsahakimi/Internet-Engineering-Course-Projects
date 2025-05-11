@@ -26,12 +26,7 @@ function BookDetails({book}) {
                     'Content-Type': 'application/json',
                 },
             });
-            if (!response.ok) {
-                console.error(`Failed to fetch book status: ${response.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
+
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 setBookstatus(responseData.data);
@@ -87,7 +82,7 @@ function BookDetails({book}) {
                 <button
                     className={`btn col-sm-4 ${bookstatus ? 'gray-btn' : 'green-btn'}`}
                     onClick={handleOpenModal}
-                    disabled={!!bookstatus} // disables the button if bookStatus is not null
+                    disabled={!!bookstatus} 
                     >
                     Add to Cart
                 </button>

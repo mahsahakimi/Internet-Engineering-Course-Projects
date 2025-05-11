@@ -4,6 +4,7 @@ import ir.ac.ut.ece.ie.miobook.dto.AddToCartRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
+import ir.ac.ut.ece.ie.miobook.model.Purchase;
 import ir.ac.ut.ece.ie.miobook.service.CartService;
 
 import java.util.Map;
@@ -58,7 +59,7 @@ public class CartController {
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
         // Example: POST /carts/purchase with a JSON empty body.
 
-        Map<String, Object> purchaseDetails = cartService.purchaseCart();
+        Purchase purchaseDetails = cartService.purchaseCart();
         Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

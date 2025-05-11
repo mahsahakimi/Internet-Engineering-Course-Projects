@@ -27,6 +27,7 @@ function UserPage() {
         if (user?.userInfo?.role === "admin") {
             navigate("/admin", { replace: true });
         }
+
     }, [user, navigate]);
 
 
@@ -167,6 +168,7 @@ function UserPage() {
                 <EmptySpace />
                 <div className="container white-box col-sm-10">
                     <h4 className="mb-4 ms-1 fw-bold"> <i class="bi bi-book"></i> My Books </h4>
+
                     {user?.userInfo?.ownedBooks?.length + user?.userInfo?.borrowedBooks?.length !== 0 ? (
                         <ul>
                             

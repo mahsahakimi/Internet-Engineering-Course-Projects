@@ -25,13 +25,6 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
                 body: JSON.stringify(payload)
             });
 
-            if (!res.ok) {
-                console.error(`Failed to add to cart: ${res.status}`);
-                const responseData = await response.json();
-                navigate('/error', { state: { message: responseData.message } });
-                return;
-            }
-
             const result = await res.json();
             if (result.status === 'success') {
                 updateBookStatus('cart');
@@ -44,7 +37,7 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
             }
         } catch (err) {
             console.error('Add to Cart error:', err);
-            navigate('/error', { state: { message: 'An error occurred while adding to the cart.' } });
+            navigate('/error', { state: { message: err.message } });
         }
     };
 

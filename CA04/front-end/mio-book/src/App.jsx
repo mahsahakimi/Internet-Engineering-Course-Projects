@@ -19,28 +19,28 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 
 
 function App() {
-  return (
-    <BrowserRouter>
-      <UserProvider>
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-            <Route path="/signin" element={<SignInPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/results" element={<ProtectedRoute><SearchResult /></ProtectedRoute>} />
-            <Route path="/book-details" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
-            <Route path="/author" element={<ProtectedRoute><AuthorPage /></ProtectedRoute>} />
-            <Route path="/book/content" element={<ProtectedRoute><BookContentPage /></ProtectedRoute>} />
-            <Route path="/user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
-            <Route path="/cart" element={<ProtectedRoute><BuyCartPage /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            <Route path="/error" element={<ErrorPage />} />
-            <Route path="*" element={<Error404Page />} />
-          </Routes>
-        </ErrorBoundary>
-      </UserProvider>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+        <UserProvider>
+            <ErrorBoundary>
+            <Routes>
+                <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+                <Route path="/signin" element={<SignInPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/results" element={<ProtectedRoute><SearchResult /></ProtectedRoute>} />
+                <Route path="/book-details" element={<ProtectedRoute><BookPage /></ProtectedRoute>} />
+                <Route path="/author" element={<ProtectedRoute><AuthorPage /></ProtectedRoute>} />
+                <Route path="/book/content" element={<ProtectedRoute><BookContentPage /></ProtectedRoute>} />
+                <Route path="/user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><BuyCartPage /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+                <Route path="/error" element={<ErrorPage />} />
+                <Route path="*" element={<Error404Page />} />
+            </Routes>
+            </ErrorBoundary>
+        </UserProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App;

@@ -87,7 +87,7 @@ public class UserController {
         // in cart, buy, borrow, nothing!
 
         String Status = userService.getBookStatus(title);
-        Response response = new Response("success", "Purchased books retrieved.", Status);
+        Response response = new Response("success", "Book status retrieved.", Status);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
