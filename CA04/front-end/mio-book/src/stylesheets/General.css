@@ -129,3 +129,6 @@ footer {
     text-decoration: none;
     color: black;
 }
+.link-text:hover {
+    text-decoration: underline;
+}
