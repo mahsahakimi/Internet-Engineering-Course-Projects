@@ -102,7 +102,7 @@ public class UserService {
         return status;
     }
 
-    public String getPurchaseHistory() {
+    public Map<String, Object> getPurchaseHistory() {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -112,12 +112,11 @@ public class UserService {
         }
 
         List<Map<String, Object>> purchaseHistory = new ArrayList<>();
-
         for (Purchase purchase : user.getPurchases()) {
             Map<String, Object> purchaseData = new HashMap<>();
 
             MyLocalDateTime purchaseDateTime = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
-            purchaseData.put("purchaseDate", purchaseDateTime);
+            purchaseData.put("date", purchaseDateTime);
 
             List<Map<String, Object>> items = new ArrayList<>();
             for (String title : purchase.getBookTitles()) {
@@ -126,9 +125,6 @@ public class UserService {
                     Map<String, Object> item = new HashMap<>();
                     item.put("title", book.getTitle());
                     item.put("author", book.getAuthor().getName());
-                    item.put("publisher", book.getPublisher());
-                    item.put("genres", book.getGenres());
-                    item.put("year", book.getYear());
                     item.put("price", book.getPrice());
 
                     boolean isBorrowed = false;
@@ -164,17 +160,7 @@ public class UserService {
         data.put("username", user.getUsername());
         data.put("purchaseHistory", purchaseHistory);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Purchase history retrieved successfully.");
-        response.put("data", data);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(response);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert purchase history to JSON.", e);
-        }
+        return data;
     }
 
     public String getUserDetails() {

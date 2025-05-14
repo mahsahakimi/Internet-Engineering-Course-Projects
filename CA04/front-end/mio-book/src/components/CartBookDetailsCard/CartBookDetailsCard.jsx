@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import designBook from '../../../src/images/designBook.jpg';
 
 function CartBookDetailsCard({cartElement, onRemove}) {
@@ -31,18 +32,23 @@ function CartBookDetailsCard({cartElement, onRemove}) {
     return (
         <tr>
           <td><img src={designBook} className="product-img" alt="Book" /></td>
-          <td>{cartElement?.title}</td>
-          <td>{cartElement?.author}</td>
+          <td><Link 
+              to={`/book-details?title=${encodeURIComponent(cartElement?.title)}`} className="link-text">
+              {cartElement?.title}
+          </Link></td>
+          <td><Link to={`/author?name=${encodeURIComponent(cartElement?.author)}`} className="link-text">
+              {cartElement?.author}
+          </Link></td> 
           <td>
-        {cartElement?.isBorrowed ? (
-          <>
-            <span style={{ textDecoration: 'line-through', marginRight: '6px' }}>${cartElement?.price}</span>
-            <span> ${cartElement?.finalPrice}</span>
-          </>
-        ) : (
-          <span>${cartElement?.finalPrice}</span>
-        )}
-      </td>
+            {cartElement?.isBorrowed ? (
+              <>
+                <span style={{ textDecoration: 'line-through', marginRight: '6px' }}>${cartElement?.price}</span>
+                <span> ${cartElement?.finalPrice}</span>
+              </>
+            ) : (
+              <span>${cartElement?.finalPrice}</span>
+            )}
+          </td>
           <td>
             {cartElement?.isBorrowed
               ? `${cartElement?.borrowDays}`

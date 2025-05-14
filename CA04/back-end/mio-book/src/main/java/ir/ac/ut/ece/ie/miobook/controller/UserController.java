@@ -70,7 +70,7 @@ public class UserController {
         // Returns: purchase history in JSON format or error if the user is not found.
         // Example: GET /users/purchase_history
 
-        String purchaseHistory = userService.getPurchaseHistory();
+        Map<String, Object> purchaseHistory = userService.getPurchaseHistory();
         Response response = new Response("success", "Purchase history retrieved.", purchaseHistory);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

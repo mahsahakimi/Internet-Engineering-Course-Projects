@@ -29,7 +29,17 @@ function BookCard({book}) {
                 </div>
             </div>
             <div className="row justify-content-center">
-                <button className="green-btn col-10 mb-2 ">Add to Cart</button>
+                <button 
+                className="green-btn col-10 mb-2 "
+                // onClick={handleOpenModal}
+                >Add to Cart</button>
+                {/* <ModalAddToCart
+                    show={showCartModal}
+                    onClose={handleCloseModal}
+                    bookTitle={book?.title}
+                    bookPrice={book?.price}
+                    updateBookStatus={setBookstatus}
+                /> */}
             </div>
         </div>
     );

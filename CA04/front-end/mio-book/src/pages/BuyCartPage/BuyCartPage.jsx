@@ -58,6 +58,16 @@ function BuyCartPage() {
             const responseData = await response.json();
 
             if (responseData.status === 'success') {
+                const updatedBalance = user?.userInfo?.balance;
+                const updatedUser = {
+                    ...user,
+                    userInfo: {
+                        ...user.userInfo,
+                        balance: updatedBalance - cart?.totalCost,
+                    },
+                };
+                setUser(updatedUser);
+                localStorage.setItem('activeUser', JSON.stringify(updatedUser));
                 fetchCart();
                 // show success message
             } else {

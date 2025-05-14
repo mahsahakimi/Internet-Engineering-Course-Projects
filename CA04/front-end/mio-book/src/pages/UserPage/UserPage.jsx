@@ -37,14 +37,6 @@ function UserPage() {
 
             if (responseData.status === "success") {
                 setBooks(responseData.data);
-                // SAVE the response data into a file
-const blob = new Blob([JSON.stringify(books.owned, null, 2)], { type: 'text/plain' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'backend_response.txt'; // file name
-a.click();
-URL.revokeObjectURL(url);
                 
             } else {
                 console.error("Failed to fetch Cart details.");

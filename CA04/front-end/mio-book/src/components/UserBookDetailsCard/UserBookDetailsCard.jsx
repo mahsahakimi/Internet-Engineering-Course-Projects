@@ -1,5 +1,7 @@
     import React from 'react';
     import designBook from '../../../src/images/designBook.jpg';
+    import { Link } from 'react-router-dom';
+
 
     function UserBookDetailsCard({ book, status }) {
     const {
@@ -32,8 +34,13 @@
             alt={`Cover of ${title}`}
             />
         </td>
-        <td>{title}</td>
-        <td>{author}</td>
+        <td><Link 
+            to={`/book-details?title=${encodeURIComponent(title)}`} className="link-text">
+            {title}
+        </Link></td>
+        <td><Link to={`/author?name=${encodeURIComponent(author)}`} className="link-text">
+            {author}
+        </Link></td>          
         <td>{formattedGenres}</td>
         <td>{publisher}</td>
         <td>{year}</td>

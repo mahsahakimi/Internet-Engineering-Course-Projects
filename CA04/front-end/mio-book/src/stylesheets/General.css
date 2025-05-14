@@ -124,3 +124,8 @@ footer {
     overflow : hidden;
     vertical-align: middle;
 }
+
+.link-text {
+    text-decoration: none;
+    color: black;
+}
