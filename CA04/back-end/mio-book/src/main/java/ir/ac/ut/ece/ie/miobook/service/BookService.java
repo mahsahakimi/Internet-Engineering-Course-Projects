@@ -218,7 +218,7 @@ public class BookService {
 
 
 
-    public String searchByTitle(String title, int page, int pageSize) {
+    public List<Map<String, Object>> searchByTitle(String title, int page, int pageSize) {
         List<Book> books = bookDatabase.findBooksByTitle(title);
         if (books.isEmpty()) {
             throw new NoBooksFoundException();
@@ -226,17 +226,12 @@ public class BookService {
         // Apply pagination
         List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
 
-        List<Map<String, Object>> formattedBooks = formatBooks(paginatedBooks);
+        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
         // TODO: add page and page size if needed!
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(formattedBooks);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert retrieved books to JSON.", e);
-        }
+        return formattedBooks;
     }
 
-    public String searchByAuthor(String authorName, int page, int pageSize) {
+    public List<Map<String, Object>> searchByAuthor(String authorName, int page, int pageSize) {
         Author author = authorDatabase.findAuthorByName(authorName);
         if (author == null) {
             throw new AuthorNotFoundException(authorName);
@@ -249,14 +244,9 @@ public class BookService {
         // Apply pagination
         List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
 
-        List<Map<String, Object>> formattedBooks = formatBooks(paginatedBooks);
+        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
         // TODO: add page and page size if needed!
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(formattedBooks);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert retrieved books to JSON.", e);
-        }
+        return formattedBooks;
     }
 
     public String searchByGenre(String genre, int page, int pageSize) {

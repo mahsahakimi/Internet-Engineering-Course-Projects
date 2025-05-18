@@ -20,6 +20,16 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 
 
 function App() {
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = '/bootstrap/bootstrap.bundle.min.js'; // served from public/
+        script.async = true;
+        document.body.appendChild(script);
+
+        return () => {
+            document.body.removeChild(script); // clean up
+        };
+    }, []);
     return (
         <BrowserRouter>
         <UserProvider>

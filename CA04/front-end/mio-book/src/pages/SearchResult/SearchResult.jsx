@@ -1,78 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
 
+
 function SearchResult() {
-  return (
-    <body>
-        <Nav />
-        <section class="container mb-5">
-            <h4 class="mb-4">Results for  [serach parameter]  </h4>
-            <div class="row row-cols-1 row-cols-sm-5 mb-5">
-                <div class="col">
-                    <BookCard />
-                </div>
+    const location = useLocation();
+    const filterType = location.state?.type || '';
+    const searchTerm = location.state?.term || '';
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-                <div class="col">
-                    <BookCard />
-                </div>
+    useEffect(() => {
+        if (filterType && searchTerm) {
+            quickSerach();
+        }
+    }, [filterType, searchTerm]);
 
-                <div class="col">
-                    <BookCard />
-                </div>
+    const quickSerach = async () => {
 
-                <div class="col">
-                    <BookCard />
-                </div>
+        setLoading(true);
+        const endpoint =
+            filterType === "Author"
+                ? `/api/books/search_by_author?author=${encodeURIComponent(searchTerm)}`
+                : `/api/books/search_by_title?title=${encodeURIComponent(searchTerm)}`;
 
-                <div class="col">
-                    <BookCard />
-                </div>
-            </div>
+        try {
+            const result = await fetch(endpoint);
+            const responseData = await result.json();
+            setResults(Array.isArray(responseData?.data) ? responseData.data : []);
+            
+        } catch (error) {
+            console.error('Search failed:', error);
+            setResults([]);
+            
+        } finally {
+            setLoading(false);
+        }
+    };
 
-            <div class="row row-cols-1 row-cols-sm-5 ">
-                <div class="col">
-                    <BookCard />
-                </div>
 
-                <div class="col">
-                    <BookCard />
-                </div>
+    return (
+        <div>
+            <Nav />
+            <section className="container mb-5 mt-4">
+                <h4 className="mb-4">Results for <strong>{filterType}: "{searchTerm}"</strong></h4>
 
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-            </div>
-        </section>
-
-        <div class="pg-container">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#" aria-label="Previous">&lsaquo;</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" href="#" aria-label="Next">&rsaquo;</a>
-                    </li>
-                </ul>
-            </nav>
+                {loading ? (
+                    <p>Loading...</p>
+                ) : results.length === 0 ? (
+                    <p>No results found.</p>
+                ) : (
+                    <div className="row row-cols-1 row-cols-sm-5  g-4">
+                        {results.map((book, index) => (
+                            <div className="col" key={index}>
+                                <BookCard book = {book} />
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
+            <Footer />
         </div>
-
-        <Footer />
-    </body>
-  );
+    );
 };
 
 export default SearchResult;

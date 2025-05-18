@@ -145,13 +145,13 @@ public class BookController {
             throw new MissingRequiredFieldsException("title");
         }
 
-        String responseJson = bookService.searchByTitle(title, page, pageSize);
+        List<Map<String, Object>> responseJson = bookService.searchByTitle(title, page, pageSize);
         Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/search_by_author") // (search_books_by_author)
-    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "name") String authorName,
+    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "author") String authorName,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by author name with pagination.
@@ -162,7 +162,7 @@ public class BookController {
             throw new MissingRequiredFieldsException("author");
         }
 
-        String responseJson = bookService.searchByAuthor(authorName, page, pageSize);
+        List<Map<String, Object>> responseJson = bookService.searchByAuthor(authorName, page, pageSize);
         Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
