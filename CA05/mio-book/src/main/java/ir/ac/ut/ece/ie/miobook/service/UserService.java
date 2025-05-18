@@ -5,10 +5,13 @@ import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
+import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
 import ir.ac.ut.ece.ie.miobook.validator.AddressValidator;
 import ir.ac.ut.ece.ie.miobook.validator.EmailValidator;
 import ir.ac.ut.ece.ie.miobook.validator.PasswordValidator;
 import ir.ac.ut.ece.ie.miobook.validator.UsernameValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,10 +23,13 @@ import java.util.Map;
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
     private final UserDatabase userDatabase;
     private final BookDatabase bookDatabase;
 
-    public UserService(UserDatabase userDatabase, BookDatabase bookDatabase) {
+    @Autowired
+    public UserService(UserRepository userRepository, UserDatabase userDatabase, BookDatabase bookDatabase) {
+        this.userRepository = userRepository;
         this.userDatabase = userDatabase;
         this.bookDatabase = bookDatabase;
     }
@@ -33,8 +39,8 @@ public class UserService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
         Map<String, Object> userBooks = new HashMap<>();
     
@@ -74,8 +80,8 @@ public class UserService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
         String status = null;
         for (Book book : user.getOwnedBooks()) {
@@ -107,8 +113,8 @@ public class UserService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         List<Map<String, Object>> purchaseHistory = new ArrayList<>();
@@ -175,7 +181,7 @@ public class UserService {
         userData.put("email", user.getEmail());
         userData.put("address", user.getAddress());
 
-        if (user.getRole() == Role.customer) {
+        if (user.getRole() == Role.CUSTOMER) {
             userData.put("balance", user.getBalance());
         }
 
@@ -197,8 +203,8 @@ public class UserService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
         if (credit <= 0) {
             throw new InvalidCreditAmountException();
@@ -234,7 +240,24 @@ public class UserService {
             throw new InvalidAddressException(address.getCountry(), address.getCity());
         }
 
-        User user = new User(role, username, password, email, address);
-        userDatabase.addUser(user);
+        User user;
+        Role parsedRole = Role.valueOf(role.toUpperCase());
+        if (parsedRole == Role.ADMIN) {
+            user = new Admin(username, password, email, address);
+        } else { // Role.CUSTOMER
+            user = new Customer(username, password, email, address);
+        }
+
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            // Handle potential unique constraint violations for username or email
+            if (e.getMessage().contains("unique constraint") && e.getMessage().contains(username)) {
+                throw new UsernameAlreadyExistsException(username);
+            } else if (e.getMessage().contains("unique constraint") && e.getMessage().contains(email)) {
+                throw new EmailAlreadyExistsException(email);
+            }
+            throw new RuntimeException("Error saving user: " + e.getMessage());
+        }
     }
 }

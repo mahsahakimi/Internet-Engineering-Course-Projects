@@ -39,8 +39,8 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        // if (user.getRole() == Role.customer) {
-        //     throw new PermissionDeniedException(Role.customer.toString());
+        // if (user.getRole() == Role.CUSTOMER) {
+        //     throw new PermissionDeniedException(Role.CUSTOMER.toString());
         // }
         Author author = authorDatabase.findAuthorByName(authorName);
         if (author == null) {
@@ -63,8 +63,8 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         Book book = bookDatabase.findBookByTitle(title);
@@ -95,8 +95,8 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         Book book = bookDatabase.findBookByTitle(title);
@@ -138,8 +138,8 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         Book book = bookDatabase.findBookByTitle(title);

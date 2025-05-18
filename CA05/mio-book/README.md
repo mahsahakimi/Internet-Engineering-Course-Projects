@@ -285,7 +285,7 @@ All API endpoints now start with: `/api/users`
 * **Request Body:** A special note (JSON) with the user's details:
     ```json
     {
-        "role": "customer",
+        "role": "CUSTOMER",
         "username": "new_user",
         "password": "password123",
         "email": "email@xyz.com",

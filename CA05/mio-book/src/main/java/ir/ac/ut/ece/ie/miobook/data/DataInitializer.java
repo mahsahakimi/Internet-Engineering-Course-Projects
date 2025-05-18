@@ -5,11 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
-import ir.ac.ut.ece.ie.miobook.model.Author;
-import ir.ac.ut.ece.ie.miobook.model.Book;
-import ir.ac.ut.ece.ie.miobook.model.Review;
-import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.model.*;
+import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -27,14 +24,14 @@ public class DataInitializer implements ApplicationRunner {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private final UserDatabase userDatabase;
+    private final UserRepository userRepository;
     private final AuthorDatabase authorDatabase;
     private final BookDatabase bookDatabase;
     private final ReviewDatabase reviewDatabase;
 
-    public DataInitializer(UserDatabase userDatabase, AuthorDatabase authorDatabase,
+    public DataInitializer(UserRepository userRepository, AuthorDatabase authorDatabase,
                            BookDatabase bookDatabase, ReviewDatabase reviewDatabase) {
-        this.userDatabase = userDatabase;
+        this.userRepository = userRepository;
         this.authorDatabase = authorDatabase;
         this.bookDatabase = bookDatabase;
         this.reviewDatabase = reviewDatabase;
@@ -50,10 +47,39 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeUsers() {
         try {
             URL url = new URL("http://194.60.231.242:8000/users");
-            List<User> users = fetchData(url, new TypeReference<List<User>>() {});
-            if(users != null) {
-                for (User user : users) {
-                    userDatabase.addUser(user);
+            List<Map<String, Object>> userMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
+            if (userMaps != null) {
+                for (Map<String, Object> userMap : userMaps) {
+                    String roleStr = (String) userMap.get("role");
+                    String username = (String) userMap.get("username");
+                    String password = (String) userMap.get("password");
+                    String email = (String) userMap.get("email");
+                    Map<String, Object> addressMap = (Map<String, Object>) userMap.get("address");
+
+                    if (addressMap != null) {
+                        Address address = new Address(
+                                (String) addressMap.get("city"),
+                                (String) addressMap.get("country")
+                        );
+
+                        User user;
+                        try {
+                            Role role = Role.valueOf(roleStr.toUpperCase());
+                            if (role == Role.ADMIN) {
+                                user = new Admin(username, password, email, address);
+                            } else if (role == Role.CUSTOMER) {
+                                user = new Customer(username, password, email, address);
+                            } else {
+                                System.err.println("Unknown role: " + roleStr + " for user: " + username);
+                                continue;
+                            }
+                            userRepository.save(user);
+                        } catch (IllegalArgumentException e) {
+                            System.err.println("Invalid role: " + roleStr + " for user: " + username);
+                        }
+                    } else {
+                        System.err.println("Address is null for user: " + username);
+                    }
                 }
             }
         } catch (IOException e) {

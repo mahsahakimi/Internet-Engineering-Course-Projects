@@ -25,7 +25,7 @@ public class BookController {
 
     @PostMapping("/add") // (add_book)
     public ResponseEntity<Response> addBook(@RequestBody AddBookRequest request) {
-        // Adds a new book to the library. Requires admin privileges.
+        // Adds a new book to the library. Requires ADMIN privileges.
         // Parameters: title, author, publisher, year, price, genres, synopsis, content.
         // Returns: success message or error if book already exists or input is invalid.
         // Example: POST /books/add with JSON body containing book details.

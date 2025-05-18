@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
@@ -8,7 +7,6 @@ import ir.ac.ut.ece.ie.miobook.model.*;
 
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +28,8 @@ public class CartService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         Book book = bookDatabase.findBookByTitle(title);
@@ -60,8 +58,8 @@ public class CartService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         Book book = bookDatabase.findBookByTitle(title);
@@ -87,8 +85,8 @@ public class CartService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         List<CartElement> cart = user.getCart();
@@ -138,8 +136,8 @@ public class CartService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() == Role.admin) {
-            throw new PermissionDeniedException(Role.admin.toString());
+        if (user.getRole() == Role.ADMIN) {
+            throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
         int totalCost = 0;
