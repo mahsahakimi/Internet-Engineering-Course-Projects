@@ -1,9 +1,9 @@
-    import React from 'react';
-    import designBook from '../../../src/images/designBook.jpg';
-    import { Link } from 'react-router-dom';
+import React from 'react';
+import designBook from '../../../src/images/designBook.jpg';
+import { Link, useNavigate } from 'react-router-dom';
 
 
-    function UserBookDetailsCard({ book, status }) {
+function UserBookDetailsCard({ book, status }) {
     const {
         title = 'Untitled Book',
         author = 'Unknown Author',
@@ -12,6 +12,8 @@
         year = 'N/A',
         dueDate = null,
     } = book;
+    const navigate = useNavigate();
+
 
     const formattedGenres = Array.isArray(genres) && genres.length > 0
         ? genres.join(', ')
@@ -54,9 +56,13 @@
             )}
             </div>
         </td>
-        <td> <button className='btn gray-btn'>Read</button></td>
+        <td>  
+            <Link to={`/book/content?title=${encodeURIComponent(title)}`}>
+                <button className='btn gray-btn'>Read</button>
+            </Link>
+        </td>
         </tr>
     );
-    }
+}
 
-    export default UserBookDetailsCard;
+export default UserBookDetailsCard;

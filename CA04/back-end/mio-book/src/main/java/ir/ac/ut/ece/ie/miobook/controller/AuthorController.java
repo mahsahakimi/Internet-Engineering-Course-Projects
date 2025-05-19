@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.PrintStream;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/authors")
@@ -60,7 +61,7 @@ public class AuthorController {
             throw new MissingRequiredFieldsException("username");
         }
 
-        String authorDetails = authorService.getAuthorDetails(authorName);
+        Map<String, Object> authorDetails = authorService.getAuthorDetails(authorName);
         Response response = new Response("success", "Author details retrieved successfully.", authorDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -18,7 +18,10 @@ function BookCard({book}) {
                 <Link to={`/book-details?title=${encodeURIComponent(book?.title)}`} className='link-text'>
                     <h5 className="mb-1">{book?.title}</h5>
                 </Link>  
-                <p className="text-muted mb-2">{book?.author}</p>
+                <Link to={`/author?name=${encodeURIComponent(book?.author)}`} className='link-text'>
+                    <p className="text-muted mb-2">{book?.author}</p>
+                </Link>  
+                
             </div>
             <div className="row align-items-center mb-3 px-3">
                 <div className="col-8">
