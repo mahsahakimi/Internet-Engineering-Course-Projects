@@ -1,13 +1,15 @@
-import React from 'react';
+import {useNavigate, Link } from 'react-router-dom';
 import '../../stylesheets/General.css';
 import bookpng from '../../../src/images/book.png';
-import { Link } from 'react-router-dom';
 import StarRatingRenderer from '../StarRatingRenderer';
 
 
 function BookCard({book}) {
-
+    const navigate = useNavigate();
     const rating = book?.averageRating || 0;
+    const gotobookpage = () => {
+        navigate(`/book-details?title=${encodeURIComponent(book.title)}`);
+    };
 
     return (
         <div className="book-card">
@@ -34,15 +36,9 @@ function BookCard({book}) {
             <div className="row justify-content-center">
                 <button 
                 className="green-btn col-10 mb-2 "
-                // onClick={handleOpenModal}
+                onClick={gotobookpage}
                 >Add to Cart</button>
-                {/* <ModalAddToCart
-                    show={showCartModal}
-                    onClose={handleCloseModal}
-                    bookTitle={book?.title}
-                    bookPrice={book?.price}
-                    updateBookStatus={setBookstatus}
-                /> */}
+                
             </div>
         </div>
     );

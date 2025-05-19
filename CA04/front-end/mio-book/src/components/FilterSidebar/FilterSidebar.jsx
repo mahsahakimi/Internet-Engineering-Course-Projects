@@ -1,6 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import '../../stylesheets/Filter.css';
+
+const genres = [
+  "Action",
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Fantasy",
+  "Horror",
+  "Romance",
+  "Sci-Fi",
+  "Thriller",
+];
 
 function FilterSidebar({ show, onClose, onResults}) {
     if (!show) return null;
@@ -128,17 +140,20 @@ function FilterSidebar({ show, onClose, onResults}) {
                 <label htmlFor="genre">Genre:</label>
                 </div>
                 <div className="col-8">
-                <select
-                    id="genre"
-                    name="genre"
-                    className="form-select"
-                    value={formData.genre}
-                    onChange={handleChange}
-                >
-                    <option value="">Select genre</option>
-                    <option value="sample">Sample</option>
-                    {/* Add more options dynamically if needed */}
-                </select>
+                    <select
+                        id="genre"
+                        name="genre"
+                        className="form-select"
+                        value={formData.genre}
+                        onChange={handleChange}
+                    >
+                        <option value="">Select genre</option>
+                        {genres.map((genre) => (
+                        <option key={genre} value={genre}>
+                            {genre}
+                        </option>
+                        ))}
+                    </select>
                 </div>
             </div>
 
