@@ -34,9 +34,9 @@ public class AuthorService {
         if (whoAdded == null) {
             throw new UserNotLoggedInException();
         }
-        // if (whoAdded.getRole() == Role.customer) {
-        //     throw new PermissionDeniedException(Role.customer.toString());
-        // }
+        if (whoAdded.getRole() == Role.customer) {
+            throw new PermissionDeniedException(Role.customer.toString());
+        }
 
         if (!BornDiedValidator.validateBornDied(born.toLocalDate(), died != null ? died.toLocalDate() : null)) {
             throw new InvalidDatesException();

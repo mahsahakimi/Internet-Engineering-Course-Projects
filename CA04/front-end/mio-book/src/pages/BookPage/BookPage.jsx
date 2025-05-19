@@ -13,6 +13,7 @@ import ModalAddReview from '../../components/ModalAddReview/ModalAddReview';
 function BookPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
 
@@ -103,7 +104,11 @@ function BookPage() {
                         </div>
                         <div className="col-sm-4"></div>
                         <div className="col-sm-2">
-                            <button className="btn gray-btn col-sm-12" onClick={handleOpenModal}>
+                            <button 
+                                className="btn gray-btn col-sm-12" 
+                                onClick={handleOpenModal}
+                                disabled={localUser?.userInfo?.role === "admin"}
+                                >
                                 Add review <i className="bi bi-chat-square-text"></i>
                             </button>
                             {/* Modal */}

@@ -26,11 +26,13 @@ function UserPage() {
     useEffect(() => {
         if (user?.userInfo?.role === "admin") {
             navigate("/admin", { replace: true });
+            return;
         }
 
     }, [user, navigate]);
 
     const fetchUserBooks = async () => {
+
         try {
             const response = await fetch('/api/users/purchased_books');
             const responseData = await response.json();
@@ -49,6 +51,10 @@ function UserPage() {
     };
 
     useEffect(() => {
+        if (user?.userInfo?.role === "admin") {
+            navigate("/admin", { replace: true });
+            return;
+        }
         fetchUserBooks();
     }, []);
 
@@ -126,6 +132,8 @@ function UserPage() {
 
                 if(responseData.status === "success"){
                     const newBalance = responseData.data;
+                    setFormData({ amount: '' });
+
 
                     const currentUser = user || JSON.parse(localStorage.getItem('activeUser'));
                     const updatedUser = {
