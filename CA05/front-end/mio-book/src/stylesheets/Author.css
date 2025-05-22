@@ -1,0 +1,16 @@
+.header-bg {
+    max-height: 320px;
+    object-fit: cover;
+    width: 100%;
+    border-bottom: 3px solid black;
+    margin-bottom: 100px;
+}
+
+.author-img {
+    width: 100%;
+    object-fit: cover;
+    min-height: 360px;
+    border-radius: 1rem;
+    transform: translateY(-100%);
+}
+  
