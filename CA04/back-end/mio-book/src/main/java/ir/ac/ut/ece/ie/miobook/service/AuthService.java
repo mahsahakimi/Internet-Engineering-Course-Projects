@@ -6,6 +6,10 @@ import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserSessionActiveException;
 import ir.ac.ut.ece.ie.miobook.model.User;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +21,7 @@ public class AuthService {
         this.userDatabase = userDatabase;
     }
 
-    public User userLogin(String username, String password){
+    public Map<String, Object> userLogin(String username, String password){
         if(userDatabase.getLoggedInUser() != null) {
             throw new UserSessionActiveException();
         }
@@ -29,7 +33,14 @@ public class AuthService {
             throw new IncorrectPasswordException();
         }
         userDatabase.setLoggedInUser(user);
-        return user;
+
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("email", user.getEmail());
+        userInfo.put("username", user.getUsername());
+        userInfo.put("role", user.getRole().toString());
+        userInfo.put("balance", user.getBalance());
+
+        return userInfo;
     }
 
     public void userLogout(){

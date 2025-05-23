@@ -35,63 +35,57 @@ function AuthorPage() {
           `/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`
         );
 
+        const responseData = await detailsResponse.json();
         if (!detailsResponse.ok) {
           console.error(`Failed to fetch author details: ${detailsResponse.status}`);
-          const responseData = await response.json();
           navigate('/error', { state: { message: responseData.message } });
           return;
         }
 
-        const detailsResponseJson = await detailsResponse.json();
-        console.log('Author Details API Response:', detailsResponseJson);
-
-        if (detailsResponseJson.status === 'success' && detailsResponseJson.data) {
+        if (responseData.status === 'success' && responseData.data) {
           try {
-            const parsedDetailsData = JSON.parse(detailsResponseJson.data);
-            setAuthorDetails(parsedDetailsData);
+            setAuthorDetails(responseData.data);
           } catch (parseError) {
             console.error('Error parsing author details:', parseError);
             navigate('/error', { state: { message: 'Failed to parse author details.' } });
             return;
           }
         } else {
-          navigate('/error', { state: { message: detailsResponseJson.message || 'Failed to retrieve author details.' } });
+          navigate('/error', { state: { message: responseData.message || 'Failed to retrieve author details.' } });
           return;
         }
 
         // Fetch author's books
-        const booksResponse = await fetch(
-          `/api/books/search_by_author?name=${encodeURIComponent(
+        const response = await fetch(
+          `/api/books/search_by_author?author=${encodeURIComponent(
             authorNameFromURL
           )}&page=1&pageSize=10`
         );
 
-        if (!booksResponse.ok) {
-          console.warn(`Failed to fetch author's books: ${booksResponse.status}`);
-          navigate('/error', { state: { message: `Failed to fetch author's books: ${booksResponse.status}` } });
+        if (!response.ok) {
+          console.warn(`Failed to fetch author's books: ${response.status}`);
+          navigate('/error', { state: { message: `Failed to fetch author's books: ${response.status}` } });
           return;
         }
 
-        const booksResponseJson = await booksResponse.json();
-        console.log('Author Books API Response:', booksResponseJson);
+        const newResponseData = await response.json();
 
-        if (booksResponseJson.status === 'success' && booksResponseJson.data) {
+        if (newResponseData.status === 'success' && newResponseData.data) {
           try {
-            const parsedBooksData = JSON.parse(booksResponseJson.data);
-            setAuthorBooks(parsedBooksData);
+            setAuthorBooks(newResponseData.data);
           } catch (parseError) {
             console.error('Error parsing author books:', parseError);
             navigate('/error', { state: { message: 'Failed to parse author books.' } });
             return;
           }
         } else {
-          console.warn(booksResponseJson.message || 'Failed to retrieve author\'s books.');
-          navigate('/error', { state: { message: booksResponseJson.message || 'Failed to retrieve author\'s books.' } });
+          console.warn(newResponseData.message || 'Failed to retrieve author\'s books.');
+          navigate('/error', { state: { message: newResponseData.message || 'Failed to retrieve author\'s books.' } });
           return;
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        navigate('/error', { state: { message: 'Failed to load author data.' } });
+        navigate('/error', { state: { message: err.message } });
       } finally {
         setLoading(false);
       }

@@ -34,9 +34,9 @@ public class AuthorService {
         if (whoAdded == null) {
             throw new UserNotLoggedInException();
         }
-        // if (whoAdded.getRole() == Role.customer) {
-        //     throw new PermissionDeniedException(Role.customer.toString());
-        // }
+        if (whoAdded.getRole() == Role.customer) {
+            throw new PermissionDeniedException(Role.customer.toString());
+        }
 
         if (!BornDiedValidator.validateBornDied(born.toLocalDate(), died != null ? died.toLocalDate() : null)) {
             throw new InvalidDatesException();
@@ -47,7 +47,7 @@ public class AuthorService {
         return authorDatabase.getAuthors();
     }
 
-    public String getAuthorDetails(String authorName) {
+    public Map<String, Object> getAuthorDetails(String authorName) {
         Author author = authorDatabase.findAuthorByName(authorName);
 
         if (author == null) {
@@ -64,13 +64,7 @@ public class AuthorService {
         if (author.getDied() != null) {
             authorData.put("died", author.getDied().toString());
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(authorData);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert author details to JSON.", e);
-        }
+        return authorData;
     }
 
     public List<Author> getAllAuthors(int page, int pageSize){

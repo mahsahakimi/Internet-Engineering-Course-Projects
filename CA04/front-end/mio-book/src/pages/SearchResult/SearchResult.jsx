@@ -1,78 +1,96 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
+import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
+
 
 function SearchResult() {
-  return (
-    <body>
-        <Nav />
-        <section class="container mb-5">
-            <h4 class="mb-4">Results for  [serach parameter]  </h4>
-            <div class="row row-cols-1 row-cols-sm-5 mb-5">
-                <div class="col">
-                    <BookCard />
+    const location = useLocation();
+    const filterType = location.state?.type || '';
+    const searchTerm = location.state?.term || '';
+    const [results, setResults] = useState([]);
+    const [filters, setFilters] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showSidebar, setShowSidebar] = useState(false);
+
+    const handleSearchResults = (data, param) => {
+        setResults(data);
+        setFilters(param)
+    };
+
+
+    useEffect(() => {
+        if (filterType && searchTerm) {
+            quickSerach();
+        }
+    }, [filterType, searchTerm]);
+
+    const quickSerach = async () => {
+
+        setLoading(true);
+        const endpoint =
+            filterType === "Author"
+                ? `/api/books/searchBooks?author=${encodeURIComponent(searchTerm)}`
+                : `/api/books/searchBooks?title=${encodeURIComponent(searchTerm)}`;
+
+        try {
+            setFilters (new URLSearchParams({
+                title: filterType === 'Author'? null : searchTerm,
+                author: filterType !== 'Author'? null : searchTerm,
+                sortBy: 'reviewCount',
+                sortOrder: 'desc',
+            }))
+            const result = await fetch(endpoint);
+            const responseData = await result.json();
+            setResults(Array.isArray(responseData?.data) ? responseData.data : []);
+            
+        } catch (error) {
+            console.error('Search failed:', error);
+            setResults([]);
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    return (
+        <div>
+            <Nav />
+            <section className="container mb-5 mt-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h4 className="mb-0">
+                        Results for [{filters.toString()}]
+                    </h4>
+                    <button onClick={() => setShowSidebar(true)} className="btn green-btn">
+                        <i class="bi bi-filter"></i> Filter
+                    </button>
+                    <FilterSidebar show={showSidebar} onClose={() => setShowSidebar(false)} onResults={handleSearchResults}/>
                 </div>
 
-                <div class="col">
-                    <BookCard />
+                
+                <div>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : results.length === 0 ? (
+                        <p>No results found.</p>
+                    ) : (
+                        <div className="row row-cols-1 row-cols-sm-5  g-4">
+                            {results.map((book, index) => (
+                                <div className="col" key={index}>
+                                    <BookCard book = {book} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-            </div>
-
-            <div class="row row-cols-1 row-cols-sm-5 ">
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-
-                <div class="col">
-                    <BookCard />
-                </div>
-            </div>
-        </section>
-
-        <div class="pg-container">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#" aria-label="Previous">&lsaquo;</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" href="#" aria-label="Next">&rsaquo;</a>
-                    </li>
-                </ul>
-            </nav>
+            </section>
+            <Footer />
         </div>
-
-        <Footer />
-    </body>
-  );
+    );
 };
 
 export default SearchResult;

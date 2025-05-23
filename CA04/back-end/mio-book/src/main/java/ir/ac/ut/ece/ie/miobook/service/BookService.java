@@ -39,9 +39,9 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        // if (user.getRole() == Role.customer) {
-        //     throw new PermissionDeniedException(Role.customer.toString());
-        // }
+        if (user.getRole() == Role.customer) {
+            throw new PermissionDeniedException(Role.customer.toString());
+        }
         Author author = authorDatabase.findAuthorByName(authorName);
         if (author == null) {
             throw new AuthorNotFoundException(authorName);
@@ -133,14 +133,14 @@ public class BookService {
         return bookData;
     }
 
-    public String showBookContent(String title) {
+    public Map<String, Object> showBookContent(String title) {
         User user = userDatabase.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.customer) {
-            throw new PermissionDeniedException(Role.admin.toString());
-        }
+        // if (user.getRole() != Role.customer) {
+        //     throw new PermissionDeniedException(Role.admin.toString());
+        // }
 
         Book book = bookDatabase.findBookByTitle(title);
         if (book == null) {
@@ -170,14 +170,10 @@ public class BookService {
         if (hasAccess) {
             Map<String, Object> data = new HashMap<>();
             data.put("title", book.getTitle());
+            data.put("author", book.getAuthor().getName());
             data.put("content", book.getContent());
 
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                return mapper.writeValueAsString(data);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not convert book content to JSON.", e);
-            }
+            return data;
         }
         throw new BookAccessDeniedException();
     }
@@ -218,29 +214,27 @@ public class BookService {
 
 
 
-    public String searchByTitle(String title, int page, int pageSize) {
-        List<Book> books = bookDatabase.findBooksByTitle(title);
-        if (books.isEmpty()) {
+    public List<Map<String, Object>> searchByTitle(String title, int page, int pageSize) {
+        List<Book> books = bookDatabase.getBooks();
+        List<Book> founded = books.stream().filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase())).collect(Collectors.toList());
+
+        if (founded.isEmpty()) {
             throw new NoBooksFoundException();
         }
         // Apply pagination
-        List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
+        List<Book> paginatedBooks = PaginationUtils.paginate(founded, page, pageSize);
 
-        List<Map<String, Object>> formattedBooks = formatBooks(paginatedBooks);
+        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
         // TODO: add page and page size if needed!
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(formattedBooks);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert retrieved books to JSON.", e);
-        }
+        return formattedBooks;
     }
 
-    public String searchByAuthor(String authorName, int page, int pageSize) {
-        Author author = authorDatabase.findAuthorByName(authorName);
+    public List<Map<String, Object>> searchByAuthor(String authorName, int page, int pageSize) {
+        List<Author> author = authorDatabase.getAuthors();
         if (author == null) {
             throw new AuthorNotFoundException(authorName);
         }
+        
         List<Book> books =  bookDatabase.findBooksByAuthor(authorName);
         if (books.isEmpty()) {
             throw new NoBooksFoundException();
@@ -249,14 +243,9 @@ public class BookService {
         // Apply pagination
         List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
 
-        List<Map<String, Object>> formattedBooks = formatBooks(paginatedBooks);
+        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
         // TODO: add page and page size if needed!
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(formattedBooks);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert retrieved books to JSON.", e);
-        }
+        return formattedBooks;
     }
 
     public String searchByGenre(String genre, int page, int pageSize) {
@@ -303,8 +292,8 @@ public class BookService {
         }
     }
 
-    public String searchBooks(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder, int page, int pageSize) {
-        if (fromYear <= 0 || toYear <= 0) {
+    public List<Map<String, Object>> searchBooks(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder, int page, int pageSize) {
+        if (fromYear < 0 || toYear < 0) {
             throw new InvalidYearException();
         }
         if (fromYear > toYear) {
@@ -315,10 +304,14 @@ public class BookService {
 
         // Apply filters
         if (title != null && !title.isEmpty()) {
-            books = books.stream().filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase())).collect(Collectors.toList());
+            if(!title.equals("null")){   
+                books = books.stream().filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase())).collect(Collectors.toList());
+            }
         }
         if (authorName != null && !authorName.isEmpty()) {
-            books = books.stream().filter(book -> book.getAuthor().getName().toLowerCase().contains(authorName.toLowerCase())).collect(Collectors.toList());
+            if(!authorName.equals("null")){  
+                books = books.stream().filter(book -> book.getAuthor().getName().toLowerCase().contains(authorName.toLowerCase())).collect(Collectors.toList());
+            }
         }
         if (genre != null && !genre.isEmpty()) {
             books = books.stream().filter(book -> book.getGenres().stream().anyMatch(g -> g.toLowerCase().equals(genre.toLowerCase()))).collect(Collectors.toList());
@@ -340,7 +333,7 @@ public class BookService {
         List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
 
         // Format books for output
-        List<Map<String, Object>> formattedBooks = formatBooks(paginatedBooks);
+        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
 
         // Build response
         Map<String, Object> responseData = new HashMap<>();
@@ -348,12 +341,7 @@ public class BookService {
         responseData.put("search", buildSearchString(title, authorName, genre, fromYear, toYear, sortBy, sortOrder));
         // TODO: add page and page size if needed!
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(responseData);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert retrieved books to JSON.", e);
-        }
+        return formattedBooks;
     }
 
     private List<Book> sortBooksByAverageRating(List<Book> books, String sortOrder) {

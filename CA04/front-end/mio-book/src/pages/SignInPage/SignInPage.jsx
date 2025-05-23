@@ -76,7 +76,7 @@ function SignInPage() {
 
             const responseData = await response.json();
 
-            if (response.ok && response.status === 200) {
+            if (response.ok) {
             const activeUser = { userInfo: responseData.data };
 
             setUser(activeUser);

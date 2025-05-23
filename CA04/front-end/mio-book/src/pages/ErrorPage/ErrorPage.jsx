@@ -11,7 +11,7 @@ function ErrorPage() {
     const errorMessage = location.state?.message || 'An unexpected error occurred.';
 
     return (
-    <body>
+    <>
         <Nav />
         <div className="main-content p-2 mb-2 d-flex align-items-center justify-content-center">
             <div className="error-container col-sm-10 d-flex">
@@ -35,7 +35,7 @@ function ErrorPage() {
             </div>
         </div>
         <Footer />
-    </body>
+    </>
     );
 };
 
