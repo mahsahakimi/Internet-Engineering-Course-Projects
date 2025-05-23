@@ -2,7 +2,7 @@ package ir.ac.ut.ece.ie.miobook.data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
+import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -25,14 +26,14 @@ public class DataInitializer implements ApplicationRunner {
     private final ObjectMapper mapper = new ObjectMapper();
 
     private final UserRepository userRepository;
-    private final AuthorDatabase authorDatabase;
+    private final AuthorRepository authorRepository;
     private final BookDatabase bookDatabase;
     private final ReviewDatabase reviewDatabase;
 
-    public DataInitializer(UserRepository userRepository, AuthorDatabase authorDatabase,
+    public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
                            BookDatabase bookDatabase, ReviewDatabase reviewDatabase) {
         this.userRepository = userRepository;
-        this.authorDatabase = authorDatabase;
+        this.authorRepository = authorRepository;
         this.bookDatabase = bookDatabase;
         this.reviewDatabase = reviewDatabase;
     }
@@ -90,15 +91,63 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeAuthors() {
         try {
             URL url = new URL("http://194.60.231.242:8000/authors");
-            List<Author> authors = fetchData(url, new TypeReference<List<Author>>() {});
-            if(authors != null) {
-                for (Author author : authors) {
-                    authorDatabase.addAuthor(author);
+            List<Map<String, Object>> authorMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
+            if (authorMaps != null) {
+                for (Map<String, Object> authorMap : authorMaps) {
+                    String name = (String) authorMap.get("name");
+                    String penName = (String) authorMap.get("penName");
+                    String nationality = (String) authorMap.get("nationality");
+                    String bornStr = (String) authorMap.get("born");
+                    String diedStr = (String) authorMap.get("died");
+                    String addedByAdminUsername = (String) authorMap.get("addedBy"); // Assuming API provides the adding admin's username
+
+                    MyLocalDate born = parseLocalDate((String) authorMap.get("born"));
+                    MyLocalDate died = parseLocalDate((String) authorMap.get("died"));
+
+                    Optional<Admin> adminOptional = adminRepository.findById(addedByAdminUsername);
+
+                    if (adminOptional.isPresent()) {
+                        Admin addingAdmin = adminOptional.get();
+                        Optional<Author> existingAuthor = authorRepository.findById(name);
+
+                        if (existingAuthor.isEmpty()) {
+                            Author author = new Author(name, penName, nationality, born, died, addingAdmin);
+                            authorRepository.save(author);
+                            System.out.println("Author added: " + name + " (added by " + addedByAdminUsername + ")");
+                        } else {
+                            System.out.println("Author already exists: " + name);
+                            // You could add logic here to update the author if needed
+                        }
+                    } else {
+                        System.err.println("Admin not found: " + addedByAdminUsername + " for author: " + name);
+                    }
                 }
             }
         } catch (IOException e) {
             System.err.println("Error initializing authors: " + e.getMessage());
         }
+    }
+
+    // Helper method to parse date strings to MyLocalDate (assuming yyyy-mm-dd format)
+    private MyLocalDate parseLocalDate(String dateStr) {
+        if (dateStr != null && !dateStr.isEmpty()) {
+            String[] parts = dateStr.split("-");
+            if (parts.length == 3) {
+                try {
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]);
+                    int day = Integer.parseInt(parts[2]);
+                    return new MyLocalDate(year, month, day);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing date: " + dateStr);
+                    return null;
+                }
+            } else {
+                System.err.println("Invalid date format: " + dateStr);
+                return null;
+            }
+        }
+        return null;
     }
 
     private void initializeBooks() {

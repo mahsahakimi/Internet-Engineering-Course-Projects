@@ -1,7 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.database.AuthorDatabase;
+import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
@@ -24,10 +24,10 @@ public class BookService {
 
     private final UserDatabase userDatabase;
     private final BookDatabase bookDatabase;
-    private final AuthorDatabase authorDatabase;
+    private final AuthorRepository authorDatabase;
     private final ReviewDatabase reviewDatabase;
 
-    public BookService(UserDatabase userDatabase, BookDatabase bookDatabase, AuthorDatabase authorDatabase, ReviewDatabase reviewDatabase) {
+    public BookService(UserDatabase userDatabase, BookDatabase bookDatabase, AuthorRepository authorDatabase, ReviewDatabase reviewDatabase) {
         this.userDatabase = userDatabase;
         this.bookDatabase = bookDatabase;
         this.authorDatabase = authorDatabase;

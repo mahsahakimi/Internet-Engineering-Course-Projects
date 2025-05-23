@@ -6,22 +6,25 @@ import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserSessionActiveException;
 import ir.ac.ut.ece.ie.miobook.model.User;
+import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
     private final UserDatabase userDatabase;
+    private final UserRepository userRepository;
 
-    public AuthService(UserDatabase userDatabase) {
+    public AuthService(UserDatabase userDatabase, UserRepository userRepository) {
         this.userDatabase = userDatabase;
+        this.userRepository = userRepository;
     }
 
     public User userLogin(String username, String password){
         if(userDatabase.getLoggedInUser() != null) {
             throw new UserSessionActiveException();
         }
-        User user = userDatabase.findUserByUsername(username);
+        User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new UserNotFoundException(username);
         }
