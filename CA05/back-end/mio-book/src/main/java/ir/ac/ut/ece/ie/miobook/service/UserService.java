@@ -42,10 +42,11 @@ public class UserService {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername()).orElse(null);
         Map<String, Object> userBooks = new HashMap<>();
     
         List<Map<String, Object>> borrowedBooksInfo = new ArrayList<>();
-        for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
+        for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
             if (borrowedBook.canAccessBook()) {
                 Book book = borrowedBook.getBook();
                 Map<String, Object> bookInfo = new HashMap<>();
@@ -61,7 +62,7 @@ public class UserService {
         userBooks.put("borrowed", borrowedBooksInfo);
     
         List<Map<String, Object>> ownedBooksInfo = new ArrayList<>();
-        for (Book book : user.getOwnedBooks()) {
+        for (Book book : customer.getOwnedBooks()) {
             Map<String, Object> bookInfo = new HashMap<>();
             bookInfo.put("title", book.getTitle());
             bookInfo.put("author", book.getAuthor().getName());
@@ -83,15 +84,16 @@ public class UserService {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername()).orElse(null);
         String status = null;
-        for (Book book : user.getOwnedBooks()) {
+        for (Book book : customer.getOwnedBooks()) {
             if(book.getTitle().equals(title)){
                 status = "buy";
                 return status;
             }
         }
             
-        for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
+        for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
             if (borrowedBook.canAccessBook()) {
                 Book book = borrowedBook.getBook();
                 if(book.getTitle().equals(title)){
@@ -101,7 +103,7 @@ public class UserService {
             }
         }
         Book book = bookDatabase.findBookByTitle(title);
-        if (user.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
+        if (customer.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
             status = "cart";
             return status;
         }
@@ -116,9 +118,10 @@ public class UserService {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername()).orElse(null);
 
         List<Map<String, Object>> purchaseHistory = new ArrayList<>();
-        for (Purchase purchase : user.getPurchases()) {
+        for (Purchase purchase : customer.getPurchases()) {
             Map<String, Object> purchaseData = new HashMap<>();
 
             MyLocalDateTime purchaseDateTime = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
@@ -138,7 +141,7 @@ public class UserService {
                     int finalPrice = book.getPrice();
 
                     // Check if the book was borrowed
-                    for (BorrowedBook borrowedBook : user.getBorrowedBooks()) {
+                    for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
                         if (borrowedBook.getBook().getTitle().equals(book.getTitle())) {
                             isBorrowed = true;
                             MyLocalDateTime borrowDueDate = borrowedBook.getDueDate();
@@ -163,7 +166,7 @@ public class UserService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
+        data.put("username", customer.getUsername());
         data.put("purchaseHistory", purchaseHistory);
 
         return data;
@@ -182,7 +185,8 @@ public class UserService {
         userData.put("address", user.getAddress());
 
         if (user.getRole() == Role.CUSTOMER) {
-            userData.put("balance", user.getBalance());
+            Customer customer = userRepository.findCustomerByUsername(user.getUsername()).orElse(null);
+            userData.put("balance", customer.getBalance());
         }
 
         Map<String, Object> response = new HashMap<>();
@@ -212,9 +216,10 @@ public class UserService {
         if (credit < 100) {
             throw new MinimumCreditException();
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername()).orElse(null);
 
-        user.setBalance(user.getBalance() + credit);
-        return user.getBalance();
+        customer.setBalance(customer.getBalance() + credit);
+        return customer.getBalance();
     }
 
     public void addUser(String role, String username, String password, String email, Address address) {

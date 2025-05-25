@@ -31,15 +31,12 @@ public class User {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    private int balance;
-
     public User(String role, String username, String password, String email, Address address) {
         this.role = Role.valueOf(role);
         this.username = username;
         this.password = password;
         this.email = email;
         this.address = address;
-        this.balance = 0;
     }
 
     @Override
@@ -50,7 +47,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", address=" + address +
-                ", balance=" + balance +
                 '}';
     }
 }

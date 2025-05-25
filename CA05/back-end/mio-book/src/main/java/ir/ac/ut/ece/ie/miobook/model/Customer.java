@@ -1,5 +1,6 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
+import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +38,12 @@ public class Customer extends User {
     @JoinColumn(name = "user_username")
     List<BorrowedBook> borrowedBooks = new ArrayList<>();
 
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Wallet wallet;
+
     public Customer(String username, String password, String email, Address address) {
         super(Role.CUSTOMER.name(), username, password, email, address);
+        this.wallet = new Wallet(this);
     }
 
     public void removeBookFromCart(Book book) {
