@@ -40,7 +40,7 @@ public class Book {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "book_genres",
-        joinColumns = @JoinColumn(name = "book_id"),
+        joinColumns = @JoinColumn(name = "book_title", referencedColumnName = "title"),
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
@@ -59,5 +59,10 @@ public class Book {
     public void addGenre(Genre genre) {
         this.genres.add(genre);
         genre.getBooks().add(this);
+    }
+
+    public void removeGenre(Genre genre) {
+        this.genres.remove(genre);
+        genre.getBooks().remove(this);
     }
 }

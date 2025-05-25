@@ -3,6 +3,8 @@ package ir.ac.ut.ece.ie.miobook.data;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
+import ir.ac.ut.ece.ie.miobook.repository.GenreRepository;
+import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
@@ -16,8 +18,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 
 @Component
@@ -27,14 +31,17 @@ public class DataInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final AuthorRepository authorRepository;
-    private final BookDatabase bookDatabase;
+    private final BookRepository bookRepository;
+    private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
 
     public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
-                           BookDatabase bookDatabase, ReviewRepository reviewRepository) {
+                           BookRepository bookRepository, GenreRepository genreRepository,
+                            ReviewRepository  reviewRepository) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
-        this.bookDatabase = bookDatabase;
+        this.bookRepository = bookRepository;
+        this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
     }
 
@@ -132,36 +139,56 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeBooks() {
         try {
             URL url = new URL("http://194.60.231.242:8000/books");
-            List<Map<String, Object>> bookMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
+            List<Map<String, Object>> bookMaps = fetchData(url, new TypeReference<>() {});
 
             if (bookMaps != null) {
                 for (Map<String, Object> bookMap : bookMaps) {
                     String authorName = (String) bookMap.get("author");
-
-                    Author foundAuthor = authorDatabase.findAuthorByName(authorName);
-
-                    if (foundAuthor != null) {
-                        Book fixedBook = new Book(
-                                (String) bookMap.get("title"),
-                                foundAuthor,
-                                (String) bookMap.get("publisher"),
-                                (Integer) bookMap.get("year"),
-                                (List<String>) bookMap.get("genres"),
-                                (Integer) bookMap.get("price"),
-                                (String) bookMap.get("synopsis"),
-                                (String) bookMap.get("content")
-                        );
-
-                        bookDatabase.addBook(fixedBook);
+                    Optional<Author> optionalAuthor = authorRepository.findByName(authorName);
+                    Author author = null;
+                    if (optionalAuthor.isPresent()) {
+                        author = optionalAuthor.get();
                     } else {
-                        System.err.println("Author not found: " + authorName + " for book: " + bookMap.get("title"));
+                        System.err.println("Author not found: " + authorName);
                     }
+
+                    Book book = new Book();
+                    book.setTitle((String) bookMap.get("title"));
+                    book.setAuthor(author);
+                    book.setPublisher((String) bookMap.get("publisher"));
+                    book.setYear((Integer) bookMap.get("year"));
+                    book.setPrice((Integer) bookMap.get("price"));
+                    book.setSynopsis((String) bookMap.get("synopsis"));
+                    book.setContent((String) bookMap.get("content"));
+
+                    List<String> genreNames = (List<String>) bookMap.get("genres");
+                    Set<Genre> genreEntities = new HashSet<>();
+
+                    for (String genreName : genreNames) {
+                        String trimmedName = genreName.trim();
+
+                        Genre genre = genreRepository
+                            .findByNameIgnoreCase(trimmedName)
+                            .orElseGet(() -> {
+                                Genre newGenre = new Genre();
+                                newGenre.setName(trimmedName);
+                                return genreRepository.save(newGenre);
+                            });
+
+                        genreEntities.add(genre);
+                    }
+
+                    book.setGenres(genreEntities);
+                    bookRepository.save(book);
                 }
             }
+
         } catch (IOException e) {
             System.err.println("Error initializing books: " + e.getMessage());
         }
     }
+
+
 
     private void initializeReviews() {
         try {
@@ -179,7 +206,7 @@ public class DataInitializer implements ApplicationRunner {
 
                         // Find customer and book entities
                         Optional<Customer> customerOptional = userRepository.findCustomerByUsername(username);
-                        Book book = bookDatabase.findBookByTitle(bookTitle);
+                        Book book = bookRepository.findByTitle(bookTitle).orElse(null);
 
                         if (customerOptional.isPresent() && book != null) {
                             Customer customer = customerOptional.get();
