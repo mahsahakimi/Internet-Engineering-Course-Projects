@@ -3,10 +3,10 @@ package ir.ac.ut.ece.ie.miobook.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
+import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,13 @@ public class BookService {
     private final UserDatabase userDatabase;
     private final BookDatabase bookDatabase;
     private final AuthorRepository authorDatabase;
-    private final ReviewDatabase reviewDatabase;
+    private final ReviewRepository reviewRepository;
 
-    public BookService(UserDatabase userDatabase, BookDatabase bookDatabase, AuthorRepository authorDatabase, ReviewDatabase reviewDatabase) {
+    public BookService(UserDatabase userDatabase, BookDatabase bookDatabase, AuthorRepository authorDatabase, ReviewRepository reviewRepository) {
         this.userDatabase = userDatabase;
         this.bookDatabase = bookDatabase;
         this.authorDatabase = authorDatabase;
-        this.reviewDatabase = reviewDatabase;
+        this.reviewRepository = reviewRepository;
     }
 
     public void addBook(String title, String authorName, String publisher, int year, int price, String genres, String synopsis, String content) {
