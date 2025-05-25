@@ -24,12 +24,12 @@ public class Admin extends User {
     }
 
     public void addManagedAuthor(Author author) {
-        author.setAddedBy(this);
+        author.setUsername(this);
         this.managedAuthors.add(author);
     }
 
     public void removeManagedAuthor(Author author) {
         this.managedAuthors.remove(author);
-        author.setAddedBy(null);
+        author.setUsername(null);
     }
 }

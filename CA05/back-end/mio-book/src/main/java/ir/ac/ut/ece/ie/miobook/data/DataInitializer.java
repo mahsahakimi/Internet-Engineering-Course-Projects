@@ -99,12 +99,14 @@ public class DataInitializer implements ApplicationRunner {
                     String nationality = (String) authorMap.get("nationality");
                     String bornStr = (String) authorMap.get("born");
                     String diedStr = (String) authorMap.get("died");
-                    String addedByAdminUsername = (String) authorMap.get("addedBy"); // Assuming API provides the adding admin's username
+                    String adminUsername = (String) authorMap.get("username");
 
-                    MyLocalDate born = parseLocalDate((String) authorMap.get("born"));
-                    MyLocalDate died = parseLocalDate((String) authorMap.get("died"));
+                    MyLocalDate born = MyLocalDate.parse(bornStr);
+                    MyLocalDate died = (diedStr != null && !diedStr.isEmpty())
+                            ? MyLocalDate.parse(diedStr)
+                            : null;  // Handle living authors
 
-                    Optional<Admin> adminOptional = adminRepository.findById(addedByAdminUsername);
+                    Optional<Admin> adminOptional = userRepository.findAdminByUsername(adminUsername);
 
                     if (adminOptional.isPresent()) {
                         Admin addingAdmin = adminOptional.get();
@@ -113,41 +115,18 @@ public class DataInitializer implements ApplicationRunner {
                         if (existingAuthor.isEmpty()) {
                             Author author = new Author(name, penName, nationality, born, died, addingAdmin);
                             authorRepository.save(author);
-                            System.out.println("Author added: " + name + " (added by " + addedByAdminUsername + ")");
+                            System.out.println("Author added: " + name + " (added by " + adminUsername + ")");
                         } else {
                             System.out.println("Author already exists: " + name);
-                            // You could add logic here to update the author if needed
                         }
                     } else {
-                        System.err.println("Admin not found: " + addedByAdminUsername + " for author: " + name);
+                        System.err.println("Admin not found: " + adminUsername + " for author: " + name);
                     }
                 }
             }
         } catch (IOException e) {
             System.err.println("Error initializing authors: " + e.getMessage());
         }
-    }
-
-    // Helper method to parse date strings to MyLocalDate (assuming yyyy-mm-dd format)
-    private MyLocalDate parseLocalDate(String dateStr) {
-        if (dateStr != null && !dateStr.isEmpty()) {
-            String[] parts = dateStr.split("-");
-            if (parts.length == 3) {
-                try {
-                    int year = Integer.parseInt(parts[0]);
-                    int month = Integer.parseInt(parts[1]);
-                    int day = Integer.parseInt(parts[2]);
-                    return new MyLocalDate(year, month, day);
-                } catch (NumberFormatException e) {
-                    System.err.println("Error parsing date: " + dateStr);
-                    return null;
-                }
-            } else {
-                System.err.println("Invalid date format: " + dateStr);
-                return null;
-            }
-        }
-        return null;
     }
 
     private void initializeBooks() {

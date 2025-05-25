@@ -31,11 +31,11 @@ public class Author {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "added_by_admin_id",
+            name = "username",
             nullable = false,
             foreignKey = @ForeignKey(name = "fk_author_admin")
     )
-    private Admin addedBy;
+    private Admin username;
 
     public Author(
             String name,
@@ -43,28 +43,13 @@ public class Author {
             String nationality,
             MyLocalDate born,
             MyLocalDate died,
-            Admin addedBy
+            Admin username
     ) {
         this.name = name;
         this.penName = penName;
         this.nationality = nationality;
         this.born = born;
         this.died = died;
-        this.addedBy = addedBy;
-    }
-
-    // Constructor without admin for external service DTO
-    public Author(
-            String name,
-            String penName,
-            String nationality,
-            MyLocalDate born,
-            MyLocalDate died
-    ) {
-        this.name = name;
-        this.penName = penName;
-        this.nationality = nationality;
-        this.born = born;
-        this.died = died;
+        this.username = username;
     }
 }
