@@ -16,9 +16,6 @@ import java.util.HashSet;
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, unique = true)
     private String title;
 
@@ -59,7 +56,6 @@ public class Book {
         this.content = content;
     }
 
-    // Optional helper to add genres one by one
     public void addGenre(Genre genre) {
         this.genres.add(genre);
         genre.getBooks().add(this);
