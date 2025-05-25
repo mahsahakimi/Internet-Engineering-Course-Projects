@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity(name = "Author")
+@Table(name = "author")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -31,7 +32,7 @@ public class Author {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "username",
+            name = "admin_username",
             nullable = false,
             foreignKey = @ForeignKey(name = "fk_author_admin")
     )

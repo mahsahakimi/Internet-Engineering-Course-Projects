@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity(name = "User")
+@Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
 @Getter

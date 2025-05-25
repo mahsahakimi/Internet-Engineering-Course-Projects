@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.database.ReviewDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
+import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -28,14 +28,14 @@ public class DataInitializer implements ApplicationRunner {
     private final UserRepository userRepository;
     private final AuthorRepository authorRepository;
     private final BookDatabase bookDatabase;
-    private final ReviewDatabase reviewDatabase;
+    private final ReviewRepository reviewRepository;
 
     public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
-                           BookDatabase bookDatabase, ReviewDatabase reviewDatabase) {
+                           BookDatabase bookDatabase, ReviewRepository reviewRepository) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.bookDatabase = bookDatabase;
-        this.reviewDatabase = reviewDatabase;
+        this.reviewRepository = reviewRepository;
     }
 
     public void initializeData() {
@@ -166,10 +166,50 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeReviews() {
         try {
             URL url = new URL("http://194.60.231.242:8000/reviews");
-            List<Review> reviews = fetchData(url, new TypeReference<List<Review>>() {});
-            if(reviews != null) {
-                for (Review review : reviews) {
-                    reviewDatabase.addReview(review);
+            List<Map<String, Object>> reviewMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
+
+            if (reviewMaps != null) {
+                for (Map<String, Object> reviewMap : reviewMaps) {
+                    try {
+                        String username = (String) reviewMap.get("username");
+                        String bookTitle = (String) reviewMap.get("title");
+                        Integer rate = (Integer) reviewMap.get("rate");
+                        String comment = (String) reviewMap.get("comment");
+                        String dateStr = (String) reviewMap.get("date");
+
+                        // Find customer and book entities
+                        Optional<Customer> customerOptional = userRepository.findCustomerByUsername(username);
+                        Book book = bookDatabase.findBookByTitle(bookTitle);
+
+                        if (customerOptional.isPresent() && book != null) {
+                            Customer customer = customerOptional.get();
+                            MyLocalDateTime createdAt = MyLocalDateTime.parse(dateStr);
+
+                            // Check if review already exists
+                            boolean reviewExists = reviewRepository.existsByCustomerAndBook(customer, book);
+
+                            if (!reviewExists) {
+                                Review review = new Review(
+                                        customer,
+                                        book,
+                                        rate,
+                                        comment,
+                                        createdAt
+                                );
+                                reviewRepository.save(review);
+                                System.out.println("Review added for book: " + bookTitle + " by user: " + username);
+                            } else {
+                                System.out.println("Review already exists for book: " + bookTitle + " by user: " + username);
+                            }
+                        } else {
+                            String errorMsg = "Could not create review - ";
+                            errorMsg += customerOptional.isEmpty() ? "Customer not found: " + username + " " : "";
+                            errorMsg += book == null ? "Book not found: " + bookTitle : "";
+                            System.err.println(errorMsg);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error processing review: " + reviewMap + " - " + e.getMessage());
+                    }
                 }
             }
         } catch (IOException e) {
