@@ -1,20 +1,14 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
-import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
-import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
+import ir.ac.ut.ece.ie.miobook.repository.*;
 import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,40 +16,21 @@ import java.util.stream.Stream;
 @Service
 public class BookService {
 
-    private final UserDatabase userDatabase;
-    private final BookDatabase bookDatabase;
-    private final AuthorRepository authorDatabase;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
     private final ReviewRepository reviewRepository;
 
-    public BookService(UserDatabase userDatabase, BookDatabase bookDatabase, AuthorRepository authorDatabase, ReviewRepository reviewRepository) {
-        this.userDatabase = userDatabase;
-        this.bookDatabase = bookDatabase;
-        this.authorDatabase = authorDatabase;
+    public BookService(UserRepository userRepository, BookRepository bookRepository,
+                       AuthorRepository authorRepository, ReviewRepository reviewRepository) {
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
         this.reviewRepository = reviewRepository;
     }
 
-    public void addBook(String title, String authorName, String publisher, int year, int price, String genres, String synopsis, String content) {
-        User user = userDatabase.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
-        // if (user.getRole() == Role.CUSTOMER) {
-        //     throw new PermissionDeniedException(Role.CUSTOMER.toString());
-        // }
-        Author author = authorDatabase.findAuthorByName(authorName);
-        if (author == null) {
-            throw new AuthorNotFoundException(authorName);
-        }
-        if (year <= 0) {
-            throw new InvalidYearException();
-        }
-        if ((author.getBorn() != null && author.getBorn().getYear() > year) ||
-                (author.getDied() != null && author.getDied().getYear() < year)) {
-            throw new AuthorLifespanException();
-        }
-        List<String> genres_list = Stream.of(genres.split(",")).map(String::trim).toList();
-        Book book = new Book(title, author, publisher, year, genres_list, price, synopsis, content);
-        bookDatabase.addBook(book);
+    public Book addBook(Book book) {
+        return bookRepository.save(book);
     }
 
     public void borrowBook(String title, int days) {

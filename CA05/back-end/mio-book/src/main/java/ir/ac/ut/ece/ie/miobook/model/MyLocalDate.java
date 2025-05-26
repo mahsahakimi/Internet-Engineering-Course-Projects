@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 

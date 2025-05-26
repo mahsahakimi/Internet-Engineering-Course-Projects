@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.repository.GenreRepository;
 import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
-import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
@@ -17,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +54,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeUsers() {
         try {
-            URL url = new URL("http://194.60.231.242:8000/users");
+            URL url = URI.create("http://194.60.231.242:8000/users").toURL();
             List<Map<String, Object>> userMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
             if (userMaps != null) {
                 for (Map<String, Object> userMap : userMaps) {
@@ -97,7 +97,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeAuthors() {
         try {
-            URL url = new URL("http://194.60.231.242:8000/authors");
+            URL url = URI.create("http://194.60.231.242:8000/authors").toURL();
             List<Map<String, Object>> authorMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
             if (authorMaps != null) {
                 for (Map<String, Object> authorMap : authorMaps) {
@@ -138,7 +138,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeBooks() {
         try {
-            URL url = new URL("http://194.60.231.242:8000/books");
+            URL url = URI.create("http://194.60.231.242:8000/books").toURL();
             List<Map<String, Object>> bookMaps = fetchData(url, new TypeReference<>() {});
 
             if (bookMaps != null) {
@@ -192,7 +192,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeReviews() {
         try {
-            URL url = new URL("http://194.60.231.242:8000/reviews");
+            URL url = URI.create("http://194.60.231.242:8000/reviews").toURL();
             List<Map<String, Object>> reviewMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
 
             if (reviewMaps != null) {

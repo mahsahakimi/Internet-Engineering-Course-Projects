@@ -1,6 +1,6 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
+import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.IncorrectPasswordException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private final UserDatabase userDatabase;
+    private final UserContext userContext;
     private final UserRepository userRepository;
 
-    public AuthService(UserDatabase userDatabase, UserRepository userRepository) {
-        this.userDatabase = userDatabase;
+    public AuthService(UserContext userContext, UserRepository userRepository) {
+        this.userContext = userContext;
         this.userRepository = userRepository;
     }
 
     public User userLogin(String username, String password){
-        if(userDatabase.getLoggedInUser() != null) {
+        if(userContext.getLoggedInUser() != null) {
             throw new UserSessionActiveException();
         }
         User user = userRepository.findByUsername(username).orElse(null);
@@ -31,14 +31,14 @@ public class AuthService {
         if (!user.getPassword().equals(password)){
             throw new IncorrectPasswordException();
         }
-        userDatabase.setLoggedInUser(user);
+        userContext.setLoggedInUser(user);
         return user;
     }
 
     public void userLogout(){
-        if(userDatabase.getLoggedInUser() == null){
+        if(userContext.getLoggedInUser() == null){
             throw new UserNotLoggedInException();
         }
-        userDatabase.setLoggedInUser(null);
+        userContext.setLoggedInUser(null);
     }
 }

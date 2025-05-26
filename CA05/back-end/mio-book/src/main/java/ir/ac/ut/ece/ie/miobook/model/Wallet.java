@@ -49,7 +49,7 @@ public class Wallet {
 
     // Setter only for balance with package-private visibility
     // Used only by JPA/reflection, not for business operations
-    @Setter(AccessLevel.PACKAGE)
+    // @Setter(AccessLevel.PACKAGE)
     private void setBalance(int balance) {
         this.balance = balance;
     }
