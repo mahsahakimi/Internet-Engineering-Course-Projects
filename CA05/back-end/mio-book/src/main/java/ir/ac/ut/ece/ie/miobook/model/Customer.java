@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
-import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
