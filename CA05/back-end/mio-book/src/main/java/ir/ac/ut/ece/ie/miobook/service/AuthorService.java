@@ -26,8 +26,7 @@ public class AuthorService {
     }
 
     public List<Author> addAuthor(String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
-        // Fetch logged-in user (replace this with your actual login/session mechanism)
-        User currentUser = userContext.getLoggedInUser(); // <-- implement this method appropriately
+        User currentUser = userContext.getLoggedInUser();
 
         if (currentUser == null) {
             throw new UserNotLoggedInException();

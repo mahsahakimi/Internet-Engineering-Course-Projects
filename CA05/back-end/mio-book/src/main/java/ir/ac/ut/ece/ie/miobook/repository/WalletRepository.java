@@ -9,9 +9,6 @@ import java.util.Optional;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, String> {
 
-    // Find wallet by customer username
     Optional<Wallet> findByUsername(String username);
-
-    // Check if wallet exists for customer username
     boolean existsByUsername(String username);
 }
