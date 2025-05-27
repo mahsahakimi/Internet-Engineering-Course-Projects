@@ -33,15 +33,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final WalletRepository walletRepository;
+    private final WalletService walletService;
     private final UserContext userContext;
 
     @Autowired
     public UserService(UserRepository userRepository, BookRepository bookRepository,
-                        WalletRepository walletRepository, UserContext userContext) {
+                       WalletService walletService, UserContext userContext) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.walletRepository = walletRepository;
+        this.walletService = walletService;
         this.userContext = userContext;
     }
     public Map<String, Object> getPurchasedBooks() {
@@ -53,7 +53,8 @@ public class UserService {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
 
-        Customer customer = (Customer) user;
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername())
+                .orElseThrow(UserNotLoggedInException::new);
 
         Map<String, Object> userBooks = new HashMap<>();
 
@@ -192,6 +193,7 @@ public class UserService {
 
         return data;
     }
+
     public String getUserDetails() {
         User user = userContext.getLoggedInUser();
         if (user == null) {
@@ -205,10 +207,7 @@ public class UserService {
         userData.put("address", user.getAddress());
 
         if (user.getRole() == Role.CUSTOMER) {
-            // Only try to cast to Customer if the role is CUSTOMER
-            Customer customer = userRepository.findCustomerByUsername(user.getUsername())
-                                            .orElseThrow(UserNotLoggedInException::new);
-            userData.put("balance", customer.getWallet().getBalance());
+            userData.put("balance", walletService.getBalance(user.getUsername()));
         }
 
         Map<String, Object> response = new HashMap<>();
@@ -236,14 +235,9 @@ public class UserService {
         Customer customer = userRepository.findCustomerByUsername(user.getUsername())
                 .orElseThrow(UserNotLoggedInException::new);
 
-        Wallet wallet = customer.getWallet();
-        if (wallet == null) {
-            throw new IllegalStateException("Customer wallet not found.");
-        }
+        walletService.deposit(customer.getUsername(), credit);
 
-        wallet.deposit(credit);
-
-        return wallet.getBalance();
+        return walletService.getBalance(customer.getUsername());
     }
 
     @Transactional
@@ -280,9 +274,10 @@ public class UserService {
             userRepository.save(user);
 
             // If it's a customer, create wallet
-            if (user instanceof Customer customer) {
-                Wallet wallet = new Wallet(customer);
-                walletRepository.save(wallet);
+            if (user.getRole() == Role.CUSTOMER) {
+                Customer customer = userRepository.findCustomerByUsername(user.getUsername())
+                        .orElseThrow(UserNotLoggedInException::new);
+                walletService.create(customer);
             }
 
         } catch (DataIntegrityViolationException e) {

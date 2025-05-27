@@ -71,6 +71,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(WalletNotFoundException.class)
+    public ResponseEntity<Response> handleWalletNotFoundException(WalletNotFoundException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(PermissionDeniedException.class)
     public ResponseEntity<Response> handlePermissionDeniedException(PermissionDeniedException ex) {
         Response response = new Response("error", ex.getMessage(), null);

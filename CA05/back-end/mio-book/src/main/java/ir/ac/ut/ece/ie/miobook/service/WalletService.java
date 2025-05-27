@@ -2,6 +2,7 @@ package ir.ac.ut.ece.ie.miobook.service;
 
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 
+import ir.ac.ut.ece.ie.miobook.model.Customer;
 import ir.ac.ut.ece.ie.miobook.model.Wallet;
 import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 import jakarta.transaction.Transactional;
@@ -22,7 +23,11 @@ public class WalletService {
                 .orElseThrow(() -> new WalletNotFoundException(username));
 
         wallet.deposit(amount);
-        // todo
+        walletRepository.save(wallet);
+    }
+
+    public void create(Customer customer) {
+        Wallet wallet = customer.getWallet();
         walletRepository.save(wallet);
     }
 

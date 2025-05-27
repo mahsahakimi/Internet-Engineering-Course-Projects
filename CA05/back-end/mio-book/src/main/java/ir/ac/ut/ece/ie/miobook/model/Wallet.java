@@ -1,7 +1,10 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
+import ir.ac.ut.ece.ie.miobook.exceptions.InvalidCreditAmountException;
+import ir.ac.ut.ece.ie.miobook.exceptions.MinimumCreditException;
+import ir.ac.ut.ece.ie.miobook.exceptions.PermissionDeniedException;
+import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,15 +44,15 @@ public class Wallet {
 
     private void validateAmount(int amount) {
         if (amount <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("Amount must be positive. Received: %d", amount)
-            );
+            throw new InvalidCreditAmountException();
+        }
+        if (amount < 100) {
+            throw new MinimumCreditException();
         }
     }
 
     // Setter only for balance with package-private visibility
     // Used only by JPA/reflection, not for business operations
-    // @Setter(AccessLevel.PACKAGE)
     private void setBalance(int balance) {
         this.balance = balance;
     }
