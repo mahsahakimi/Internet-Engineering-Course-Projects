@@ -32,5 +32,27 @@ public interface BookRepository extends JpaRepository<Book, String> {
     List<Book> findByYearBetween(int fromYear, int toYear);
     Page<Book> findByYearBetween(int fromYear, int toYear, Pageable pageable);
 
+    @Query("""
+        SELECT b FROM Book b
+        JOIN b.author a
+        LEFT JOIN b.genres g
+        WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')))
+        AND (:authorName IS NULL OR LOWER(a.name) LIKE LOWER(CONCAT('%', :authorName, '%')))
+        AND (:genre IS NULL OR LOWER(g.name) = LOWER(:genre))
+        AND (:fromYear IS NULL OR b.year >= :fromYear)
+        AND (:toYear IS NULL OR b.year <= :toYear)
+        GROUP BY b
+        """)
+    List<Book> searchBooksWithFilters(
+        @Param("title") String title,
+        @Param("authorName") String authorName,
+        @Param("genre") String genre,
+        @Param("fromYear") Integer fromYear,
+        @Param("toYear") Integer toYear
+    );
+
+    List<Book> findTop5ByOrderByYearDesc(); 
+
+
     boolean existsByTitle(String title);
 }
