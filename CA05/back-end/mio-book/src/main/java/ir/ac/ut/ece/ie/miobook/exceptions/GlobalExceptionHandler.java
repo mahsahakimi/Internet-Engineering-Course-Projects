@@ -215,6 +215,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidPriceValueException.class)
+    public ResponseEntity<Response> handleInvalidPriceValueException(InvalidPriceValueException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(InvalidRatingException.class)
     public ResponseEntity<Response> handleInvalidRatingException(InvalidRatingException ex) {
         Response response = new Response("error", ex.getMessage(), null);
