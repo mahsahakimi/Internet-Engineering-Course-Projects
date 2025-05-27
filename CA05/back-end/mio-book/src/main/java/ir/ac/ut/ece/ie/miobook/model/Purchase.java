@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "purchases")
+@Table(name = "purchase")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,13 +31,13 @@ public class Purchase {
     private int totalCost;
 
     @Column(name = "purchase_date_time", nullable = false)
-    private LocalDateTime purchaseDateTime;
+    private MyLocalDateTime purchaseDateTime;
 
     // FK column in purchase table that references the Customer's username
     @Column(name = "user_username", nullable = false)
     private String userUsername;
 
-    public Purchase(List<String> bookTitles, int totalCost, LocalDateTime purchaseDateTime, String userUsername) {
+    public Purchase(List<String> bookTitles, int totalCost, MyLocalDateTime purchaseDateTime, String userUsername) {
         this.bookTitles = bookTitles;
         this.totalCost = totalCost;
         this.purchaseDateTime = purchaseDateTime;
