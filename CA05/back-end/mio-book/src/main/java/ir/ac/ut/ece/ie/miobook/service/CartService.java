@@ -52,12 +52,15 @@ public class CartService {
         if (customer.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
             throw new BookAlreadyInCartException(title);
         }
-        if (userBookRepository.existsByCustomerAndBookAndIsBorrowedFalse(customer, book)) {
-            throw new BookAlreadyOwnedException(title);
+        List<UserBook> userBooks = userBookRepository.findAllByCustomerAndBook(customer, book);
+        for (UserBook userBook : userBooks) {
+            if (!userBook.isBorrowed()) {
+                throw new BookAlreadyOwnedException(title);
+            } else if (userBook.canAccessBook()) {
+                throw new BookAlreadyBorrowedException(title);
+            }
         }
-        if (userBookRepository.existsByCustomerAndBookAndIsBorrowedTrue(customer, book) && userBookRepository.findByCustomerAndBook(customer, book).orElseThrow(BookNotBorrowedException::new).canAccessBook())) {
-            throw new BookAlreadyBorrowedException(title);
-        }
+
         CartElement newElement = new CartElement(book, day, customer.getUsername());
         cartElementRepository.save(newElement);
         customer.getCart().add(newElement);
@@ -108,7 +111,6 @@ public class CartService {
         }
 
         int totalCost = 0;
-        int cartSize = cart.size();
         for (CartElement ce : cart) {
             totalCost += ce.getPrice();
         }
@@ -136,12 +138,14 @@ public class CartService {
         Purchase purchase = new Purchase(bookTitles, totalCost, now, customer.getUsername());
         customer.getPurchases().add(purchase);
         customer.getCart().clear();
-
+        userRepository.save(customer);
+        // it does not need! 
+        purchaseRepository.save(purchase); 
         return purchase;
     }
 
     public Map<String, Object> showCart() {
-        User user = UserContext.getLoggedInUser();
+        User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }

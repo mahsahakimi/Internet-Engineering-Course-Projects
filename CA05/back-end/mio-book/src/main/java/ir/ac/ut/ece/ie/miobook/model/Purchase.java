@@ -33,7 +33,6 @@ public class Purchase {
     @Column(name = "purchase_date_time", nullable = false)
     private MyLocalDateTime purchaseDateTime;
 
-    // FK column in purchase table that references the Customer's username
     @Column(name = "user_username", nullable = false)
     private String userUsername;
 

@@ -17,29 +17,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BookService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final UserBookRepository userBookRepository;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
     private final UserContext userContext;
 
     public BookService(UserRepository userRepository, BookRepository bookRepository,
-                       AuthorRepository authorRepository, GenreRepository genreRepository,
+                        UserBookRepository userBookRepository,
+                        AuthorRepository authorRepository, GenreRepository genreRepository,
                         ReviewRepository reviewRepository, UserContext userContext) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
+        this.userBookRepository = userBookRepository;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
         this.userContext = userContext;
     }
 
-    public void addBook(Book book) {
+    public void addBook(String title, String authorName, String publisher, int year, int price,
+                    String genres, String synopsis, String content) {
         User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -48,32 +53,35 @@ public class BookService {
             throw new PermissionDeniedException("Only admins can add books.");
         }
 
-        if (bookRepository.existsByTitle(book.getTitle())) {
-            throw new BookTitleAlreadyExistsException(book.getTitle());
+        if (bookRepository.existsByTitle(title)) {
+            throw new BookTitleAlreadyExistsException(title);
         }
 
-        Author author = authorRepository.findByName(book.getAuthor().getName())
-            .orElseGet(() -> authorRepository.save(book.getAuthor()));
-        book.setAuthor(author);
+        Author author = authorRepository.findByName(authorName)
+            .orElseThrow(() -> new AuthorNotFoundException(authorName));
 
-        Set<Genre> resolvedGenres = new HashSet<>();
-        for (Genre genre : book.getGenres()) {
-            String genreName = genre.getName().toLowerCase(); // normalize
-            Genre existingGenre = genreRepository.findByNameIgnoreCase(genreName)
-                    .orElseGet(() -> genreRepository.save(new Genre(genreName)));
-            resolvedGenres.add(existingGenre);
-        }
-        book.setGenres(resolvedGenres);
-
-        if (book.getPrice() < 0) {
+        if (price < 0) {
             throw new InvalidPriceValueException();
         }
-        if (book.getYear() < 0) {
+        if (year < 0) {
             throw new InvalidYearException();
         }
 
+        Book book = new Book(title, author, publisher, year, price, synopsis, content);
+
+        List<String> genreNames = Stream.of(genres.split(","))
+            .map(String::trim)
+            .filter(name -> !name.isEmpty())
+            .toList();
+
+        for (String genreName : genreNames) {
+            Genre genre = genreRepository.findByNameIgnoreCase(genreName)
+                .orElseGet(() -> genreRepository.save(new Genre(genreName)));
+            book.addGenre(genre);
+        }
+
         bookRepository.save(book);
-        return;
+
     }
 
     @Transactional
@@ -102,16 +110,14 @@ public class BookService {
             throw new BookAlreadyInCartException(title);
         }
 
-        boolean alreadyOwned = customer.getOwnedBooks().stream()
-                .anyMatch(ownedBook -> ownedBook.equals(book));
-        if (alreadyOwned) {
-            throw new BookAlreadyOwnedException(title);
-        }
-
-        boolean alreadyBorrowed = customer.getBorrowedBooks().stream()
-                .anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook());
-        if (alreadyBorrowed) {
-            throw new BookAlreadyBorrowedException(title);
+        for (UserBook userBook : customer.getLibrary()) {
+            if (userBook.getBook().equals(book)) {
+                if (!userBook.isBorrowed()) {
+                    throw new BookAlreadyOwnedException(title);
+                } else if (userBook.canAccessBook()) {
+                    throw new BookAlreadyBorrowedException(title);
+                }
+            }
         }
 
         CartElement newElement = new CartElement(book, days, customer.getUsername());
@@ -135,12 +141,12 @@ public class BookService {
         Book book = bookRepository.findById(title)
                 .orElseThrow(() -> new BookNotFoundException(title));
 
-        
-        boolean ownsOrBorrowed = customer.getOwnedBooks().contains(book) ||
-            customer.getBorrowedBooks().stream()
-                .anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook());
-        if (!ownsOrBorrowed) {
-            throw new BookNotOwnedException();
+        for (UserBook userBook : customer.getLibrary()) {
+            if (userBook.getBook().equals(book)) {
+                if (!userBook.isBorrowed() || userBook.canAccessBook()) {
+                    throw new BookNotOwnedException();
+                }
+            }
         }
 
         if (rate < 1 || rate > 5) {
@@ -158,9 +164,9 @@ public class BookService {
 
         Map<String, Object> bookData = new HashMap<>();
         bookData.put("title", book.getTitle());
-        bookData.put("author", book.getAuthor());         // Assuming Author is an entity with proper toString or JSON serialization
+        bookData.put("author", book.getAuthor());  
         bookData.put("publisher", book.getPublisher());
-        bookData.put("genres", book.getGenres());         // Assuming genres is a collection of entities
+        bookData.put("genres", book.getGenres()); 
         bookData.put("year", book.getYear());
         bookData.put("price", book.getPrice());
         bookData.put("synopsis", book.getSynopsis());
@@ -186,14 +192,14 @@ public class BookService {
         Customer customer = userRepository.findCustomerByUsername(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        boolean hasAccess = customer.getOwnedBooks().stream()
-                .anyMatch(b -> b.getTitle().equals(title));
-
-        if (!hasAccess) {
-            hasAccess = customer.getBorrowedBooks().stream()
-                    .anyMatch(bb -> bb.getBook().getTitle().equals(title) && bb.canAccessBook());
+        List<UserBook> userBooks = userBookRepository.findAllByCustomerAndBook(customer, book);
+        boolean hasAccess = false;
+        for (UserBook userBook : userBooks) {
+            if (!userBook.isBorrowed() || userBook.canAccessBook()) {
+                hasAccess = true;
+                break;
+            }
         }
-
         if (!hasAccess) {
             throw new BookAccessDeniedException();
         }

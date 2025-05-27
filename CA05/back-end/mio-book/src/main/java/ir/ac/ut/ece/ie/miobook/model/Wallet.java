@@ -45,14 +45,14 @@ public class Wallet {
     }
     public synchronized void withdraw(int amount) {
         if (balance - amount < 0) {
-            throw new InsufficientBalanceException();
+            throw new InsufficientBalanceException(this.customer.getUsername());
         }
         this.balance -= amount;
     }
 
     // Setter only for balance with package-private visibility
     // Used only by JPA/reflection, not for business operations
-    private void setBalance(int balance) {
-        this.balance = balance;
-    }
+    // private void setBalance(int balance) {
+    //     this.balance = balance;
+    // }
 }

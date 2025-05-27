@@ -5,7 +5,6 @@ import ir.ac.ut.ece.ie.miobook.dto.AddReviewRequest;
 import ir.ac.ut.ece.ie.miobook.dto.BorrowBookRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
-import ir.ac.ut.ece.ie.miobook.model.Book;
 import ir.ac.ut.ece.ie.miobook.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -111,7 +110,7 @@ public class BookController {
             throw new MissingRequiredFieldsException("title");
         }
 
-        String bookContent = bookService.showBookContent(title);
+        Map<String,Object> bookContent = bookService.showBookContent(title);
         Response response = new Response("success", "Book content retrieved.", bookContent);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -145,7 +144,7 @@ public class BookController {
             throw new MissingRequiredFieldsException("title");
         }
 
-        String responseJson = bookService.searchByTitle(title, page, pageSize);
+        List<Map<String,Object>> responseJson = bookService.searchByTitle(title, page, pageSize);
         Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -162,7 +161,7 @@ public class BookController {
             throw new MissingRequiredFieldsException("author");
         }
 
-        String responseJson = bookService.searchByAuthor(authorName, page, pageSize);
+        List<Map<String,Object>> responseJson = bookService.searchByAuthor(authorName, page, pageSize);
         Response response = new Response("success", "Books found successfully", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -240,7 +239,7 @@ public class BookController {
             throw new SortOrderException(sortOrder);
         }
 
-        String responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
+        List<Map<String,Object>> responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
         Response response = new Response("success", "Books retrieved successfully.", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

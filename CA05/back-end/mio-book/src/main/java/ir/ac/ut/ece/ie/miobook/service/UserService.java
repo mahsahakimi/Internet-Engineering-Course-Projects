@@ -143,7 +143,8 @@ public class UserService {
         for (Purchase purchase : customer.getPurchases()) {
             Map<String, Object> purchaseData = new HashMap<>();
 
-            MyLocalDateTime purchaseDateTime = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
+            // MyLocalDateTime purchaseDateTime = MyLocalDateTime.parse(purchase.getPurchaseDateTime());
+            MyLocalDateTime purchaseDateTime = purchase.getPurchaseDateTime();
             purchaseData.put("date", purchaseDateTime);
 
             List<Map<String, Object>> items = new ArrayList<>();

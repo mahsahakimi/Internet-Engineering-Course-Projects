@@ -12,13 +12,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface UserBookRepository extends JpaRepository<UserBook, Long> {
 
     // Find by customer and book
-    Optional<UserBook> findByCustomerAndBook(Customer customer, Book book);
+    List<UserBook> findAllByCustomerAndBook(Customer customer, Book book);
 
     // Find all books owned by a customer (both purchased and borrowed)
     List<UserBook> findByCustomer(Customer customer);

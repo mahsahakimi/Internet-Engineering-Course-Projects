@@ -54,7 +54,7 @@ public class BookService {
             throw new AuthorLifespanException();
         }
         List<String> genres_list = Stream.of(genres.split(",")).map(String::trim).toList();
-        Book book = new Book(title, author, publisher, year, genres_list, price, synopsis, content);
+        Book book = new Book(title, author, publisher, year, price, synopsis, content);
         bookDatabase.addBook(book);
     }
 
