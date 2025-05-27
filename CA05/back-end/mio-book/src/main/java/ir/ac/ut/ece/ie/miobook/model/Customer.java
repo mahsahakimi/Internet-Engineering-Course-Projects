@@ -25,17 +25,8 @@ public class Customer extends User {
     @JoinColumn(name = "user_username")
     List<Purchase> purchases = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_owned_books",
-            joinColumns = @JoinColumn(name = "user_username"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
-    List<Book> ownedBooks = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_username")
-    List<BorrowedBook> borrowedBooks = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBook> library = new ArrayList<>();
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Wallet wallet;

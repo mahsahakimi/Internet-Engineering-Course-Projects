@@ -35,17 +35,19 @@ public class Wallet {
     }
 
     public synchronized void deposit(int amount) {
-        validateAmount(amount);
-        this.balance += amount;
-    }
-
-    private void validateAmount(int amount) {
         if (amount <= 0) {
             throw new InvalidCreditAmountException();
         }
         if (amount < 100) {
             throw new MinimumCreditException();
         }
+        this.balance += amount;
+    }
+    public synchronized void withdraw(int amount) {
+        if (balance - amount < 0) {
+            throw new InsufficientBalanceException();
+        }
+        this.balance -= amount;
     }
 
     // Setter only for balance with package-private visibility

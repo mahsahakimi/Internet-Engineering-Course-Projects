@@ -4,8 +4,8 @@ import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
+import ir.ac.ut.ece.ie.miobook.repository.UserBookRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
-import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 import ir.ac.ut.ece.ie.miobook.validator.AddressValidator;
 import ir.ac.ut.ece.ie.miobook.validator.EmailValidator;
 import ir.ac.ut.ece.ie.miobook.validator.PasswordValidator;
@@ -25,9 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-
-
 @Service
 public class UserService {
 
@@ -35,15 +32,18 @@ public class UserService {
     private final BookRepository bookRepository;
     private final WalletService walletService;
     private final UserContext userContext;
+    private final UserBookRepository userBookRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, BookRepository bookRepository,
-                       WalletService walletService, UserContext userContext) {
+                       WalletService walletService, UserContext userContext, UserBookRepository userBookRepository) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.walletService = walletService;
         this.userContext = userContext;
+        this.userBookRepository = userBookRepository;
     }
+
     public Map<String, Object> getPurchasedBooks() {
         User user = userContext.getLoggedInUser();
         if (user == null) {
@@ -60,7 +60,7 @@ public class UserService {
 
         // Borrowed books
         List<Map<String, Object>> borrowedBooksInfo = new ArrayList<>();
-        for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
+        for (UserBook borrowedBook : userBookRepository.findBorrowedBooksByCustomer(customer)) {
             if (borrowedBook.canAccessBook()) {
                 Book book = borrowedBook.getBook();
                 Map<String, Object> bookInfo = new HashMap<>();
@@ -77,7 +77,8 @@ public class UserService {
 
         // Owned books
         List<Map<String, Object>> ownedBooksInfo = new ArrayList<>();
-        for (Book book : customer.getOwnedBooks()) {
+        for (UserBook userBook : userBookRepository.findOwnedBooksByCustomer(customer)) {
+            Book book = userBook.getBook();
             Map<String, Object> bookInfo = new HashMap<>();
             bookInfo.put("title", book.getTitle());
             bookInfo.put("author", book.getAuthor().getName());
@@ -103,13 +104,13 @@ public class UserService {
         Customer customer = userRepository.findCustomerByUsername(user.getUsername())
                 .orElseThrow(UserNotLoggedInException::new);
 
-        for (Book book : customer.getOwnedBooks()) {
-            if (book.getTitle().equalsIgnoreCase(title)) {
+        for (UserBook userBook : userBookRepository.findOwnedBooksByCustomer(customer)) {
+            if (userBook.getBook().getTitle().equalsIgnoreCase(title)) {
                 return "buy";
             }
         }
 
-        for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
+        for (UserBook borrowedBook : userBookRepository.findBorrowedBooksByCustomer(customer)) {
             if (borrowedBook.canAccessBook() &&
                 borrowedBook.getBook().getTitle().equalsIgnoreCase(title)) {
                 return "borrow";
@@ -164,7 +165,7 @@ public class UserService {
                 int finalPrice = book.getPrice();
 
                 // Check if the book was borrowed
-                for (BorrowedBook borrowedBook : customer.getBorrowedBooks()) {
+                for (UserBook borrowedBook : userBookRepository.findBorrowedBooksByCustomer(customer)) {
                     if (borrowedBook.getBook().getTitle().equals(book.getTitle())) {
                         isBorrowed = true;
                         MyLocalDateTime borrowDueDate = borrowedBook.getDueDate();

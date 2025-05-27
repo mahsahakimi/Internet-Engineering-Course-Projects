@@ -1,10 +1,13 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.database.BookDatabase;
-import ir.ac.ut.ece.ie.miobook.database.UserDatabase;
+import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 
+import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
+import ir.ac.ut.ece.ie.miobook.repository.UserBookRepository;
+import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,52 +18,62 @@ import java.util.Map;
 @Service
 public class CartService {
 
-    private final UserDatabase userDatabase;
-    private final BookDatabase bookDatabase;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final UserBookRepository userBookRepository;
+    private final UserContext userContext;
+    private final WalletService walletService;
 
-    public CartService(UserDatabase userDatabase, BookDatabase bookDatabase) {
-        this.userDatabase = userDatabase;
-        this.bookDatabase = bookDatabase;
+    public CartService(UserRepository userRepository, BookRepository bookRepository, UserBookRepository userBookRepository, UserContext userContext, WalletService walletService) {
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.userBookRepository = userBookRepository;
+        this.userContext = userContext;
+        this.walletService = walletService;
     }
 
     public void addToCart(String title, int day) {
-        User user = userDatabase.getLoggedInUser();
+        User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername())
+                .orElseThrow(UserNotLoggedInException::new);
 
         Book book = bookDatabase.findBookByTitle(title);
         if (book == null) {
             throw new BookNotFoundException(title);
         }
 
-        if (user.getCart().size() >= 10) {
+        if (customer.getCart().size() >= 10) {
             throw new CartIsFullException();
         }
-        if (user.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
+        if (customer.getCart().stream().anyMatch(cartElement -> cartElement.getBook().equals(book))) {
             throw new BookAlreadyInCartException(title);
         }
-        if (user.getOwnedBooks().stream().anyMatch(ownedBook -> ownedBook.equals(book))) {
+        if (userBookRepository.existsByCustomerAndBookAndIsBorrowedFalse(customer, book)) {
             throw new BookAlreadyOwnedException(title);
         }
-        if (user.getBorrowedBooks().stream().anyMatch(borrowedBook -> borrowedBook.getBook().equals(book) && borrowedBook.canAccessBook())) {
+        if (userBookRepository.existsByCustomerAndBookAndIsBorrowedTrue(customer, book) && userBookRepository.findByCustomerAndBook(customer, book).orElseThrow(BookNotBorrowedException::new).canAccessBook())) {
             throw new BookAlreadyBorrowedException(title);
         }
         CartElement newElement = new CartElement(book, day);
-        user.getCart().add(newElement);
+        customer.getCart().add(newElement);
     }
 
     public void removeFromCart(String title) {
-        User user = userDatabase.getLoggedInUser();
+        User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername())
+                .orElseThrow(UserNotLoggedInException::new);
 
         Book book = bookDatabase.findBookByTitle(title);
         if (book == null) {
@@ -68,7 +81,7 @@ public class CartService {
         }
 
         boolean found = false;
-        for (CartElement ce : user.getCart()) {
+        for (CartElement ce : customer.getCart()) {
             if (ce.getBook().getTitle().equals(title)) {
                 found = true;
                 break;
@@ -77,19 +90,21 @@ public class CartService {
         if (!found) {
             throw new BookNotInCartException(title);
         }
-        user.removeBookFromCart(book);
+        customer.removeBookFromCart(book);
     }
 
     public Purchase purchaseCart() {
-        User user = userDatabase.getLoggedInUser();
+        User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
+        Customer customer = userRepository.findCustomerByUsername(user.getUsername())
+                .orElseThrow(UserNotLoggedInException::new);
 
-        List<CartElement> cart = user.getCart();
+        List<CartElement> cart = customer.getCart();
 
         if (cart.isEmpty()) {
             throw new CartIsEmptyException();
@@ -101,24 +116,28 @@ public class CartService {
             totalCost += ce.getPrice();
         }
 
-        if (user.getBalance() < totalCost) {
+        if (walletService.getBalance(customer.getUsername()) < totalCost) {
             throw new InsufficientBalanceException(user.getUsername());
         }
 
         MyLocalDateTime now = MyLocalDateTime.now();
 
-        user.setBalance(user.getBalance() - totalCost);
+        walletService.withdraw(customer.getUsername(), totalCost);
         List<String> bookTitles = new ArrayList<>();
-        List<Book> ownedBooks = user.getOwnedBooks();
-        List<BorrowedBook> borrowedBooks = user.getBorrowedBooks();
+        List<UserBook> ownedBooks = userBookRepository.findOwnedBooksByCustomer(customer);
+        List<UserBook> borrowedBooks = userBookRepository.findBorrowedBooksByCustomer(customer);
         for(CartElement ce : cart){
             bookTitles.add(ce.getBook().getTitle());
             if (ce.getDays() == 0){
-                ownedBooks.add(ce.getBook());
+                UserBook ownedBook = new UserBook(customer, ce.getBook());
+                userBookRepository.save(ownedBook);
             } else {
                 MyLocalDateTime dueDate = now.plusDays(ce.getDays());
                 BorrowedBook borrowedBook = new BorrowedBook(ce.getBook(), dueDate);
-                borrowedBooks.add(borrowedBook);
+
+                UserBook borrowedBook = new UserBook(customer, ce.getBook());
+                borrowedBook.markAsBorrowed(ce.getDays(), now);
+                userBookRepository.save(borrowedBook);
             }
         }
 

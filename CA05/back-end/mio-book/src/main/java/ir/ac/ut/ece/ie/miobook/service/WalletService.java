@@ -26,6 +26,14 @@ public class WalletService {
         walletRepository.save(wallet);
     }
 
+    public void withdraw(String username, int amount) {
+        Wallet wallet = walletRepository.findByUsername(username)
+                .orElseThrow(() -> new WalletNotFoundException(username));
+
+        wallet.withdraw(amount);
+        walletRepository.save(wallet);
+    }
+
     public void create(Customer customer) {
         Wallet wallet = customer.getWallet();
         walletRepository.save(wallet);
