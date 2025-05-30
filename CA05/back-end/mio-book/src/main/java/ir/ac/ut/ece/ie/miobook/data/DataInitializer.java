@@ -8,6 +8,8 @@ import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -34,15 +36,17 @@ public class DataInitializer implements ApplicationRunner {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
+    private final WalletRepository walletRepository;
 
     public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
                            BookRepository bookRepository, GenreRepository genreRepository,
-                            ReviewRepository  reviewRepository) {
+                            ReviewRepository  reviewRepository, WalletRepository walletRepository) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
+        this.walletRepository = walletRepository;
     }
 
     public void initializeData() {
@@ -69,21 +73,30 @@ public class DataInitializer implements ApplicationRunner {
                                 (String) addressMap.get("city"),
                                 (String) addressMap.get("country")
                         );
-
-                        User user;
-                        try {
-                            Role role = Role.valueOf(roleStr.toUpperCase());
-                            if (role == Role.ADMIN) {
-                                user = new Admin(username, password, email, address);
-                            } else if (role == Role.CUSTOMER) {
-                                user = new Customer(username, password, email, address);
-                            } else {
-                                System.err.println("Unknown role: " + roleStr + " for user: " + username);
-                                continue;
+                        
+                        Optional<User> existing = userRepository.findById("user1");
+                        if (existing.isEmpty()) {
+                            User user;
+                            try {
+                                Role role = Role.valueOf(roleStr.toUpperCase());
+                                if (role == Role.ADMIN) {
+                                    user = new Admin(username, password, email, address);
+                                } else if (role == Role.CUSTOMER) {
+                                    Customer customer = new Customer(username, password, email, address);
+                                    Wallet w = new Wallet(customer);
+                                    customer.setWallet(w);
+                                    user = customer;
+                                } else {
+                                    System.err.println("Unknown role: " + roleStr + " for user: " + username);
+                                    continue;
+                                }
+                                userRepository.save(user);
+                                System.out.println("User added: " + username);
+                            } catch (IllegalArgumentException e) {
+                                System.err.println("Invalid role: " + roleStr + " for user: " + username);
                             }
-                            userRepository.save(user);
-                        } catch (IllegalArgumentException e) {
-                            System.err.println("Invalid role: " + roleStr + " for user: " + username);
+                        } else{
+                            System.out.println("User already exists: " + username);
                         }
                     } else {
                         System.err.println("Address is null for user: " + username);
@@ -111,7 +124,7 @@ public class DataInitializer implements ApplicationRunner {
                     MyLocalDate born = MyLocalDate.parse(bornStr);
                     MyLocalDate died = (diedStr != null && !diedStr.isEmpty())
                             ? MyLocalDate.parse(diedStr)
-                            : null;  // Handle living authors
+                            : null;
 
                     Optional<Admin> adminOptional = userRepository.findAdminByUsername(adminUsername);
 
@@ -145,15 +158,22 @@ public class DataInitializer implements ApplicationRunner {
                 for (Map<String, Object> bookMap : bookMaps) {
                     String authorName = (String) bookMap.get("author");
                     Optional<Author> optionalAuthor = authorRepository.findByName(authorName);
-                    Author author = null;
-                    if (optionalAuthor.isPresent()) {
-                        author = optionalAuthor.get();
-                    } else {
+                    
+                    if (optionalAuthor.isEmpty()) {
                         System.err.println("Author not found: " + authorName);
+                        continue;
+                    }
+
+                    Author author = optionalAuthor.get();
+                    String title = (String) bookMap.get("title");
+
+                    if (bookRepository.existsByTitleAndAuthor(title, author)) {
+                        System.out.println("Book already exists: " + title + " by " + authorName);
+                        continue;
                     }
 
                     Book book = new Book();
-                    book.setTitle((String) bookMap.get("title"));
+                    book.setTitle(title);
                     book.setAuthor(author);
                     book.setPublisher((String) bookMap.get("publisher"));
                     book.setYear((Integer) bookMap.get("year"));
@@ -180,6 +200,7 @@ public class DataInitializer implements ApplicationRunner {
 
                     book.setGenres(genreEntities);
                     bookRepository.save(book);
+                    System.out.println("Book added: " + title + " by " + authorName);
                 }
             }
 

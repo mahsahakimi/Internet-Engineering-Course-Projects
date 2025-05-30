@@ -1,5 +1,6 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
+import ir.ac.ut.ece.ie.miobook.converter.MyLocalDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +33,13 @@ public class UserBook {
     @Column(name = "borrow_days")
     private Integer borrowDays;
 
+    @Convert(converter = MyLocalDateTimeConverter.class)
     @Column(name = "borrow_start_date")
     private MyLocalDateTime borrowStartDate;
+
+    @Convert(converter = MyLocalDateTimeConverter.class)
+    @Column(name = "due_date")
+    private MyLocalDateTime dueDate;
 
     public UserBook(Customer customer, Book book) {
         this.customer = customer;
@@ -44,17 +50,13 @@ public class UserBook {
         this.isBorrowed = true;
         this.borrowDays = borrowDays;
         this.borrowStartDate = startDate;
+        this.dueDate = startDate.plusDays(borrowDays);
     }
 
     public boolean canAccessBook() {
         if (!isBorrowed || borrowStartDate == null || borrowDays == null) {
             return true;
         }
-        MyLocalDateTime dueDate = borrowStartDate.plusDays(borrowDays);
         return MyLocalDateTime.now().isBefore(dueDate);
-    }
-
-    public MyLocalDateTime getDueDate() {
-        return borrowStartDate.plusDays(borrowDays);
     }
 }

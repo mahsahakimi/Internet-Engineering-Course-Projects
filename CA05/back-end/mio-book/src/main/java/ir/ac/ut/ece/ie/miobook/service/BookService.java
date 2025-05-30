@@ -226,7 +226,7 @@ public class BookService {
         List<Map<String, Object>> outputReviews = reviewPage.getContent().stream()
                 .map(r -> {
                     Map<String, Object> reviewMap = new HashMap<>();
-                    reviewMap.put("username", r.getUsername().getUsername());
+                    reviewMap.put("username", r.getCustomer().getUsername());
                     reviewMap.put("rate", r.getRate());
                     reviewMap.put("comment", r.getComment());
                     reviewMap.put("date", r.getDate());

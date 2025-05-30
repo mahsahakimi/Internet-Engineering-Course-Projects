@@ -16,7 +16,7 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "username")
 public class Admin extends User {
 
-    @OneToMany(mappedBy = "addedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Author> managedAuthors = new ArrayList<>();
 
     public Admin(String username, String password, String email, Address address) {
@@ -24,12 +24,12 @@ public class Admin extends User {
     }
 
     public void addManagedAuthor(Author author) {
-        author.setUsername(this);
+        author.setAdmin(this);
         this.managedAuthors.add(author);
     }
 
     public void removeManagedAuthor(Author author) {
         this.managedAuthors.remove(author);
-        author.setUsername(null);
+        author.setAdmin(null);
     }
 }

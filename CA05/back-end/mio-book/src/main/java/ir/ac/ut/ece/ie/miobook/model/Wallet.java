@@ -14,8 +14,11 @@ import lombok.Setter;
 public class Wallet {
 
     @Id
-    @Column(name = "customer_username")
+    @Column(name = "customer_username", length = 255)
     private String username;
+
+    @Version
+    private Integer version;
 
     @OneToOne
     @MapsId  // Shares primary key with Customer
@@ -49,10 +52,4 @@ public class Wallet {
         }
         this.balance -= amount;
     }
-
-    // Setter only for balance with package-private visibility
-    // Used only by JPA/reflection, not for business operations
-    // private void setBalance(int balance) {
-    //     this.balance = balance;
-    // }
 }

@@ -17,8 +17,8 @@ public class User {
     @Column(name = "role", insertable = false, updatable = false)
     private Role role;
 
+    @Column(nullable = false, length = 255)
     @Id
-    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)

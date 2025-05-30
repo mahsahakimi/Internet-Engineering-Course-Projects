@@ -30,19 +30,6 @@ public interface UserBookRepository extends JpaRepository<UserBook, Long> {
     @Query("SELECT ub FROM UserBook ub WHERE ub.customer = :customer AND ub.isBorrowed = true")
     List<UserBook> findBorrowedBooksByCustomer(@Param("customer") Customer customer);
 
-    // Find all books a customer can currently access
-    // (purchased books + borrowed books that aren't expired)
-    @Query("SELECT ub FROM UserBook ub WHERE ub.customer = :customer AND " +
-            "(ub.isBorrowed = false OR " +
-            "(ub.isBorrowed = true AND ub.borrowStartDate.plusDays(ub.borrowDays) > CURRENT_TIMESTAMP))")
-    List<UserBook> findAccessibleBooksByCustomer(@Param("customer") Customer customer);
-
-    // Find all books with expired borrow time for a customer
-    @Query("SELECT ub FROM UserBook ub WHERE ub.customer = :customer AND " +
-            "ub.isBorrowed = true AND " +
-            "ub.borrowStartDate.plusDays(ub.borrowDays) <= CURRENT_TIMESTAMP")
-    List<UserBook> findExpiredBorrowedBooksByCustomer(@Param("customer") Customer customer);
-
     // Check if a customer owns a specific book
     boolean existsByCustomerAndBookAndIsBorrowedFalse(Customer customer, Book book);
 
@@ -67,10 +54,8 @@ public interface UserBookRepository extends JpaRepository<UserBook, Long> {
             @Param("startDate") MyLocalDateTime startDate
     );
 
-    // Find all overdue books in the system
     @Query("SELECT ub FROM UserBook ub WHERE " +
-            "ub.isBorrowed = true AND " +
-            "ub.borrowStartDate.plusDays(ub.borrowDays) < CURRENT_TIMESTAMP")
+       "ub.isBorrowed = true AND ub.dueDate < CURRENT_TIMESTAMP")
     List<UserBook> findAllOverdueBooks();
 
     // Count how many customers own a specific book

@@ -18,11 +18,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     long countByBook(Book book);
 
-    List<Review> findByCustomer(Customer customer);
+    List<Review> findByCustomer(Customer Customer);
 
     Page<Review> findByBook(Book book, Pageable pageable);
 
-    @Query("SELECT AVG(r.rate) FROM Review r WHERE r.title = :book")
+    @Query("SELECT AVG(r.rate) FROM Review r WHERE r.book = :book")
     Double calculateAverageRatingByBook(@Param("book") Book book);
 
     boolean existsByCustomerAndBook(Customer customer, Book book);

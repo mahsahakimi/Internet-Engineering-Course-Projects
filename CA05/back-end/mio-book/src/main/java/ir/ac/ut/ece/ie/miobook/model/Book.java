@@ -15,8 +15,8 @@ import java.util.HashSet;
 @NoArgsConstructor
 public class Book {
 
+    @Column(nullable = false, unique = true, length = 255)
     @Id
-    @Column(nullable = false, unique = true)
     private String title;
 
     @ManyToOne(optional = false)

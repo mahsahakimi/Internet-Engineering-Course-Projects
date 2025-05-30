@@ -54,4 +54,5 @@ public interface BookRepository extends JpaRepository<Book, String> {
     List<Book> findTop5ByOrderByYearDesc(); 
 
     boolean existsByTitle(String title);
+    boolean existsByTitleAndAuthor(String title, Author author);
 }
