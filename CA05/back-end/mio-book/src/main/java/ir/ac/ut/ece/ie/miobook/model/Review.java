@@ -1,6 +1,8 @@
 package ir.ac.ut.ece.ie.miobook.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import ir.ac.ut.ece.ie.miobook.converter.MyLocalDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,23 +26,24 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String comment;
 
+    @Convert(converter = MyLocalDateTimeConverter.class)
     @Column(nullable = false)
     private MyLocalDateTime date;;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_title", nullable = false,
             foreignKey = @ForeignKey(name = "fk_review_book"))
-    private Book title;
+    private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_username", nullable = false,
             foreignKey = @ForeignKey(name = "fk_review_customer"))
-    private Customer username;
+    private Customer customer;
 
-    public Review(Customer username, Book title, int rate, String comment, MyLocalDateTime date)
+    public Review(Customer customer, Book book, int rate, String comment, MyLocalDateTime date)
     {
-        this.title = title;
-        this.username = username;
+        this.book = book;
+        this.customer = customer;
         this.comment = comment;
         this.date = date;
         this.rate = rate;

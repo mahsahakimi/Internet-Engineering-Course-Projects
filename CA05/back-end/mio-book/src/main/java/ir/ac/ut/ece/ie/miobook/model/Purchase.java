@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
+import ir.ac.ut.ece.ie.miobook.converter.MyLocalDateTimeConverter;
 
 @Entity
 @Table(name = "purchase")
@@ -30,6 +31,7 @@ public class Purchase {
     @Column(nullable = false)
     private int totalCost;
 
+    @Convert(converter = MyLocalDateTimeConverter.class)
     @Column(name = "purchase_date_time", nullable = false)
     private MyLocalDateTime purchaseDateTime;
 
