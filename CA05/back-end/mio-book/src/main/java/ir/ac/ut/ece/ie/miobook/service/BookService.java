@@ -120,9 +120,10 @@ public class BookService {
             }
         }
 
-        CartElement newElement = new CartElement(book, days, customer.getUsername());
+        CartElement newElement = new CartElement(book, days);
+        newElement.setCustomer(customer);
         customer.getCart().add(newElement);
-        userRepository.save(customer);
+        // userRepository.save(customer);
     }
 
     @Transactional
@@ -159,14 +160,17 @@ public class BookService {
     }
 
     public Map<String, Object> getBookDetails(String title) {
-        Book book = bookRepository.findById(title)
+        Book book = bookRepository.findByTitle(title)
                 .orElseThrow(() -> new BookNotFoundException(title));
-
         Map<String, Object> bookData = new HashMap<>();
         bookData.put("title", book.getTitle());
-        bookData.put("author", book.getAuthor());  
+        bookData.put("author", book.getAuthor().getName());  
         bookData.put("publisher", book.getPublisher());
-        bookData.put("genres", book.getGenres()); 
+        List<String> genreNames = book.getGenres()
+            .stream()
+            .map(Genre::getName)
+            .collect(Collectors.toList());
+        bookData.put("genres", genreNames); 
         bookData.put("year", book.getYear());
         bookData.put("price", book.getPrice());
         bookData.put("synopsis", book.getSynopsis());
@@ -427,7 +431,13 @@ public class BookService {
 
     private List<Book> sortBooksByAverageRating(List<Book> books, String sortOrder) {
         Map<Book, Double> ratingMap = books.stream()
-            .collect(Collectors.toMap(book -> book, reviewRepository::calculateAverageRatingByBook));
+            .collect(Collectors.toMap(
+                book -> book,
+                book -> {
+                    Double avg = reviewRepository.calculateAverageRatingByBook(book);
+                    return avg != null ? avg : 0.0;
+                }
+            ));
 
         Comparator<Book> comparator = Comparator.comparing(ratingMap::get);
         if ("desc".equalsIgnoreCase(sortOrder)) {

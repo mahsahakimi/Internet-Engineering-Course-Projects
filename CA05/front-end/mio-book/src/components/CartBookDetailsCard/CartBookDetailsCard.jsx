@@ -17,7 +17,16 @@ function CartBookDetailsCard({cartElement, onRemove}) {
             });
 
             const responseData = await response.json();
+            
             if (responseData.status === 'success') {
+              // SAVE the response data into a file
+            const blob = new Blob([JSON.stringify(responseData, null, 2)], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backend_response.txt'; // file name
+            a.click();
+            URL.revokeObjectURL(url);
                 onRemove();
             } else {
                 console.error(responseData.message || 'Failed to remove cart item.');

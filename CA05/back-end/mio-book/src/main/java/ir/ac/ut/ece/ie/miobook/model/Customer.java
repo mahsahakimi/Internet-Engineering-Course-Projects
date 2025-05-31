@@ -17,9 +17,8 @@ import java.util.Optional;
 @PrimaryKeyJoinColumn(name = "username")
 public class Customer extends User {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_username")
-    List<CartElement> cart = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartElement> cart = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_username")
@@ -34,12 +33,8 @@ public class Customer extends User {
     public Customer(String username, String password, String email, Address address) {
         super(Role.CUSTOMER.name(), username, password, email, address);
     }
-
+    
     public void removeBookFromCart(Book book) {
-        Optional<CartElement> elementToRemove = cart.stream()
-                .filter(cartElement -> cartElement.getBook().equals(book))
-                .findFirst();
-
-        elementToRemove.ifPresent(cart::remove);
+        cart.removeIf(ce -> ce.getBook().getTitle().equals(book.getTitle()));
     }
 }

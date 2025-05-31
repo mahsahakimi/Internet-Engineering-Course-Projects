@@ -73,7 +73,7 @@ function BookDetails({book}) {
                 </div>
 
                 <div className="row mb-3">
-                    <div className="col">{book?.author?.name}</div>
+                    <div className="col">{book?.author}</div>
                     <div className="col">{book?.publisher}</div>
                     <div className="col">{book?.year}</div>
                     <div className="col">{book?.genres?.join(", ")}</div>

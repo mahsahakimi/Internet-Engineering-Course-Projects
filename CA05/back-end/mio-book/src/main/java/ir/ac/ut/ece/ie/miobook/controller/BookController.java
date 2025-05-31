@@ -97,6 +97,7 @@ public class BookController {
         }
         Map<String, Object> bookDetails = bookService.getBookDetails(title);
         Response response = new Response("success", "Book details retrieved.", bookDetails);
+        System.out.println(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -5,6 +5,8 @@ import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 
 import ir.ac.ut.ece.ie.miobook.repository.*;
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -61,12 +63,13 @@ public class CartService {
             }
         }
 
-        CartElement newElement = new CartElement(book, day, customer.getUsername());
-        cartElementRepository.save(newElement);
+        CartElement newElement = new CartElement(book, day);
+        newElement.setCustomer(customer);
         customer.getCart().add(newElement);
-        userRepository.save(customer);
+        // userRepository.save(customer);
     }
 
+    @Transactional
     public void removeFromCart(String title) {
         User user = userContext.getLoggedInUser();
         if (user == null) {
@@ -80,13 +83,7 @@ public class CartService {
 
         Book book = bookRepository.findByTitle(title).orElseThrow(() -> new BookNotFoundException(title));
 
-        boolean found = false;
-        for (CartElement ce : customer.getCart()) {
-            if (ce.getBook().getTitle().equals(title)) {
-                found = true;
-                break;
-            }
-        }
+        boolean found = customer.getCart().removeIf(cartElement -> cartElement.getBook().equals(book));
         if (!found) {
             throw new BookNotInCartException(title);
         }

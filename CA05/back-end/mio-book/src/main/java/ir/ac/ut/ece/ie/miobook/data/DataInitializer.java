@@ -8,7 +8,6 @@ import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
-import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -36,17 +35,15 @@ public class DataInitializer implements ApplicationRunner {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
-    private final WalletRepository walletRepository;
 
     public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
                            BookRepository bookRepository, GenreRepository genreRepository,
-                            ReviewRepository  reviewRepository, WalletRepository walletRepository) {
+                            ReviewRepository  reviewRepository) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
-        this.walletRepository = walletRepository;
     }
 
     public void initializeData() {

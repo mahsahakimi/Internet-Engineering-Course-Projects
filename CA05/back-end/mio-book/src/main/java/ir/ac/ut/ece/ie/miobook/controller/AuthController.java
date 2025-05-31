@@ -4,12 +4,14 @@ import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.service.AuthService;
+
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ir.ac.ut.ece.ie.miobook.model.User;
 
 @RestController
 public class AuthController {
@@ -31,7 +33,7 @@ public class AuthController {
         }
         request.validate();
 
-        User logged_in = authService.userLogin(request.getUsername(), request.getPassword());
+        Map<String, Object> logged_in = authService.userLogin(request.getUsername(), request.getPassword());
         Response response = new Response("success", "User logged in successfully.", logged_in);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -44,6 +46,7 @@ public class AuthController {
 
         authService.userLogout();
         Response response = new Response("success", "User logged out successfully.", null);
+        
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

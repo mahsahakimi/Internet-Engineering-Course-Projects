@@ -37,6 +37,7 @@ function BookPage() {
                     'Content-Type': 'application/json',
                 },
             });
+
             const responseData = await response.json();
             if (responseData.status === 'success') {
                 setBookDetails(responseData.data);
@@ -46,7 +47,7 @@ function BookPage() {
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            navigate('/error', { state: { message: 'An error occurred while fetching book details.' } });
+            navigate('/error', { state: { message: err.message } });
         }
     };
 

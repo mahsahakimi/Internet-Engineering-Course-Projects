@@ -36,7 +36,6 @@ function UserPage() {
         try {
             const response = await fetch('/api/users/purchased_books');
             const responseData = await response.json();
-
             if (responseData.status === "success") {
                 setBooks(responseData.data);
                 
