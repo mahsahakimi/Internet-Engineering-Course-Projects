@@ -18,12 +18,6 @@ function BuyCartPage() {
         setUser(localUser)
     }
 
-    useEffect(() => {
-        if (user?.userInfo?.role === "admin") {
-            navigate("/admin", { replace: true });
-        }
-    }, [user, navigate]);
-
     const fetchCart = async () => {
         try {
             const response = await fetch('/api/carts/details');
@@ -42,6 +36,10 @@ function BuyCartPage() {
     };
 
     useEffect(() => {
+        if (user?.userInfo?.role == "ADMIN") {
+            navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
+            return;
+        }
         fetchCart();
     }, []);
 

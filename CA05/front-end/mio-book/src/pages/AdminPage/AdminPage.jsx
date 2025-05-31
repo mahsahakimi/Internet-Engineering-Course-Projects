@@ -28,7 +28,7 @@ function AdminPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user?.userInfo?.role === "customer") {
+        if (user?.userInfo?.role === "CUSTOMER") {
             navigate("/user", { replace: true });
         }
     }, [user, navigate]);
@@ -187,7 +187,7 @@ function AdminPage() {
                     </table>
                 </div>
 
-            <ModalAddAuthor show={showAddAuthorModal} onClose={() => setShowAddAuthorModal(false)} />
+            <ModalAddAuthor show={showAddAuthorModal} onClose={() => setShowAddAuthorModal(false)} onSubmit={() => {setShowBookModal(false); fetchAuthors();}}/>
             <ModalAddBook show={showBookModal} onClose={() => setShowBookModal(false)} onSubmit={() => {setShowBookModal(false); fetchBooks();}}
 />
 

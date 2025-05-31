@@ -34,17 +34,18 @@ public class AuthorController {
             throw new MissingRequestBodyException();
         }
         request.validate();
-
+        System.out.println("born : " + request.getBorn());
+        System.out.println("died : " + request.getDied());
         MyLocalDate bornDate;
         MyLocalDate diedDate;
         try {
             bornDate = MyLocalDate.parse(request.getBorn());
-            diedDate = request.getDied() != null ? MyLocalDate.parse(request.getDied()) : null;
+            diedDate = request.getDied() != "" ? MyLocalDate.parse(request.getDied()) : null;
         } catch (DateTimeParseException e) {
             throw new InvalidDateFormatException();
         }
 
-        List<Author> newList = authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
+        List<Map<String, Object>> newList = authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
 
         Response response = new Response("success", "Author added successfully.", newList);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -67,7 +68,7 @@ public class AuthorController {
 
     @GetMapping("/getAll") // (show_author_details)
     public ResponseEntity<Response> getAuthors() {
-        List<Author> authors = authorService.getAllAuthors(1,10);
+        List<Map<String, Object>> authors = authorService.getAllAuthors(1,10);
         Response response = new Response("success", "Authors retrieved successfully.", authors);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

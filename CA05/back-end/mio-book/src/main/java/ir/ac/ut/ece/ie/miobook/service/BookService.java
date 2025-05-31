@@ -185,12 +185,17 @@ public class BookService {
         if (user == null) {
             throw new UserNotLoggedInException();
         }
-        if (user.getRole() != Role.CUSTOMER) {
-            throw new PermissionDeniedException(Role.ADMIN.toString());
-        }
 
         Book book = bookRepository.findById(title)
                 .orElseThrow(() -> new BookNotFoundException(title));
+
+        if (user.getRole() != Role.CUSTOMER) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", book.getTitle());
+            data.put("author", book.getAuthor().getName());
+            data.put("content", book.getContent());
+            return data;
+        }
 
         Customer customer = userRepository.findCustomerByUsername(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -325,7 +330,7 @@ public class BookService {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Book> booksPage = bookRepository.findByAuthor(author, pageable);
         if (booksPage.isEmpty()) {
-            throw new NoBooksFoundException();
+            return null;
         }
         List<Map<String, Object>> formattedBooks = formatBooks(booksPage.getContent());
         return formattedBooks;

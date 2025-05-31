@@ -34,6 +34,10 @@ function PurchaseHistoryPage() {
     };
 
     useEffect(() => {
+        if (user?.userInfo?.role == "ADMIN") {
+            navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
+            return;
+        }
         fetchHistory();
     }, []);
 

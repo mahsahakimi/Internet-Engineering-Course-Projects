@@ -45,9 +45,7 @@ public class AuthService {
         userInfo.put("username", user.getUsername());
         userInfo.put("role", user.getRole());
         userInfo.put("email", user.getEmail());
-        Wallet w = walletRepository.findByUsername(username)
-            .orElseThrow(() -> new WalletNotFoundException(username));
-        userInfo.put("balance", w.getBalance());
+
         return userInfo;
     }
 

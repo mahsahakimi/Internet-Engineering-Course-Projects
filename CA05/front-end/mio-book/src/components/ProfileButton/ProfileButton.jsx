@@ -6,21 +6,6 @@ import ProfileDropdown from '../ProfileDropdown';
 
 function ProfileButton() {
     const { user } = useContext(UserContext);
-    // userInfo : {
-    //     "role": "customer",
-    //     "username": "user22",
-    //     "password": "user22",
-    //     "email": "test@test.ir",
-    //     "address": {
-    //       "country": "iran",
-    //       "city": "iran"
-    //     },
-    //     "balance": 0,
-    //     "cart": [],
-    //     "purchases": [],
-    //     "ownedBooks": [],
-    //     "borrowedBooks": []
-    //   }
     const localUser = !user ? JSON.parse(localStorage.getItem('activeUser')) : null;
     const displayUser = user || localUser;
     const firstLetter = displayUser?.userInfo?.username?.charAt(0).toUpperCase() || '?';
@@ -28,7 +13,6 @@ function ProfileButton() {
     const [menuOpen, setMenuOpen] = useState(false);
     const buttonRef = useRef(null);
 
-    // Close menu when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (buttonRef.current && !buttonRef.current.contains(event.target)) {

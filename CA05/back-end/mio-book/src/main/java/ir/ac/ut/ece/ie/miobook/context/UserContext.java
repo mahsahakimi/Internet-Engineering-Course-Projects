@@ -23,7 +23,7 @@ public class UserContext {
 
     public User getLoggedInUser() {
         if (loggedInUsername != null) {
-            return userRepository.findById(loggedInUsername).orElse(null);
+            return userRepository.findByUsername(loggedInUsername).orElse(null);
         }
         return null;
     }

@@ -3,7 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../UserContex';
 
 function ProfileDropdown({ name }) {
-    const { setUser } = useContext(UserContext);
+    const {user, setUser } = useContext(UserContext);
+    if (!user) {
+        const localUser = JSON.parse(localStorage.getItem('activeUser'));
+        setUser(localUser);
+    }
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -33,8 +37,12 @@ function ProfileDropdown({ name }) {
             <hr />
             <Link to="/user" className="profile-menu-item">Profile</Link>
             <Link to="/user" className="profile-menu-item">My Books</Link>
-            <Link to="/cart" className="profile-menu-item">Buy Cart</Link>
-            <Link to="/purchase-history" className="profile-menu-item">Purchase History</Link>
+            {!(user?.userInfo?.role == "ADMIN") && (
+            <>
+                <Link to="/cart" className="profile-menu-item">Buy Cart</Link>
+                <Link to="/purchase-history" className="profile-menu-item">Purchase History</Link>
+            </>
+            )}
             <hr />
             <button onClick={handleLogout} className="profile-menu-item logout-btn">
                 Logout

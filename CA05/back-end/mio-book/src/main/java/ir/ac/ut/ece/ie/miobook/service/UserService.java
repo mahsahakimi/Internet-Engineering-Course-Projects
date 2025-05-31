@@ -109,7 +109,7 @@ public class UserService {
             throw new UserNotLoggedInException();
         }
         if (user.getRole() == Role.ADMIN) {
-            throw new PermissionDeniedException(Role.ADMIN.toString());
+            return "You are Admin!";
         }
 
         Customer customer = userRepository.findCustomerByUsername(user.getUsername())

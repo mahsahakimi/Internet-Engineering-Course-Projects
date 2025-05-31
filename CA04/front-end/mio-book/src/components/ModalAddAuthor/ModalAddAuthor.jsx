@@ -47,7 +47,7 @@ const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
       }
     } catch (err) {
       console.error('Submission error:', err);
-      navigate('/error', { state: { message: 'An error occurred while adding the author.' } });
+      navigate('/error', { state: { message: err.message } });
     }
     handleClose();
   };

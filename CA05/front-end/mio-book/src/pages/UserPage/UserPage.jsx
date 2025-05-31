@@ -51,7 +51,7 @@ function UserPage() {
     };
 
     useEffect(() => {
-        if (user?.userInfo?.role === "admin") {
+        if (user?.userInfo?.role === "ADMIN") {
             navigate("/admin", { replace: true });
             return;
         }

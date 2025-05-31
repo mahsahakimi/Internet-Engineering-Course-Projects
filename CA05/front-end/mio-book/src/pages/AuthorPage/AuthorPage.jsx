@@ -42,7 +42,7 @@ function AuthorPage() {
           return;
         }
 
-        if (responseData.status === 'success' && responseData.data) {
+        if (responseData.status === 'success') {
           try {
             setAuthorDetails(responseData.data);
           } catch (parseError) {
@@ -70,7 +70,7 @@ function AuthorPage() {
 
         const newResponseData = await response.json();
 
-        if (newResponseData.status === 'success' && newResponseData.data) {
+        if (newResponseData.status === 'success') {
           try {
             setAuthorBooks(newResponseData.data);
           } catch (parseError) {
@@ -119,29 +119,31 @@ function AuthorPage() {
   }
 
   return (
-      <>
-          <Nav />
+    <>
+      <Nav />
 
-          <AuthorHeader name={authorDetails.name} />
+      <AuthorHeader name={authorDetails.name} />
 
-          <EmptySpace />
-          <EmptySpace />
+      <EmptySpace />
+      <EmptySpace />
 
-          <AuthorInfo author={authorDetails} bookCount={authorBooks.length} />
-          <EmptySpace />
+      <AuthorInfo author={authorDetails} bookCount={authorBooks?.length || 0} />
+      <EmptySpace />
 
-          <section className="container mb-5">
-              <div className="row row-cols-1 row-cols-sm-5">
-              {authorBooks.map((book) => (
-                  <div className="col" key={book._id}> {/* Added a key for mapping */}
-                   <BookCard book={book} />
-                </div>
-                ))}
-              </div>
-          </section>
-          <Footer />
-      </>
-    );
+      <section className="container mb-5">
+        <div className="row row-cols-1 row-cols-sm-5">
+          {(authorBooks || []).map((book) => (
+            <div className="col" key={book._id}>
+              <BookCard book={book} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <Footer />
+    </>
+  );
+
 }
 
 export default AuthorPage;
