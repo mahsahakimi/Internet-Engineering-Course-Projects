@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
-import bookCover from '../../images/book.png'
 
 const ModalAddReview = ({ show, onClose, onSubmit, bookTitle }) => {
     const [rating, setRating] = useState(0);

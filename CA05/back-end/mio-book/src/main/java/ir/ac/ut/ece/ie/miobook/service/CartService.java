@@ -136,8 +136,7 @@ public class CartService {
         customer.getPurchases().add(purchase);
         customer.getCart().clear();
         userRepository.save(customer);
-        // it does not need! 
-        // purchaseRepository.save(purchase); 
+
         return;
     }
 

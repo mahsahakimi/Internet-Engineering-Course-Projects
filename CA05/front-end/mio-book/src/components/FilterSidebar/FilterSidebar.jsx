@@ -2,19 +2,8 @@ import { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import '../../stylesheets/Filter.css';
 
-const genres = [
-  "Action",
-  "Adventure",
-  "Comedy",
-  "Drama",
-  "Fantasy",
-  "Horror",
-  "Romance",
-  "Sci-Fi",
-  "Thriller",
-];
 
-function FilterSidebar({ show, onClose, onResults}) {
+function FilterSidebar({ show, onClose, onResults, genres}) {
     if (!show) return null;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -42,7 +31,6 @@ function FilterSidebar({ show, onClose, onResults}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Destructure formData fields
         const { name, author, genre, year, sort, order } = formData;
 
         const fromYear = year.trim() === '' ? null : parseInt(year, 10);

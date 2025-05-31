@@ -141,14 +141,25 @@ public class BookService {
         Book book = bookRepository.findById(title)
                 .orElseThrow(() -> new BookNotFoundException(title));
 
-        for (UserBook userBook : customer.getLibrary()) {
-            if (userBook.getBook().equals(book)) {
-                if (!userBook.isBorrowed() || userBook.canAccessBook()) {
-                    throw new BookNotOwnedException();
+        boolean flag = false;
+        for (UserBook borrowedBook : userBookRepository.findBorrowedBooksByCustomer(customer)) {
+            if (borrowedBook.getBook().getTitle() == title){
+                    flag = true;
+                    break;
+            } 
+        }
+        if(!flag){
+            for (UserBook userBook : userBookRepository.findOwnedBooksByCustomer(customer)) {
+                if (userBook.getBook().getTitle() == title){
+                    flag = true;
+                        break;
                 }
             }
+        
         }
-
+        if(!flag){
+            throw new BookNotOwnedException();
+        }
         if (rate < 1 || rate > 5) {
             throw new InvalidRatingException();
         }

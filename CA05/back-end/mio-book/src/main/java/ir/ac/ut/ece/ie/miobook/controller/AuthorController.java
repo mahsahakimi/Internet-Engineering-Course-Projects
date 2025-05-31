@@ -5,7 +5,6 @@ import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
-import ir.ac.ut.ece.ie.miobook.model.Author;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,6 @@ public class AuthorController {
             throw new MissingRequestBodyException();
         }
         request.validate();
-        System.out.println("born : " + request.getBorn());
-        System.out.println("died : " + request.getDied());
         MyLocalDate bornDate;
         MyLocalDate diedDate;
         try {

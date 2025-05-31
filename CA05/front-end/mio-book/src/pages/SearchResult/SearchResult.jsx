@@ -12,6 +12,7 @@ function SearchResult() {
     const filterType = location.state?.type || '';
     const searchTerm = location.state?.term || '';
     const [results, setResults] = useState([]);
+    const [genres, setGenres] = useState([]);
     const [filters, setFilters] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showSidebar, setShowSidebar] = useState(false);
@@ -26,7 +27,12 @@ function SearchResult() {
         if (filterType && searchTerm) {
             quickSerach();
         }
+        fetchGenres();
     }, [filterType, searchTerm]);
+    
+    useEffect(() => {
+        fetchGenres();
+    }, []);
 
     const quickSerach = async () => {
 
@@ -56,6 +62,21 @@ function SearchResult() {
         }
     };
 
+    const fetchGenres = async () => {
+        try {
+            const response = await fetch('/api/genres/getAll');
+            const responseData = await response.json();
+
+            if (responseData.status === "success") {
+                setGenres(responseData.data);
+            } else {
+                console.error("Failed to fetch Genres");
+            }
+        } catch (error) {
+            console.error("Error fetching books for admin:", error);
+        }
+    };
+
 
     return (
         <div>
@@ -68,7 +89,7 @@ function SearchResult() {
                     <button onClick={() => setShowSidebar(true)} className="btn green-btn">
                         <i class="bi bi-filter"></i> Filter
                     </button>
-                    <FilterSidebar show={showSidebar} onClose={() => setShowSidebar(false)} onResults={handleSearchResults}/>
+                    <FilterSidebar show={showSidebar} onClose={() => setShowSidebar(false)} onResults={handleSearchResults} genres={genres}/>
                 </div>
 
                 
