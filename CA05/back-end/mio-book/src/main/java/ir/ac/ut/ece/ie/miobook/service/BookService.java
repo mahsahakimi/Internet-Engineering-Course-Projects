@@ -73,7 +73,6 @@ public class BookService {
             .map(String::trim)
             .filter(name -> !name.isEmpty())
             .toList();
-
         for (String genreName : genreNames) {
             Genre genre = genreRepository.findByNameIgnoreCase(genreName)
                 .orElseGet(() -> genreRepository.save(new Genre(genreName)));
@@ -123,7 +122,7 @@ public class BookService {
         CartElement newElement = new CartElement(book, days);
         newElement.setCustomer(customer);
         customer.getCart().add(newElement);
-        // userRepository.save(customer);
+        userRepository.save(customer);
     }
 
     @Transactional
@@ -256,7 +255,11 @@ public class BookService {
             formattedBook.put("title", book.getTitle());
             formattedBook.put("author", book.getAuthor().getName());
             formattedBook.put("publisher", book.getPublisher());
-            formattedBook.put("genres", book.getGenres());
+            List<String> genreNames = book.getGenres()
+                .stream()
+                .map(Genre::getName)
+                .collect(Collectors.toList());
+            formattedBook.put("genres", genreNames);
             formattedBook.put("year", book.getYear());
             formattedBook.put("price", book.getPrice());
             formattedBook.put("synopsis", book.getSynopsis());
@@ -285,7 +288,11 @@ public class BookService {
             Map<String, Object> formattedBook = new HashMap<>();
             formattedBook.put("title", book.getTitle());
             formattedBook.put("author", book.getAuthor().getName());
-            formattedBook.put("genres", book.getGenres());
+            List<String> genreNames = book.getGenres()
+                .stream()
+                .map(Genre::getName)
+                .collect(Collectors.toList());
+            formattedBook.put("genres", genreNames);
             formattedBook.put("publisher", book.getPublisher());
             formattedBook.put("year", book.getYear());
             formattedBook.put("price", book.getPrice());
@@ -316,12 +323,10 @@ public class BookService {
                 .orElseThrow(() -> new AuthorNotFoundException(authorName));
 
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-
-        Page<Book> booksPage = bookRepository.findByAuthorNameContainingIgnoreCase(author, pageable);
+        Page<Book> booksPage = bookRepository.findByAuthor(author, pageable);
         if (booksPage.isEmpty()) {
             throw new NoBooksFoundException();
         }
-
         List<Map<String, Object>> formattedBooks = formatBooks(booksPage.getContent());
         return formattedBooks;
     }
@@ -375,13 +380,12 @@ public class BookService {
                             String sortBy, String sortOrder,
                             int page, int pageSize) {
 
-        if (fromYear != null && fromYear <= 0 || toYear != null && toYear <= 0) {
+        if (fromYear != null && fromYear < 0 || toYear != null && toYear < 0) {
             throw new InvalidYearException();
         }
         if (fromYear != null && toYear != null && fromYear > toYear) {
             throw new InvalidYearRangeException();
         }
-
         List<Book> books = bookRepository.searchBooksWithFilters(
             title, authorName, genre, fromYear, toYear
         );

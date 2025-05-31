@@ -71,7 +71,7 @@ public class DataInitializer implements ApplicationRunner {
                                 (String) addressMap.get("country")
                         );
                         
-                        Optional<User> existing = userRepository.findById("user1");
+                        Optional<User> existing = userRepository.findByUsername(username);
                         if (existing.isEmpty()) {
                             User user;
                             try {

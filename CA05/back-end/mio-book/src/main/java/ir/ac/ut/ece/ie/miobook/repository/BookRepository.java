@@ -17,6 +17,7 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, String> {
 
     Optional<Book> findByTitle(String title);
+    Page<Book> findByAuthor(Author author, Pageable pageable);
 
     List<Book> findByTitleContainingIgnoreCase(String title);
     Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);

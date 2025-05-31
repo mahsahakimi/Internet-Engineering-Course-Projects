@@ -16,6 +16,7 @@ function UserPage() {
     });
     const [errors, setErrors] = useState({});
     const [books, setBooks] = useState([]);
+    const [balance, setBalance] = useState([]);
     const { user, setUser } = useContext(UserContext);
     const localUser = JSON.parse(localStorage.getItem('activeUser'));
     if(!user){
@@ -37,15 +38,15 @@ function UserPage() {
             const response = await fetch('/api/users/purchased_books');
             const responseData = await response.json();
             if (responseData.status === "success") {
-                setBooks(responseData.data);
-                
+                setBooks(responseData.data.books);
+                setBalance(responseData.data.balance);
             } else {
                 console.error("Failed to fetch Cart details.");
                 navigate('/error', { state: { message: responseData.message || "Failed to fetch Cart details." } });
             }
         } catch (error) {
             console.error("Error fetching Cart details:", error);
-            navigate('/error', { state: { message: "Error fetching Cart details." } });
+            navigate('/error', { state: { message: error.message } });
         }
     };
 
@@ -128,24 +129,9 @@ function UserPage() {
                 });
                 
                 const responseData = await response.json();
-
                 if(responseData.status === "success"){
-                    const newBalance = responseData.data;
+                    setBalance(responseData.data);
                     setFormData({ amount: '' });
-
-
-                    const currentUser = user || JSON.parse(localStorage.getItem('activeUser'));
-                    const updatedUser = {
-                        ...currentUser,
-                        userInfo: {
-                            ...currentUser.userInfo,
-                            balance: newBalance,
-                        },
-                    };
-                    
-                    setUser(updatedUser);
-                    localStorage.setItem('activeUser', JSON.stringify(updatedUser));
-    
                 } else {
                     const newErrors = {};
                     newErrors.amount = responseData.message;
@@ -168,7 +154,7 @@ function UserPage() {
             <div className="row justify-content-center">
                 <div className="row col-sm-10">
                     <div className="container white-box col-sm-8">
-                        <div className="m-3"><h3> <i class="bi bi-coin"></i> {user?.userInfo?.balance}</h3></div>
+                        <div className="m-3"><h3> <i class="bi bi-coin"></i> {balance}</h3></div>
                         <div className="d-flex">
                         <input 
                             type="text" 

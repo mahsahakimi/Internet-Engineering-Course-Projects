@@ -66,7 +66,7 @@ public class CartService {
         CartElement newElement = new CartElement(book, day);
         newElement.setCustomer(customer);
         customer.getCart().add(newElement);
-        // userRepository.save(customer);
+        userRepository.save(customer);
     }
 
     @Transactional
@@ -90,7 +90,7 @@ public class CartService {
         customer.removeBookFromCart(book);
     }
 
-    public Purchase purchaseCart() {
+    public void purchaseCart() {
         User user = userContext.getLoggedInUser();
         if (user == null) {
             throw new UserNotLoggedInException();
@@ -137,8 +137,8 @@ public class CartService {
         customer.getCart().clear();
         userRepository.save(customer);
         // it does not need! 
-        purchaseRepository.save(purchase); 
-        return purchase;
+        // purchaseRepository.save(purchase); 
+        return;
     }
 
     public Map<String, Object> showCart() {

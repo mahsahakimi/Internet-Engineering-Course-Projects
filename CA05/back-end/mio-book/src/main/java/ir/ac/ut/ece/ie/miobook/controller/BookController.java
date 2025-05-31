@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,6 @@ public class BookController {
         }
         Map<String, Object> bookDetails = bookService.getBookDetails(title);
         Response response = new Response("success", "Book details retrieved.", bookDetails);
-        System.out.println(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -151,7 +151,7 @@ public class BookController {
     }
 
     @GetMapping("/search_by_author") // (search_books_by_author)
-    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "name") String authorName,
+    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "author") String authorName,
                                                             @RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by author name with pagination.
@@ -209,8 +209,8 @@ public class BookController {
     public ResponseEntity<Response> searchBooks(@RequestParam(value = "title", required = false) String title,
                                                         @RequestParam(value = "author", required = false) String authorName,
                                                         @RequestParam(value = "genre", required = false) String genre,
-                                                        @RequestParam(value = "fromYear", required = false) Integer fromYear,
-                                                        @RequestParam(value = "toYear", required = false) Integer toYear,
+                                                        @RequestParam(value = "fromYear", required = false) String fromYearStr,
+                                                        @RequestParam(value = "toYear", required = false) String toYearStr,
                                                         @RequestParam(value = "sortBy", required = false) String sortBy,
                                                         @RequestParam(value = "sortOrder", required = false) String sortOrder,
                                                         @RequestParam(value = "page", defaultValue = "1") int page,
@@ -221,11 +221,18 @@ public class BookController {
         //             page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the search criteria in JSON format.
         // Example: GET /books/searchBooks?title=ExampleTitle&author=ExampleAuthor&genre=Fantasy&fromYear=2020&toYear=2023&sortBy=averageRating&sortOrder=desc&page=1&pageSize=10.
-        if (fromYear == null) {
-            throw new MissingRequiredFieldsException("from year.");
-        }
-        if (toYear == null) {
-            throw new MissingRequiredFieldsException("to year.");
+        Integer fromYear = 0;
+        Integer toYear = 3000;
+
+        try {
+            if(fromYearStr != null){
+                fromYear = fromYearStr.equals("null") ? 0 : Integer.parseInt(fromYearStr, 10);
+            }
+            if(toYearStr != null){
+                toYear = toYearStr.equals("null") ? 3000 : Integer.parseInt(toYearStr, 10);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException("Year must be a valid integer.");
         }
 
         // Check for valid sortBy and sortOrder
@@ -239,7 +246,6 @@ public class BookController {
         if (sortOrder != null && !validSortOrder.contains(sortOrder)) {
             throw new SortOrderException(sortOrder);
         }
-
         List<Map<String,Object>> responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
         Response response = new Response("success", "Books retrieved successfully.", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);

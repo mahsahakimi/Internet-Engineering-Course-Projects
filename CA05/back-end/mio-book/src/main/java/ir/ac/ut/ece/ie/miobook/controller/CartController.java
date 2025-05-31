@@ -57,8 +57,8 @@ public class CartController {
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
         // Example: POST /carts/purchase with a JSON empty body.
 
-        Purchase purchaseDetails = cartService.purchaseCart();
-        Response response = new Response("success", "Purchase completed successfully.", purchaseDetails);
+        cartService.purchaseCart();
+        Response response = new Response("success", "Purchase completed successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

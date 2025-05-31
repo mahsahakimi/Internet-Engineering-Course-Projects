@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -66,7 +67,11 @@ public class UserService {
                 Map<String, Object> bookInfo = new HashMap<>();
                 bookInfo.put("title", book.getTitle());
                 bookInfo.put("author", book.getAuthor().getName());
-                bookInfo.put("genres", book.getGenres());
+                List<String> genreNames = book.getGenres()
+                    .stream()
+                    .map(Genre::getName)
+                    .collect(Collectors.toList());
+                bookInfo.put("genres", genreNames); 
                 bookInfo.put("publisher", book.getPublisher());
                 bookInfo.put("year", book.getYear());
                 bookInfo.put("dueDate", borrowedBook.getDueDate().toString());
@@ -82,14 +87,20 @@ public class UserService {
             Map<String, Object> bookInfo = new HashMap<>();
             bookInfo.put("title", book.getTitle());
             bookInfo.put("author", book.getAuthor().getName());
-            bookInfo.put("genres", book.getGenres());
+            List<String> genreNames = book.getGenres()
+                .stream()
+                .map(Genre::getName)
+                .collect(Collectors.toList());
+            bookInfo.put("genres", genreNames); 
             bookInfo.put("publisher", book.getPublisher());
             bookInfo.put("year", book.getYear());
             ownedBooksInfo.add(bookInfo);
         }
         userBooks.put("owned", ownedBooksInfo);
-
-        return userBooks;
+        Map<String, Object> data = new HashMap<>();
+        data.put("books", userBooks);
+        data.put("balance", walletService.getBalance(user.getUsername()));
+        return data;
     }
 
     public String getBookStatus(String title) {
