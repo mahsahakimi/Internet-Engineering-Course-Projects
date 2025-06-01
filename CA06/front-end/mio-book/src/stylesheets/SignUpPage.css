@@ -1,0 +1,21 @@
+.signin-link a {
+    color: #16423C;
+    text-decoration: none;
+}
+.signin-link a:hover {
+    color: green;
+}
+.role-btn {
+    color: black;
+    background-color: #F7F9FB;
+    border-radius: 12px;
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.role-btn.selected {
+    border: 2px solid #16423C;
+    background-color: #F5EFE7;
+    color: #16423C;
+}
