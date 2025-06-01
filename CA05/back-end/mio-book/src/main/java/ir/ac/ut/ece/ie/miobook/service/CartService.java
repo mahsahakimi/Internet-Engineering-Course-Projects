@@ -20,17 +20,13 @@ public class CartService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final UserBookRepository userBookRepository;
-    private final PurchaseRepository purchaseRepository;
-    private final CartElementRepository cartElementRepository;
     private final UserContext userContext;
     private final WalletService walletService;
 
-    public CartService(UserRepository userRepository, BookRepository bookRepository, UserBookRepository userBookRepository, PurchaseRepository purchaseRepository, CartElementRepository cartElementRepository, UserContext userContext, WalletService walletService) {
+    public CartService(UserRepository userRepository, BookRepository bookRepository, UserBookRepository userBookRepository, UserContext userContext, WalletService walletService) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.userBookRepository = userBookRepository;
-        this.purchaseRepository = purchaseRepository;
-        this.cartElementRepository = cartElementRepository;
         this.userContext = userContext;
         this.walletService = walletService;
     }

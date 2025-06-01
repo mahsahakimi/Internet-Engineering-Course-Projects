@@ -66,6 +66,14 @@ public class BookService {
         if (year < 0) {
             throw new InvalidYearException();
         }
+        if (year < author.getBorn().getYear()) {
+            throw new AuthorLifespanException();
+        }
+        if(author.getDied() != null){
+            if(year < author.getDied().getYear()){
+                throw new AuthorLifespanException();
+            }
+        }
 
         Book book = new Book(title, author, publisher, year, price, synopsis, content);
 
@@ -312,6 +320,7 @@ public class BookService {
             formattedBook.put("publisher", book.getPublisher());
             formattedBook.put("year", book.getYear());
             formattedBook.put("price", book.getPrice());
+            formattedBook.put("buycount", userBookRepository.countByBook(book));
             // formattedBook.put("total_buys", book.getTotalBuys()); // Uncomment if you implement total buys
             formattedBooks.add(formattedBook);
         }

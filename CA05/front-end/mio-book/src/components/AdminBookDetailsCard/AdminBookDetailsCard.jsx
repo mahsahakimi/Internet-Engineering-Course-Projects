@@ -9,7 +9,8 @@ function AdminBookDetailsCard({ book }) {
         genre = [],
         publisher = 'Unknown Publisher',
         year = 'N/A',
-        price = '0.00'
+        price = '0.00',
+        buycount = 0
     } = book;
 
     const formattedGenres = Array.isArray(genre) && genre.length > 0
@@ -40,7 +41,7 @@ function AdminBookDetailsCard({ book }) {
         <td>{publisher}</td>
         <td>{year}</td>
         <td>{formattedPrice}</td>
-        <th>10</th>
+        <th>{buycount}</th>
         </tr>
     );
 }

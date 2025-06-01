@@ -5,11 +5,8 @@ import ir.ac.ut.ece.ie.miobook.exceptions.IncorrectPasswordException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserSessionActiveException;
-import ir.ac.ut.ece.ie.miobook.exceptions.WalletNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.User;
-import ir.ac.ut.ece.ie.miobook.model.Wallet;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
-import ir.ac.ut.ece.ie.miobook.repository.WalletRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,13 +18,11 @@ public class AuthService {
 
     private final UserContext userContext;
     private final UserRepository userRepository;
-    private final WalletRepository walletRepository;
 
 
-    public AuthService(UserContext userContext, UserRepository userRepository, WalletRepository walletRepository) {
+    public AuthService(UserContext userContext, UserRepository userRepository) {
         this.userContext = userContext;
         this.userRepository = userRepository;
-        this.walletRepository = walletRepository;
     }
 
     public Map<String, Object> userLogin(String username, String password){
