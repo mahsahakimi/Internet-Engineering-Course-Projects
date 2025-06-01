@@ -15,11 +15,11 @@ public class RedisService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    public String createSession(Integer userId) {
+    public String createSession(String userUsername) {
         String sessionToken = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(
                 sessionToken,
-                userId.toString(),
+                userUsername,
                 SESSION_TIMEOUT,
                 TimeUnit.MINUTES
         );

@@ -3,10 +3,12 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
+import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.AuthService;
 
 import java.util.Map;
 
+import ir.ac.ut.ece.ie.miobook.service.RedisService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final RedisService redisService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, RedisService redisService) {
         this.authService = authService;
+        this.redisService = redisService;
     }
 
     @PostMapping("/login")
@@ -32,6 +36,13 @@ public class AuthController {
             throw new MissingRequestBodyException();
         }
         request.validate();
+
+        User user = authService.authenticate(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        String sessionToken = redisService.createSession(user.getUsername());
 
         Map<String, Object> logged_in = authService.userLogin(request.getUsername(), request.getPassword());
         Response response = new Response("success", "User logged in successfully.", logged_in);

@@ -25,6 +25,20 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
+    public User authenticate(String username, String password) {
+        if(userContext.getLoggedInUser() != null) {
+            throw new UserSessionActiveException();
+        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        if (!user.getPassword().equals(password)){
+            throw new IncorrectPasswordException();
+        }
+        userContext.setLoggedInUser(user);
+        return user;
+    }
+
     public Map<String, Object> userLogin(String username, String password){
         if(userContext.getLoggedInUser() != null) {
             throw new UserSessionActiveException();
