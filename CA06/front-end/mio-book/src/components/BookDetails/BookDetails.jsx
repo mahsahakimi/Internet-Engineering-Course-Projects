@@ -24,8 +24,8 @@ function BookDetails({book}) {
                 const response = await fetch(`/api/users/book_status?title=${book?.title}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
+                        'Session-ID': localUser.userInfo.sessionId,
+                    }
                 });
 
                 const responseData = await response.json();

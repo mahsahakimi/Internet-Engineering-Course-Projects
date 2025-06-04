@@ -10,14 +10,19 @@ import EmptySpace from '../../components/EmptySpace';
 
 
 function HomePage() {
-
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const [newReleases, setNewReleases] = useState([]);
     const [topRated, setTopRated] = useState([]);
     const navigate = useNavigate();
 
     const fetchNewReleases = async () => {
         try {
-            const response = await fetch('/api/books/newRelease');
+            const response = await fetch('/api/books/newRelease', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': localUser.userInfo.sessionId
+                }
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {
@@ -34,7 +39,12 @@ function HomePage() {
 
     const fetchTopRated = async () => {
         try {
-            const response = await fetch('/api/books/topRated');
+            const response = await fetch('/api/books/topRated', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': localUser.userInfo.sessionId
+                }
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {

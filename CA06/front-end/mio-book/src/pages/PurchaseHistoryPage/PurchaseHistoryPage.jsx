@@ -19,7 +19,12 @@ function PurchaseHistoryPage() {
 
     const fetchHistory = async () => {
         try {
-            const response = await fetch('/api/users/purchase_history');
+            const response = await fetch('/api/users/purchase_history', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
+                },
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {

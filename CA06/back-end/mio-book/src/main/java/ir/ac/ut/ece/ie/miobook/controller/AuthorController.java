@@ -1,11 +1,14 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
+import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddAuthorRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
+import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
+import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,19 @@ import java.util.Map;
 @RequestMapping("/authors")
 public class AuthorController {
 
+    private final AuthorService authorService;
+    private final UserContext userContext;
+
     @Autowired
-    private AuthorService authorService;
+    public AuthorController(AuthorService authorService, UserContext userContext) {
+        this.authorService = authorService;
+        this.userContext = userContext;
+    }
 
     @PostMapping("/add") // (add_author)
-    public ResponseEntity<Response> addAuthor(@RequestBody AddAuthorRequest request) {
+    public ResponseEntity<Response> addAuthor(
+        @RequestHeader("Session-Id") String sessionId,
+        @RequestBody AddAuthorRequest request) {
         // Adds a new author to the system.
         // Parameters: name, penName, nationality, born (date), died (date, optional).
         // Returns: success message or error if the author already exists or input is invalid.
@@ -32,6 +43,12 @@ public class AuthorController {
         if(request == null){
             throw new MissingRequestBodyException();
         }
+
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         request.validate();
         MyLocalDate bornDate;
         MyLocalDate diedDate;
@@ -42,18 +59,26 @@ public class AuthorController {
             throw new InvalidDateFormatException();
         }
 
-        List<Map<String, Object>> newList = authorService.addAuthor(request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
+         List<Map<String, Object>> newList = authorService.addAuthor( user, request.getName(), request.getPenName(), request.getNationality(), bornDate, diedDate);
 
         Response response = new Response("success", "Author added successfully.", newList);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/details") // (show_author_details)
-    public ResponseEntity<Response> getAuthorDetails(@RequestParam("username") String authorName) {
+    public ResponseEntity<Response> getAuthorDetails(
+            @RequestHeader("Session-ID") String sessionId,
+            @RequestParam("username") String authorName) {
         // Retrieves the details of a specific author.
         // Parameters: username (author's name).
         // Returns: author details in JSON format or error if the author is not found.
         // Example: GET /authors/details?username=author_name.
+
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+        
         if (authorName == null || authorName.isEmpty()) {
             throw new MissingRequiredFieldsException("username");
         }
@@ -64,7 +89,15 @@ public class AuthorController {
     }
 
     @GetMapping("/getAll") // (show_author_details)
-    public ResponseEntity<Response> getAuthors() {
+    public ResponseEntity<Response> getAuthors(
+        @RequestHeader("Session-ID") String sessionId) {
+
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
+
         List<Map<String, Object>> authors = authorService.getAllAuthors(1,10);
         Response response = new Response("success", "Authors retrieved successfully.", authors);
         return new ResponseEntity<>(response, HttpStatus.OK);

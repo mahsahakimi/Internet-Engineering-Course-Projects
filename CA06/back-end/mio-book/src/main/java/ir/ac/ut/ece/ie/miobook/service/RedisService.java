@@ -26,11 +26,11 @@ public class RedisService {
         return sessionToken;
     }
 
-    public Integer validateSession(String sessionToken) {
-        String userId = redisTemplate.opsForValue().get(sessionToken);
-        if (userId != null) {
+    public String validateSession(String sessionToken) {
+        String username = redisTemplate.opsForValue().get(sessionToken);
+        if (username != null) {
             redisTemplate.expire(sessionToken, SESSION_TIMEOUT, TimeUnit.MINUTES);
-            return Integer.parseInt(userId);
+            return username;
         }
         return null;
     }

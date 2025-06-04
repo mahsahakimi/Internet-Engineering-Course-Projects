@@ -14,7 +14,9 @@ function ProfileDropdown({ name }) {
         try {
             const response = await fetch('/api/logout', {
                 method: 'POST',
-                // credentials: 'include', // Important if your backend uses cookies/session
+                headers: {
+                    'Session-ID': user.userInfo.sessionId
+                }
             });
 
             if (response.ok) {

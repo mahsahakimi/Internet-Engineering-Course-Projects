@@ -4,6 +4,7 @@ import '../../stylesheets/Filter.css';
 
 
 function FilterSidebar({ show, onClose, onResults, genres}) {
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     if (!show) return null;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -57,7 +58,12 @@ function FilterSidebar({ show, onClose, onResults, genres}) {
         }
 
         try {
-            const response = await fetch(`/api/books/searchBooks?${params.toString()}`);
+            const response = await fetch(`/api/books/searchBooks?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'Session-ID': localUser.userInfo.sessionId
+                },
+            });
             const responseData = await response.json();
             if (responseData.status === 'success') {
 

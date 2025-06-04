@@ -4,31 +4,34 @@ import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.data.redis.core.RedisTemplate;
+
 
 @Component
 public class UserContext {
 
-    private String loggedInUsername;
-
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserContext(UserRepository userRepository) {
+    public UserContext(RedisTemplate<String, String> redisTemplate,
+                       UserRepository userRepository) {
+        this.redisTemplate = redisTemplate;
         this.userRepository = userRepository;
     }
 
-    public void setLoggedInUser(User user) {
-        this.loggedInUsername = user.getUsername();
+    public User getLoggedInUser(String sessionId) {
+        if (sessionId == null) return null;
+
+        String username = redisTemplate.opsForValue().get(sessionId);
+        if (username == null) return null;
+
+        return userRepository.findByUsername(username).orElse(null);
     }
 
-    public User getLoggedInUser() {
-        if (loggedInUsername != null) {
-            return userRepository.findByUsername(loggedInUsername).orElse(null);
+    public void clear(String sessionId) {
+        if (sessionId != null) {
+            redisTemplate.delete(sessionId);
         }
-        return null;
-    }
-
-    public void clear() {
-        this.loggedInUsername = null;
     }
 }

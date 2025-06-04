@@ -37,7 +37,9 @@ function AdminPage() {
         try {
             const response = await fetch('/api/logout', {
                 method: 'POST',
-                // credentials: 'include', // Important if your backend uses cookies/session
+                headers: {
+                    'Session-ID': user.userInfo.sessionId
+                }
             });
 
             if (response.ok) {
@@ -57,7 +59,12 @@ function AdminPage() {
     const fetchBooks = async () => {
         setLoadingBooks(true);
         try {
-            const response = await fetch('/api/books/adminPageBooks');
+            const response = await fetch('/api/books/adminPageBooks', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': user.userInfo.sessionId
+                },
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {
@@ -78,7 +85,12 @@ function AdminPage() {
     const fetchAuthors = async () => {
         setLoadingAuthors(true);
         try {
-            const response = await fetch('/api/authors/getAll');
+            const response = await fetch('/api/authors/getAll', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': user.userInfo.sessionId
+                },
+            });
             const responseData = await response.json();
             
             if (responseData.status === "success") {

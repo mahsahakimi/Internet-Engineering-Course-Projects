@@ -17,6 +17,7 @@ function AuthorPage() {
   const [authorBooks, setAuthorBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const localUser = JSON.parse(localStorage.getItem('activeUser'));
 
   useEffect(() => {
     const fetchAuthorData = async () => {
@@ -32,7 +33,13 @@ function AuthorPage() {
 
       try {
         const detailsResponse = await fetch(
-          `/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`
+          `/api/authors/details?username=${encodeURIComponent(authorNameFromURL)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Session-ID': localUser.userInfo.sessionId
+            }
+          }
         );
 
         const responseData = await detailsResponse.json();
@@ -57,9 +64,13 @@ function AuthorPage() {
 
         // Fetch author's books
         const response = await fetch(
-          `/api/books/search_by_author?author=${encodeURIComponent(
-            authorNameFromURL
-          )}&page=1&pageSize=10`
+          `/api/books/search_by_author?author=${encodeURIComponent(authorNameFromURL)}&page=1&pageSize=10`,
+          {
+            method: 'GET',
+            headers: {
+              'Session-ID': localUser.userInfo.sessionId
+            }
+          }
         );
 
         if (!response.ok) {

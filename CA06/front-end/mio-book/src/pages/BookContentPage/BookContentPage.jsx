@@ -8,6 +8,7 @@ import BookContentHeader from '../../components/BookContentHeader';
 import BookContentText from '../../components/BookContentText';
 
 function BookContentPage() {
+  const localUser = JSON.parse(localStorage.getItem('activeUser'));
   const location = useLocation();
   const navigate = useNavigate();
   const [bookData, setBookData] = useState(null);
@@ -30,6 +31,7 @@ function BookContentPage() {
         `/api/books/content?title=${encodeURIComponent(bookTitleFromURL)}`,
         {
           headers: {
+            'Session-ID': localUser.userInfo.sessionId,
             'Content-Type': 'application/json',
           },
         }

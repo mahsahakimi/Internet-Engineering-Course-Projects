@@ -3,51 +3,55 @@ import React, { useState } from 'react';
  import '../../stylesheets/Modal.css';
 
  const ModalAddBook = ({ show, onClose, onSubmit }) => {
-     const [step, setStep] = useState(1);
-     const [formData, setFormData] = useState({
-         title: '',
-         author: '',
-         publisher: '',
-         genres: '',
-         year: '',
-         price: '',
-         imageLink: '',
-         synopsis: '',
-         content: ''
-     });
-     const navigate = useNavigate();
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState({
+        title: '',
+        author: '',
+        publisher: '',
+        genres: '',
+        year: '',
+        price: '',
+        imageLink: '',
+        synopsis: '',
+        content: ''
+    });
+    const navigate = useNavigate();
 
-     const isStepOneComplete = formData.title && formData.author && formData.publisher && formData.genres && formData.year && formData.price && formData.imageLink;
-     const isStepTwoComplete = formData.synopsis && formData.content;
+    const isStepOneComplete = formData.title && formData.author && formData.publisher && formData.genres && formData.year && formData.price && formData.imageLink;
+    const isStepTwoComplete = formData.synopsis && formData.content;
 
-     const handleChange = (e) => {
-         setFormData({ ...formData, [e.target.name]: e.target.value });
-     };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-     const handleNext = () => setStep(2);
-     const handleBack = () => setStep(1);
+    const handleNext = () => setStep(2);
+    const handleBack = () => setStep(1);
 
-     const handleClose = () => {
-         setStep(1);
-         setFormData({
-             title: '',
-             author: '',
-             publisher: '',
-             genres: '',
-             year: '',
-             price: '',
-             imageLink: '',
-             synopsis: '',
-             content: ''
-         });
-         onClose();
-     };
+    const handleClose = () => {
+        setStep(1);
+        setFormData({
+            title: '',
+            author: '',
+            publisher: '',
+            genres: '',
+            year: '',
+            price: '',
+            imageLink: '',
+            synopsis: '',
+            content: ''
+        });
+        onClose();
+    };
 
      const handleSubmit = async () => {
          try {
              const response = await fetch('/api/books/add', {
                  method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
+                 headers: { 
+                    'Session-ID' : localUser.userInfo.sessionId,
+                    'Content-Type': 'application/json'
+                 },
                  body: JSON.stringify(formData),
              });
 

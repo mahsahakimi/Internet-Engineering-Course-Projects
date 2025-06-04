@@ -18,8 +18,8 @@ function UserPage() {
     const [books, setBooks] = useState([]);
     const [balance, setBalance] = useState([]);
     const { user, setUser } = useContext(UserContext);
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     if(!user){
+        const localUser = JSON.parse(localStorage.getItem('activeUser'));
         setUser(localUser)
     }
     
@@ -35,7 +35,11 @@ function UserPage() {
     const fetchUserBooks = async () => {
 
         try {
-            const response = await fetch('/api/users/purchased_books');
+            const response = await fetch('/api/users/purchased_books', {
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
+                },
+            });
             const responseData = await response.json();
             if (responseData.status === "success") {
                 setBooks(responseData.data.books);
@@ -98,7 +102,9 @@ function UserPage() {
         try{
             const response = await fetch('/api/logout', {
                 method: 'POST',
-                // credentials: 'include', // Important if your backend uses cookies/session
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
+                },
             });
             
             if(response.ok){
@@ -121,6 +127,7 @@ function UserPage() {
                 const response = await fetch('/api/users/addcredit', {
                     method: 'POST',
                     headers: {  
+                        'Session-ID': user.userInfo.sessionId,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({

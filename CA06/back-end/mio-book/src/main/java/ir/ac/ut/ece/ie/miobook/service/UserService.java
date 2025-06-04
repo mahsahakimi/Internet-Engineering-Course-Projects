@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
@@ -32,24 +31,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final WalletService walletService;
-    private final UserContext userContext;
     private final UserBookRepository userBookRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, BookRepository bookRepository,
-                       WalletService walletService, UserContext userContext, UserBookRepository userBookRepository) {
+                       WalletService walletService, UserBookRepository userBookRepository) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.walletService = walletService;
-        this.userContext = userContext;
         this.userBookRepository = userBookRepository;
     }
 
-    public Map<String, Object> getPurchasedBooks() {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public Map<String, Object> getPurchasedBooks(User user) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -103,11 +96,7 @@ public class UserService {
         return data;
     }
 
-    public String getBookStatus(String title) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public String getBookStatus(User user, String title) {
         if (user.getRole() == Role.ADMIN) {
             return "You are Admin!";
         }
@@ -137,11 +126,7 @@ public class UserService {
         return null;
     }
 
-    public Map<String, Object> getPurchaseHistory() {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public Map<String, Object> getPurchaseHistory(User user) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -207,12 +192,7 @@ public class UserService {
         return data;
     }
 
-    public String getUserDetails() {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
-
+    public String getUserDetails(User user) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("username", user.getUsername());
         userData.put("role", user.getRole());
@@ -236,11 +216,7 @@ public class UserService {
         }
     }
 
-    public int addCredit(int credit) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public int addCredit(User user, int credit) {
         if (user.getRole() != Role.CUSTOMER) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }

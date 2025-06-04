@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
@@ -22,20 +21,13 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
-    private final UserContext userContext;
 
-    public AuthorService(AuthorRepository authorRepository, UserRepository userRepository, UserContext userContex) {
+    public AuthorService(AuthorRepository authorRepository, UserRepository userRepository) {
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;
-        this.userContext = userContex;
     }
 
-    public List<Map<String, Object>> addAuthor(String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
-        User currentUser = userContext.getLoggedInUser();
-
-        if (currentUser == null) {
-            throw new UserNotLoggedInException();
-        }
+    public List<Map<String, Object>> addAuthor(User currentUser, String name, String penName, String nationality, MyLocalDate born, MyLocalDate died) {
         if (!(currentUser instanceof Admin)) {
             throw new PermissionDeniedException(Role.CUSTOMER.toString());
         }

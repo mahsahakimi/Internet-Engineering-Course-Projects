@@ -8,6 +8,7 @@ import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
 
 
 function SearchResult() {
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const location = useLocation();
     const filterType = location.state?.type || '';
     const searchTerm = location.state?.term || '';
@@ -49,7 +50,11 @@ function SearchResult() {
                 sortBy: 'reviewCount',
                 sortOrder: 'desc',
             }))
-            const result = await fetch(endpoint);
+            const result = await fetch(endpoint, {
+                headers: {
+                    'Session-ID': localUser.userInfo.sessionId,
+                },
+            });
             const responseData = await result.json();
             setResults(Array.isArray(responseData?.data) ? responseData.data : []);
             
@@ -64,7 +69,11 @@ function SearchResult() {
 
     const fetchGenres = async () => {
         try {
-            const response = await fetch('/api/genres/getAll');
+            const response = await fetch('/api/genres/getAll', {
+                headers: {
+                    'Session-ID': localUser.userInfo.sessionId,
+                },
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {

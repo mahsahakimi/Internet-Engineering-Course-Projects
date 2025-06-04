@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 
@@ -20,22 +19,16 @@ public class CartService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final UserBookRepository userBookRepository;
-    private final UserContext userContext;
     private final WalletService walletService;
 
-    public CartService(UserRepository userRepository, BookRepository bookRepository, UserBookRepository userBookRepository, UserContext userContext, WalletService walletService) {
+    public CartService(UserRepository userRepository, BookRepository bookRepository, UserBookRepository userBookRepository, WalletService walletService) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.userBookRepository = userBookRepository;
-        this.userContext = userContext;
         this.walletService = walletService;
     }
 
-    public void addToCart(String title, int day) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public void addToCart(User user, String title, int day) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -66,11 +59,7 @@ public class CartService {
     }
 
     @Transactional
-    public void removeFromCart(String title) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public void removeFromCart(User user, String title) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -86,11 +75,7 @@ public class CartService {
         customer.removeBookFromCart(book);
     }
 
-    public void purchaseCart() {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public void purchaseCart(User user) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -136,11 +121,7 @@ public class CartService {
         return;
     }
 
-    public Map<String, Object> showCart() {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public Map<String, Object> showCart(User user) {
         if (user.getRole() == Role.ADMIN) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }

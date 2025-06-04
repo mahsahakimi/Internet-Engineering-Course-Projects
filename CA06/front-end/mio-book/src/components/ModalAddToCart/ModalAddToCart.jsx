@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
 
 const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}) => {
+    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const [borrowChecked, setBorrowChecked] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
     const navigate = useNavigate();
@@ -21,7 +22,10 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
         try {
             const res = await fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Session-ID' : localUser.userInfo.sessionId,
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(payload)
             });
 

@@ -12,6 +12,7 @@ function CartBookDetailsCard({cartElement, onRemove}) {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Session-ID': user.userInfo.sessionId
                 },
                 body: JSON.stringify({ title: cartElement?.title }),
             });

@@ -20,14 +20,19 @@ function BuyCartPage() {
 
     const fetchCart = async () => {
         try {
-            const response = await fetch('/api/carts/details');
+            const response = await fetch('/api/carts/details', {
+                method: 'GET',
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
+                },
+            });
             const responseData = await response.json();
 
             if (responseData.status === "success") {
                 setCart(responseData.data);
             } else {
                 console.error("Failed to fetch Cart details.");
-                navigate('/error', { state: { message: responseData.message || "Failed to fetch Cart details." } });
+                navigate('/error', { state: { message: responseData.data || "Failed to fetch Cart details." } });
             }
         } catch (error) {
             console.error("Error fetching Cart details:", error);
@@ -51,7 +56,9 @@ function BuyCartPage() {
         try {
             const response = await fetch('/api/carts/purchase', {
                 method: 'POST',
-                // credentials: 'include', // Important if your backend uses cookies/session
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
+                },
             });
             const responseData = await response.json();
 

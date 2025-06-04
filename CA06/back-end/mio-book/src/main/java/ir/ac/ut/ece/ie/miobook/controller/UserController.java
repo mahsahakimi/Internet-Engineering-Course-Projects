@@ -1,9 +1,12 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
+import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddCreditRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddUserRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
+import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
+import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.UserService;
 
 import java.util.Map;
@@ -17,11 +20,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
+    private final UserService userService;
+    private final UserContext userContext;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService, UserContext userContext) {
+        this.userService = userService;
+        this.userContext = userContext;
+    }
 
     @PostMapping("/add") // (add_user)
-    public ResponseEntity<Response> addUser(@RequestBody AddUserRequest request) {
+    public ResponseEntity<Response> addUser(
+            @RequestBody AddUserRequest request) {
         // Adds a new user to the system.
         // Parameters: role, username, password, email, address.
         // Returns: success message or error if the user already exists or input is invalid.
@@ -37,59 +47,84 @@ public class UserController {
     }
 
     @PostMapping("/addcredit") // (add_credit)
-    public ResponseEntity<Response> addCredit(@RequestBody AddCreditRequest request) {
+    public ResponseEntity<Response> addCredit(
+            @RequestHeader("Session-ID") String sessionId,
+            @RequestBody AddCreditRequest request) {
         // Adds credit to a user's account.
         // Parameters: credit amount.
         // Returns: success message or error if the user is not found or input is invalid.
         // Example: POST /users/credit with JSON body containing credit.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if(request == null){
             throw new MissingRequestBodyException();
         }
 
         request.validate();
-        int new_balance = userService.addCredit(request.getCredit());
+        int new_balance = userService.addCredit(user, request.getCredit());
         Response response = new Response("success", "Credit added successfully.", new_balance);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/details") // (show_user_details)
-    public ResponseEntity<Response> showUserDetails() {
+    public ResponseEntity<Response> showUserDetails(@RequestHeader("Session-ID") String sessionId) {
         // Retrieves the details of a specific user.
         // Returns: user details in JSON format or error if the user is not found.
         // Example: GET /users/details
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
 
-        String userDetails = userService.getUserDetails();
+        String userDetails = userService.getUserDetails(user);
         Response response = new Response("success", "User details retrieved.", userDetails);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/purchase_history") // (show_purchase_history)
-    public ResponseEntity<Response> showPurchaseHistory() {
+    public ResponseEntity<Response> showPurchaseHistory(@RequestHeader("Session-ID") String sessionId) {
         // Retrieves the purchase history of user.
         // Returns: purchase history in JSON format or error if the user is not found.
         // Example: GET /users/purchase_history
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
 
-        Map<String, Object> purchaseHistory = userService.getPurchaseHistory();
+        Map<String, Object> purchaseHistory = userService.getPurchaseHistory(user);
         Response response = new Response("success", "Purchase history retrieved.", purchaseHistory);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/purchased_books") // (show_purchased_books)
-    public ResponseEntity<Response> showPurchasedBooks() {
+    public ResponseEntity<Response> showPurchasedBooks(@RequestHeader("Session-ID") String sessionId) {
         // Retrieves the list of books purchased by a specific user.
         // Returns: list of purchased books in JSON format or error if the user is not found.
         // Example: GET /users/purchased_books.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
 
-        Map<String, Object> purchasedBooks = userService.getPurchasedBooks();
+        Map<String, Object> purchasedBooks = userService.getPurchasedBooks(user);
         Response response = new Response("success", "Purchased books retrieved.", purchasedBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/book_status")
-    public ResponseEntity<Response> bookStatus(@RequestParam("title") String title) {
+    public ResponseEntity<Response> bookStatus(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam("title") String title) {
         // in cart, buy, borrow, nothing!
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
 
-        String Status = userService.getBookStatus(title);
+        String Status = userService.getBookStatus(user, title);
         Response response = new Response("success", "Book status retrieved.", Status);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

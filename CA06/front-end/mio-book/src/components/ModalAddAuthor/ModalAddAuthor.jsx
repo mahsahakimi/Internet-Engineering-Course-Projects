@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
 
 const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
+  const localUser = JSON.parse(localStorage.getItem('activeUser'));
   const [formData, setFormData] = useState({
     name: '',
     penName: '',
@@ -27,7 +28,10 @@ const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
     try {
       const response = await fetch('/api/authors/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Session-ID' : localUser.userInfo.sessionId,
+          'Content-Type': 'application/json'
+         },
         body: JSON.stringify(formData),
       });
 

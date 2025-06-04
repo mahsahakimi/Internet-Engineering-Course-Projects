@@ -3,27 +3,24 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
-import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.AuthService;
 
 import java.util.Map;
 
-import ir.ac.ut.ece.ie.miobook.service.RedisService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController {
 
     private final AuthService authService;
-    private final RedisService redisService;
 
-    public AuthController(AuthService authService, RedisService redisService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.redisService = redisService;
     }
 
     @PostMapping("/login")
@@ -37,25 +34,22 @@ public class AuthController {
         }
         request.validate();
 
-        User user = authService.authenticate(
-                request.getUsername(),
-                request.getPassword()
+        Map<String, Object> userInfo = authService.loginAndCreateSession(
+            request.getUsername(),
+            request.getPassword()
         );
 
-        String sessionToken = redisService.createSession(user.getUsername());
-
-        Map<String, Object> logged_in = authService.userLogin(request.getUsername(), request.getPassword());
-        Response response = new Response("success", "User logged in successfully.", logged_in);
+        Response response = new Response("success", "User logged in successfully.", userInfo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Response> userLogin() {
-        // Logs out the currently logged-in user.
+    public ResponseEntity<Response> userLogout(@RequestHeader("Session-ID") String sessionId) {
+        // Logs out the currently logged-in user based on the session ID from the header.
         // Returns: Success message after successful logout.
-        // Example: POST /logout
+        // Example: POST /logout with header: Session-ID: <sessionId>
 
-        authService.userLogout();
+        authService.userLogout(sessionId);
         Response response = new Response("success", "User logged out successfully.", null);
         
         return new ResponseEntity<>(response, HttpStatus.OK);

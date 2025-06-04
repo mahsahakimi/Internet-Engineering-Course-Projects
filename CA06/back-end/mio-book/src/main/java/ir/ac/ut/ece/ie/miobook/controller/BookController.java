@@ -1,10 +1,12 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
+import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddBookRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddReviewRequest;
 import ir.ac.ut.ece.ie.miobook.dto.BorrowBookRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
+import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,15 +22,26 @@ import java.util.Map;
 @RequestMapping("/books")
 public class BookController {
 
+    private final BookService bookService;
+    private final UserContext userContext;
+
     @Autowired
-    private BookService bookService;
+    public BookController(BookService bookService, UserContext userContext) {
+        this.bookService = bookService;
+        this.userContext = userContext;
+    }
 
     @PostMapping("/add") // (add_book)
-    public ResponseEntity<Response> addBook(@RequestBody AddBookRequest request) {
-        // Adds a new book to the library. Requires ADMIN privileges.
-        // Parameters: title, author, publisher, year, price, genres, synopsis, content.
-        // Returns: success message or error if book already exists or input is invalid.
-        // Example: POST /books/add with JSON body containing book details.
+    public ResponseEntity<Response> addBook(
+            @RequestHeader("Session-ID") String sessionId,
+            @RequestBody AddBookRequest request) {
+
+        // Validate session
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if(request == null){
             throw new MissingRequestBodyException();
         }
@@ -48,7 +61,7 @@ public class BookController {
             finalPrice = (Integer) price;
         }
 
-        bookService.addBook(request.getTitle(), request.getAuthor(),
+        bookService.addBook(user, request.getTitle(), request.getAuthor(),
                 request.getPublisher(), request.getYear(), finalPrice, request.getGenres(),
                 request.getSynopsis(), request.getContent());
 
@@ -57,42 +70,63 @@ public class BookController {
     }
 
     @PostMapping("/borrow") // (borrow_book)
-    public ResponseEntity<Response> borrowBook(@RequestBody BorrowBookRequest request) {
+    public ResponseEntity<Response> borrowBook(
+            @RequestHeader("Session-ID") String sessionId,
+            @RequestBody BorrowBookRequest request) {
         // Allows a user to borrow a book.
         // Parameters: title, days (number of days to borrow).
         // Returns: success message or error if book is not available or user has insufficient credit.
         // Example: POST /books/borrow with JSON body containing username, title, and days.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if(request == null){
             throw new MissingRequestBodyException();
         }
         request.validate();
 
-        bookService.borrowBook(request.getTitle(), request.getDays());
+        bookService.borrowBook(user, request.getTitle(), request.getDays());
         Response response = new Response("success", "Book added successfully.", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/add_review") // (add_review)
-    public ResponseEntity<Response> add_review(@RequestBody AddReviewRequest request) {
+    public ResponseEntity<Response> add_review(
+            @RequestHeader("Session-ID") String sessionId,
+            @RequestBody AddReviewRequest request) {
         // Adds a review for a book.
         // Parameters: title, rate (1-5), comment.
         // Returns: success message or error if book or user not found or rate is invalid.
         // Example: POST /books/add_review with JSON body containing review details.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if(request == null){
             throw new MissingRequestBodyException();
         }
         request.validate();
-        bookService.addReview(request.getTitle(), request.getRate(), request.getComment());
+        bookService.addReview(user, request.getTitle(), request.getRate(), request.getComment());
         Response response = new Response("success", "Review added successfully", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/details") // (show_book_details)
-    public ResponseEntity<Response> showBookDetails(@RequestParam("title") String title) {
+    public ResponseEntity<Response> showBookDetails(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam("title") String title) {
         // Retrieves details of a specific book.
         // Parameters: title (book title).
         // Returns: book details in JSON format or error if book not found.
         // Example: GET /books/details?title=ExampleBookTitle.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
@@ -102,24 +136,33 @@ public class BookController {
     }
 
     @GetMapping("/content") // (show_book_content)
-    public ResponseEntity<Response> showBookContent(@RequestParam("title") String title) {
+    public ResponseEntity<Response> showBookContent(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam("title") String title) {
         // Retrieves the content of a book for a specific user (if they have borrowed it).
         // Parameters: title (book title).
         // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
         // Example: GET /books/content?title=ExampleBookTitle.
+        User user = userContext.getLoggedInUser(sessionId);
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
         if (title == null || title.isEmpty()) {
             throw new MissingRequiredFieldsException("title");
         }
-
-        Map<String,Object> bookContent = bookService.showBookContent(title);
+        
+        Map<String,Object> bookContent = bookService.showBookContent(user, title);
         Response response = new Response("success", "Book content retrieved.", bookContent);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/reviews") // (show_book_reviews)
-    public ResponseEntity<Response> showBookReviews(@RequestParam("title") String title,
-                                                            @RequestParam(value = "page", defaultValue = "1") int page,
-                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> showBookReviews(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam("title") String title,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Retrieves reviews for a specific book with pagination.
         // Parameters: title (book title), page (optional, default 1), pageSize (optional, default 10).
         // Returns: reviews in JSON format or error if book not found.
@@ -134,9 +177,11 @@ public class BookController {
     }
 
     @GetMapping("/search_by_title") // (search_books_by_title)
-    public ResponseEntity<Response> searchByTitle(@RequestParam(value = "title") String title,
-                                                            @RequestParam(value = "page", defaultValue = "1") int page,
-                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> searchByTitle(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam(value = "title") String title,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by title with pagination.
         // Parameters: title (search term), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the title in JSON format.
@@ -151,9 +196,11 @@ public class BookController {
     }
 
     @GetMapping("/search_by_author") // (search_books_by_author)
-    public ResponseEntity<Response> searchByAuthor(@RequestParam(value = "author") String authorName,
-                                                            @RequestParam(value = "page", defaultValue = "1") int page,
-                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> searchByAuthor(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam(value = "author") String authorName,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by author name with pagination.
         // Parameters: name (author name), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books by the author in JSON format.
@@ -168,9 +215,11 @@ public class BookController {
     }
 
     @GetMapping("/search_by_genre") // (search_books_by_genre)
-    public ResponseEntity<Response> searchByGenre(@RequestParam(value = "genre") String genre,
-                                                            @RequestParam(value = "page", defaultValue = "1") int page,
-                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> searchByGenre(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam(value = "genre") String genre,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books by genre with pagination.
         // Parameters: genre (book genre), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the genre in JSON format.
@@ -185,10 +234,12 @@ public class BookController {
     }
 
     @GetMapping("/search_by_year") // (search_books_by_year)
-    public ResponseEntity<Response> searchByYear(@RequestParam(value = "from") Integer fromYear,
-                                                            @RequestParam(value = "to") Integer toYear,
-                                                            @RequestParam(value = "page", defaultValue = "1") int page,
-                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> searchByYear(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam(value = "from") Integer fromYear,
+        @RequestParam(value = "to") Integer toYear,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Searches books published within a year range with pagination.
         // Parameters: from (start year), to (end year), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books published within the year range in JSON format.
@@ -206,15 +257,17 @@ public class BookController {
     }
 
     @GetMapping("/searchBooks") // (search_books)
-    public ResponseEntity<Response> searchBooks(@RequestParam(value = "title", required = false) String title,
-                                                        @RequestParam(value = "author", required = false) String authorName,
-                                                        @RequestParam(value = "genre", required = false) String genre,
-                                                        @RequestParam(value = "fromYear", required = false) String fromYearStr,
-                                                        @RequestParam(value = "toYear", required = false) String toYearStr,
-                                                        @RequestParam(value = "sortBy", required = false) String sortBy,
-                                                        @RequestParam(value = "sortOrder", required = false) String sortOrder,
-                                                        @RequestParam(value = "page", defaultValue = "1") int page,
-                                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Response> searchBooks(
+        @RequestHeader("Session-ID") String sessionId,
+        @RequestParam(value = "title", required = false) String title,
+        @RequestParam(value = "author", required = false) String authorName,
+        @RequestParam(value = "genre", required = false) String genre,
+        @RequestParam(value = "fromYear", required = false) String fromYearStr,
+        @RequestParam(value = "toYear", required = false) String toYearStr,
+        @RequestParam(value = "sortBy", required = false) String sortBy,
+        @RequestParam(value = "sortOrder", required = false) String sortOrder,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // Advanced search for books with multiple filters and sorting options with pagination.
         // Parameters: title (optional), author (optional), genre (optional), fromYear (optional), toYear (optional),
         //             sortBy (optional: averageRating, reviewCount), sortOrder (optional: asc, desc),
@@ -253,19 +306,19 @@ public class BookController {
 
 
     @GetMapping("/newRelease")
-    public ResponseEntity<Response> newRelease() {
+    public ResponseEntity<Response> newRelease(@RequestHeader("Session-ID") String sessionId) {
         List<Map<String, Object>> newestBooks = bookService.newRelease();
         Response response = new Response("success", "Books retrieved successfully.", newestBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/topRated")
-    public ResponseEntity<Response> topRated() {
+    public ResponseEntity<Response> topRated(@RequestHeader("Session-ID") String sessionId) {
         List<Map<String, Object>> topBooks = bookService.topRated(1, 5);
         Response response = new Response("success", "Books retrieved successfully.", topBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/adminPageBooks")
-    public ResponseEntity<Response> adminPageBooks() {
+    public ResponseEntity<Response> adminPageBooks(@RequestHeader("Session-ID") String sessionId) {
         List<Map<String, Object>> adminPageBooks = bookService.adminPageBooks(1, 10);
         Response response = new Response("success", "Books retrieved successfully.", adminPageBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);

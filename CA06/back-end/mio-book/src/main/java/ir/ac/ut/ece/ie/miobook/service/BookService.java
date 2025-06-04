@@ -3,7 +3,6 @@ package ir.ac.ut.ece.ie.miobook.service;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.*;
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import jakarta.transaction.Transactional;
 
@@ -28,27 +27,23 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
-    private final UserContext userContext;
 
     public BookService(UserRepository userRepository, BookRepository bookRepository,
                         UserBookRepository userBookRepository,
                         AuthorRepository authorRepository, GenreRepository genreRepository,
-                        ReviewRepository reviewRepository, UserContext userContext) {
+                        ReviewRepository reviewRepository) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.userBookRepository = userBookRepository;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
-        this.userContext = userContext;
     }
 
-    public void addBook(String title, String authorName, String publisher, int year, int price,
+    public void addBook(User user, String title, String authorName, String publisher, int year, int price,
                     String genres, String synopsis, String content) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+
+
         if (user.getRole() != Role.ADMIN) {
             throw new PermissionDeniedException("Only admins can add books.");
         }
@@ -92,12 +87,7 @@ public class BookService {
     }
 
     @Transactional
-    public void borrowBook(String title, int days) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
-
+    public void borrowBook(User user, String title, int days) {
         if (user.getRole() != Role.CUSTOMER) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -134,11 +124,7 @@ public class BookService {
     }
 
     @Transactional
-    public void addReview(String title, int rate, String comment) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
+    public void addReview(User user, String title, int rate, String comment) {
         if (user.getRole() != Role.CUSTOMER) {
             throw new PermissionDeniedException(Role.ADMIN.toString());
         }
@@ -199,12 +185,7 @@ public class BookService {
         return bookData;
     }
 
-    public Map<String, Object> showBookContent(String title) {
-        User user = userContext.getLoggedInUser();
-        if (user == null) {
-            throw new UserNotLoggedInException();
-        }
-
+    public Map<String, Object> showBookContent(User user, String title) {
         Book book = bookRepository.findById(title)
                 .orElseThrow(() -> new BookNotFoundException(title));
 
