@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
@@ -6,9 +6,10 @@ import EmptySpace from '../../components/EmptySpace';
 import '../../stylesheets/General.css';
 import BookContentHeader from '../../components/BookContentHeader';
 import BookContentText from '../../components/BookContentText';
+import { UserContext } from '../../UserContex';
 
 function BookContentPage() {
-  const localUser = JSON.parse(localStorage.getItem('activeUser'));
+  const { user, setUser } = useContext(UserContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [bookData, setBookData] = useState(null);
@@ -31,7 +32,7 @@ function BookContentPage() {
         `/api/books/content?title=${encodeURIComponent(bookTitleFromURL)}`,
         {
           headers: {
-            'Session-ID': localUser.userInfo.sessionId,
+            'Session-ID': user.userInfo.sessionId,
             'Content-Type': 'application/json',
           },
         }
@@ -60,8 +61,9 @@ function BookContentPage() {
 
 
   useEffect(() => {
+    if (!user) return;
     fetchBookData();
-  }, [bookTitleFromURL, navigate]);
+  }, [bookTitleFromURL, navigate, user]);
 
   if (loading) {
     return (

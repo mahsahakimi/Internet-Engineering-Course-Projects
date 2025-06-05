@@ -1,15 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContex';
 import bookPNG from '../../../src/images/book.png';
 import StarRatingRenderer from '../StarRatingRenderer';
 import ModalAddToCart from '../ModalAddToCart/ModalAddToCart';
 
 
 function BookDetails({book}) {
+    const { user, setUser } = useContext(UserContext);
     const [showCartModal, setshowCartModal] = useState(false);
     const [bookstatus, setBookstatus] = useState(null);
     const navigate = useNavigate();
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const handleOpenModal = () => setshowCartModal(true);
     const handleCloseModal = () => setshowCartModal(false);
 
@@ -19,35 +20,34 @@ function BookDetails({book}) {
             return;
         }
         
-        if(localUser?.userInfo?.role !== "admin"){
-            try {
-                const response = await fetch(`/api/users/book_status?title=${book?.title}`, {
-                    method: 'GET',
-                    headers: {
-                        'Session-ID': localUser.userInfo.sessionId,
-                    }
-                });
-
-                const responseData = await response.json();
-                if (responseData.status === 'success') {
-                    setBookstatus(responseData.data);
-                } else {
-                    console.error(`Failed to fetch book status: ${responseData.message}`);
-                    navigate('/error', { state: { message: responseData.message || 'Failed to fetch book status.' } });
+        try {
+            const response = await fetch(`/api/users/book_status?title=${book?.title}`, {
+                method: 'GET',
+                headers: {
+                    'Session-ID': user.userInfo.sessionId,
                 }
-            } catch (err) {
-                console.error('Fetch error:', err);
-                navigate('/error', { state: { message: 'An error occurred while fetching book status.' } });
+            });
+
+            const responseData = await response.json();
+            if (responseData.status === 'success') {
+                setBookstatus(responseData.data);
+            } else {
+                console.error(`Failed to fetch book status: ${responseData.message}`);
+                navigate('/error', { state: { message: responseData.message || 'Failed to fetch book status.' } });
             }
+        } catch (err) {
+            console.error('Fetch error:', err);
+            navigate('/error', { state: { message: 'An error occurred while fetching book status.' } });
         }
-        
+    
     }
 
     useEffect(() => {
+        if (!user) return;
         if (book?.title) {
             fetchBookStatus();
         }
-    }, [book, navigate]);
+    }, [book, navigate, user]);
 
     return (
         <div className="container white-box bb p-4 col-sm-10 row">
@@ -83,9 +83,9 @@ function BookDetails({book}) {
                 <div> <p className="">        {book?.synopsis}        </p></div>
                 <div> <p className="fw-bold">${book?.price}</p> </div>
                 <button
-                    className={`btn col-sm-4 ${bookstatus || localUser?.userInfo?.role === "admin" ? 'gray-btn' : 'green-btn'}`}
+                    className={`btn col-sm-4 ${bookstatus || user?.userInfo?.role === "admin" ? 'gray-btn' : 'green-btn'}`}
                     onClick={handleOpenModal}
-                    disabled={!!bookstatus || localUser?.userInfo?.role === "admin"} 
+                    disabled={!!bookstatus || user?.userInfo?.role === "admin"} 
                     >
                     Add to Cart
                 </button>

@@ -12,6 +12,7 @@ import ModalAddBook from '../../components/ModalAddBook';
 import { UserContext } from '../../UserContex';
 
 function AdminPage() {
+    const { user, setUser } = useContext(UserContext);
     const [showBookModal, setShowBookModal] = useState(false);
     const [showAddAuthorModal, setShowAddAuthorModal] = useState(false);
     const [books, setBooks] = useState([]);
@@ -19,18 +20,16 @@ function AdminPage() {
     const [loadingBooks, setLoadingBooks] = useState(true);
     const [loadingAuthors, setLoadingAuthors] = useState(true);
 
-    const { user, setUser } = useContext(UserContext);
-    if(!user){
-        const localUser = JSON.parse(localStorage.getItem('activeUser'));
-        setUser(localUser)
-    }
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!user) return;
         if (user?.userInfo?.role === "CUSTOMER") {
             navigate("/user", { replace: true });
         }
+        fetchBooks();
+        fetchAuthors();
     }, [user, navigate]);
 
     const handleLogout = async () => {
@@ -106,11 +105,6 @@ function AdminPage() {
             setLoadingAuthors(false);
         }
     };
-
-    useEffect(() => {
-        fetchBooks();
-        fetchAuthors();
-    }, []);
 
     return (
         <>

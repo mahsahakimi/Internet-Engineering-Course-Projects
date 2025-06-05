@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
  import { useNavigate } from 'react-router-dom';
  import '../../stylesheets/Modal.css';
+import { UserContext } from '../../UserContex';
 
  const ModalAddBook = ({ show, onClose, onSubmit }) => {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         title: '',
@@ -49,7 +50,7 @@ import React, { useState } from 'react';
              const response = await fetch('/api/books/add', {
                  method: 'POST',
                  headers: { 
-                    'Session-ID' : localUser.userInfo.sessionId,
+                    'Session-ID' : user.userInfo.sessionId,
                     'Content-Type': 'application/json'
                  },
                  body: JSON.stringify(formData),

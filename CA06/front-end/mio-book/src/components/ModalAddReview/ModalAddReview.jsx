@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
+import { UserContext } from '../../UserContex';
 
 const ModalAddReview = ({ show, onClose, onSubmit, bookTitle }) => {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const ModalAddReview = ({ show, onClose, onSubmit, bookTitle }) => {
           const response = await fetch('/api/books/add_review', {
               method: 'POST',
               headers: {
-                'Session-ID' : localUser.userInfo.sessionId,
+                'Session-ID' : user.userInfo.sessionId,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({

@@ -18,11 +18,7 @@ function UserPage() {
     const [books, setBooks] = useState([]);
     const [balance, setBalance] = useState([]);
     const { user, setUser } = useContext(UserContext);
-    if(!user){
-        const localUser = JSON.parse(localStorage.getItem('activeUser'));
-        setUser(localUser)
-    }
-    
+
     const navigate = useNavigate();
 
     const fetchUserBooks = async () => {

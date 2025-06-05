@@ -4,10 +4,6 @@ import { UserContext } from '../../UserContex';
 
 function ProfileDropdown({ name }) {
     const {user, setUser } = useContext(UserContext);
-    if (!user) {
-        const localUser = JSON.parse(localStorage.getItem('activeUser'));
-        setUser(localUser);
-    }
     const navigate = useNavigate();
 
     const handleLogout = async () => {

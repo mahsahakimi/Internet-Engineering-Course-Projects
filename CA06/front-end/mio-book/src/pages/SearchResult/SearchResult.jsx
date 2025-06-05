@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
 import Nav from '../../components/Nav';
 import '../../stylesheets/General.css';
 import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
+import { UserContext } from '../../UserContex';
 
 
 function SearchResult() {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     const location = useLocation();
     const filterType = location.state?.type || '';
     const searchTerm = location.state?.term || '';
@@ -25,15 +26,13 @@ function SearchResult() {
 
 
     useEffect(() => {
+        if (!user) return;
         if (filterType && searchTerm) {
             quickSerach();
         }
         fetchGenres();
-    }, [filterType, searchTerm]);
-    
-    useEffect(() => {
-        fetchGenres();
-    }, []);
+    }, [filterType, searchTerm, user]);
+
 
     const quickSerach = async () => {
 
@@ -52,7 +51,7 @@ function SearchResult() {
             }))
             const result = await fetch(endpoint, {
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId,
+                    'Session-ID': user.userInfo.sessionId,
                 },
             });
             const responseData = await result.json();
@@ -71,7 +70,7 @@ function SearchResult() {
         try {
             const response = await fetch('/api/genres/getAll', {
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId,
+                    'Session-ID': user.userInfo.sessionId,
                 },
             });
             const responseData = await response.json();

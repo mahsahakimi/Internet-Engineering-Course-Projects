@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
+import { UserContext } from '../../UserContex';
 
 const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
-  const localUser = JSON.parse(localStorage.getItem('activeUser'));
+  const { user, setUser } = useContext(UserContext);
   const [formData, setFormData] = useState({
     name: '',
     penName: '',
@@ -29,7 +30,7 @@ const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
       const response = await fetch('/api/authors/add', {
         method: 'POST',
         headers: { 
-          'Session-ID' : localUser.userInfo.sessionId,
+          'Session-ID' : user.userInfo.sessionId,
           'Content-Type': 'application/json'
          },
         body: JSON.stringify(formData),

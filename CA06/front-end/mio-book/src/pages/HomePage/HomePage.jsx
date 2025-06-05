@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import BookCard from '../../components/BookCard';
@@ -7,20 +7,27 @@ import book from '../../../src/images/book.png';
 import '../../stylesheets/HomePage.css';
 import '../../stylesheets/General.css';
 import EmptySpace from '../../components/EmptySpace';
+import { UserContext } from '../../UserContex';
 
 
 function HomePage() {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     const [newReleases, setNewReleases] = useState([]);
     const [topRated, setTopRated] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) return;
+        fetchNewReleases();
+        fetchTopRated();
+    }, [user]);
 
     const fetchNewReleases = async () => {
         try {
             const response = await fetch('/api/books/newRelease', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId
+                    'Session-ID': user.userInfo.sessionId
                 }
             });
             const responseData = await response.json();
@@ -42,7 +49,7 @@ function HomePage() {
             const response = await fetch('/api/books/topRated', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId
+                    'Session-ID': user.userInfo.sessionId
                 }
             });
             const responseData = await response.json();
@@ -59,10 +66,7 @@ function HomePage() {
         }
     };
 
-    useEffect(() => {
-        fetchNewReleases();
-        fetchTopRated();
-    }, []);
+
 
     return (
         <>

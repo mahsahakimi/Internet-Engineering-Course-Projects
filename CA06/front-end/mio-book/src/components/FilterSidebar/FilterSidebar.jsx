@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import '../../stylesheets/Filter.css';
+import React from 'react';
+import { UserContext } from '../../UserContex';
 
 
 function FilterSidebar({ show, onClose, onResults, genres}) {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     if (!show) return null;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -61,7 +63,7 @@ function FilterSidebar({ show, onClose, onResults, genres}) {
             const response = await fetch(`/api/books/searchBooks?${params.toString()}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId
+                    'Session-ID': user.userInfo.sessionId
                 },
             });
             const responseData = await response.json();

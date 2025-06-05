@@ -13,18 +13,14 @@ function BuyCartPage() {
     const [cart, setCart] = useState([]);
     const navigate = useNavigate();
 
-    if(!user){
-        const localUser = JSON.parse(localStorage.getItem('activeUser'));
-        setUser(localUser)
-    }
-
     useEffect(() => {
+        if (!user) return;
         if (user?.userInfo?.role == "ADMIN") {
             navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
             return;
         }
         fetchCart();
-    }, []);
+    }, [user]);
 
     const fetchCart = async () => {
         try {

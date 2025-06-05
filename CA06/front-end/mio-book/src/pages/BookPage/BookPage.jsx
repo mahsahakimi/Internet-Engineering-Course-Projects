@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Nav from '../../components/Nav';
@@ -9,11 +9,12 @@ import '../../stylesheets/Book.css';
 import BookDetails from '../../components/BookDetails';
 import SVGNoComments from '../../components/SVGNoComments';
 import ModalAddReview from '../../components/ModalAddReview/ModalAddReview';
+import { UserContext } from '../../UserContex';
 
 function BookPage() {
+    const { user, setUser } = useContext(UserContext);
     const location = useLocation();
     const navigate = useNavigate();
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
 
@@ -34,7 +35,7 @@ function BookPage() {
             const response = await fetch(`/api/books/details?title=${title}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId,
+                    'Session-ID': user.userInfo.sessionId,
                     'Content-Type': 'application/json',
                 },
             });
@@ -61,7 +62,7 @@ function BookPage() {
             const response = await fetch(`/api/books/reviews?title=${title}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': localUser.userInfo.sessionId,
+                    'Session-ID': user.userInfo.sessionId,
                     'Content-Type': 'application/json',
                 },
             });
@@ -87,9 +88,10 @@ function BookPage() {
     };
 
     useEffect(() => {
+        if (!user) return;
         fetchReviews();
         fetchBookDetails();
-    }, [title, navigate]);
+    }, [title, navigate, user]);
 
     return (
         <div>
@@ -110,7 +112,7 @@ function BookPage() {
                             <button 
                                 className="btn gray-btn col-sm-12" 
                                 onClick={handleOpenModal}
-                                disabled={localUser?.userInfo?.role === "admin"}
+                                disabled={user?.userInfo?.role === "admin"}
                                 >
                                 Add review <i className="bi bi-chat-square-text"></i>
                             </button>

@@ -1,9 +1,10 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState , useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../stylesheets/Modal.css';
+import { UserContext } from '../../UserContex';
 
 const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}) => {
-    const localUser = JSON.parse(localStorage.getItem('activeUser'));
+    const { user, setUser } = useContext(UserContext);
     const [borrowChecked, setBorrowChecked] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const ModalAddToCart = ({ show, onClose, bookTitle, bookPrice, updateBookStatus}
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Session-ID' : localUser.userInfo.sessionId,
+                    'Session-ID' : user.userInfo.sessionId,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(payload)

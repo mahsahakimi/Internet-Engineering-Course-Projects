@@ -12,11 +12,6 @@ function PurchaseHistoryPage() {
     const [history, setHistory] = useState([]);
     const navigate = useNavigate();
 
-    if (!user) {
-        const localUser = JSON.parse(localStorage.getItem('activeUser'));
-        setUser(localUser);
-    }
-
     const fetchHistory = async () => {
         try {
             const response = await fetch('/api/users/purchase_history', {
@@ -39,12 +34,13 @@ function PurchaseHistoryPage() {
     };
 
     useEffect(() => {
+        if (!user) return;
         if (user?.userInfo?.role == "ADMIN") {
             navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
             return;
         }
         fetchHistory();
-    }, []);
+    }, [user]);
 
     return (
         <>
