@@ -251,23 +251,27 @@ public class UserService {
         if (!AddressValidator.isValid(address.getCountry(), address.getCity())) {
             throw new InvalidAddressException(address.getCountry(), address.getCity());
         }
+        // Check if username already exists
+        if (userRepository.existsByUsername(username)) {
+            throw new UsernameAlreadyExistsException(username);
+        }
+        // Check if email already exists
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailAlreadyExistsException(email);
+        }
 
         User user;
         if (parsedRole == Role.ADMIN) {
             user = new Admin(username, password, email, address);
         } else {
-            user = new Customer(username, password, email, address);
+            Customer customer = new Customer(username, password, email, address);
+            Wallet w = new Wallet(customer);
+            customer.setWallet(w);
+            user = customer;
         }
 
         try {
             userRepository.save(user);
-
-            // If it's a customer, create wallet
-            if (user.getRole() == Role.CUSTOMER) {
-                Customer customer = userRepository.findCustomerByUsername(user.getUsername())
-                        .orElseThrow(UserNotLoggedInException::new);
-                walletService.create(customer);
-            }
 
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("unique constraint") && e.getMessage().contains(username)) {
