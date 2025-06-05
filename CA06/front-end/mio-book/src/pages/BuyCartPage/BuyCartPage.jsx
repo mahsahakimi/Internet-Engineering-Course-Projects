@@ -18,6 +18,14 @@ function BuyCartPage() {
         setUser(localUser)
     }
 
+    useEffect(() => {
+        if (user?.userInfo?.role == "ADMIN") {
+            navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
+            return;
+        }
+        fetchCart();
+    }, []);
+
     const fetchCart = async () => {
         try {
             const response = await fetch('/api/carts/details', {
@@ -39,14 +47,6 @@ function BuyCartPage() {
             navigate('/error', { state: { message: "Error fetching Cart details." } });
         }
     };
-
-    useEffect(() => {
-        if (user?.userInfo?.role == "ADMIN") {
-            navigate("/error", { state: { message: "You can not access this page. You are Admin!" } });
-            return;
-        }
-        fetchCart();
-    }, []);
 
     const handleRemoveItem = async () => {
         fetchCart();
@@ -103,6 +103,7 @@ function BuyCartPage() {
                         <tbody>
                             {cart.items.map((item, index) => (
                                 <CartBookDetailsCard
+                                    user = {user}
                                     cartElement={item}
                                     onRemove={handleRemoveItem}
                                     key={index}

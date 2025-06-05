@@ -24,13 +24,6 @@ function UserPage() {
     }
     
     const navigate = useNavigate();
-    useEffect(() => {
-        if (user?.userInfo?.role === "admin") {
-            navigate("/admin", { replace: true });
-            return;
-        }
-
-    }, [user, navigate]);
 
     const fetchUserBooks = async () => {
 
@@ -55,12 +48,15 @@ function UserPage() {
     };
 
     useEffect(() => {
-        if (user?.userInfo?.role === "ADMIN") {
+        if (!user) return;
+        
+        const role = user?.userInfo?.role?.toUpperCase();
+        if (role === "ADMIN") {
             navigate("/admin", { replace: true });
-            return;
+        } else {
+            fetchUserBooks();
         }
-        fetchUserBooks();
-    }, []);
+    }, [user, navigate]);
 
 
     const handleChange = (e) => {    

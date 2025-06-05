@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import designBook from '../../../src/images/designBook.jpg';
 
-function CartBookDetailsCard({cartElement, onRemove}) {
+function CartBookDetailsCard({user, cartElement, onRemove}) {
     const navigate = useNavigate();
 
     const removeHandler = async () => {
@@ -27,7 +27,7 @@ function CartBookDetailsCard({cartElement, onRemove}) {
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            navigate('/error', { state: { message: 'An error occurred while trying to remove the cart item.' } });
+            navigate('/error', { state: { message: err.message } });
         }
     };
 
