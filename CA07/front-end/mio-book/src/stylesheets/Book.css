@@ -1,0 +1,23 @@
+.book-main-img{
+    width: 100%;
+    max-height: 400px;
+    border-radius : 12px;
+    object-fit: cover;
+}
+
+.bright-titles{
+    color:gray;
+    font-size:14px;
+}
+.avatar {
+    background-color: rgba(108, 117, 125, 0.25);
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+}
+.search-form{
+    background-color : rgba(108, 117, 125, 0.25);
+}
+.review-card{
+    margin-bottom: 1%;
+    border: none;
+}
