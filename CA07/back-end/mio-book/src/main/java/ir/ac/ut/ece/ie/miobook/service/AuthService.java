@@ -5,6 +5,8 @@ import ir.ac.ut.ece.ie.miobook.exceptions.IncorrectPasswordException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.utils.PasswordHasher;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import java.time.Duration;
 
@@ -33,8 +35,9 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if (!user.getPassword().equals(password)) {
-            throw new IncorrectPasswordException();
+        String expectedHash = PasswordHasher.hashPassword(password, user.getSalt());
+        if (!expectedHash.equals(user.getPassword())) {
+                throw new IncorrectPasswordException();
         }
 
         String sessionId = UUID.randomUUID().toString();

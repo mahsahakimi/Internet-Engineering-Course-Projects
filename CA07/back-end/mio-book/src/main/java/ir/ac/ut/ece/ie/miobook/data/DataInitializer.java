@@ -8,6 +8,7 @@ import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.ReviewRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.utils.PasswordHasher;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -76,10 +77,14 @@ public class DataInitializer implements ApplicationRunner {
                             User user;
                             try {
                                 Role role = Role.valueOf(roleStr.toUpperCase());
-                                if (role == Role.ADMIN) {
-                                    user = new Admin(username, password, email, address);
+
+                                String salt = PasswordHasher.generateSalt();
+                                String hashedPassword = PasswordHasher.hashPassword(password, salt);
+
+                                if (role == Role.ADMIN) {   
+                                    user = new Admin(username, hashedPassword, salt, email, address);
                                 } else if (role == Role.CUSTOMER) {
-                                    Customer customer = new Customer(username, password, email, address);
+                                    Customer customer = new Customer(username, hashedPassword, salt, email, address);
                                     Wallet w = new Wallet(customer);
                                     customer.setWallet(w);
                                     user = customer;

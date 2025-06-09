@@ -14,7 +14,7 @@ import lombok.Setter;
 @PrimaryKeyJoinColumn(name = "username")
 public class Admin extends User {
 
-    public Admin(String username, String password, String email, Address address) {
-        super(Role.ADMIN.name(), username, password, email, address);
+    public Admin(String username, String password, String salt, String email, Address address) {
+        super(Role.ADMIN.name(), username, password, salt, email, address);
     }
 }

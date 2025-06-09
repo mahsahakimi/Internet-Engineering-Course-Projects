@@ -5,6 +5,7 @@ import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserBookRepository;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.utils.PasswordHasher;
 import ir.ac.ut.ece.ie.miobook.validator.AddressValidator;
 import ir.ac.ut.ece.ie.miobook.validator.EmailValidator;
 import ir.ac.ut.ece.ie.miobook.validator.PasswordValidator;
@@ -259,12 +260,16 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email);
         }
+        
+        String salt = PasswordHasher.generateSalt();
+        String hashedPassword = PasswordHasher.hashPassword(password, salt);
 
         User user;
         if (parsedRole == Role.ADMIN) {
-            user = new Admin(username, password, email, address);
+            user = new Admin(username, hashedPassword, salt, email, address);
         } else {
-            Customer customer = new Customer(username, password, email, address);
+            Customer customer = new Customer(username, hashedPassword, salt, email, address);
+
             Wallet w = new Wallet(customer);
             customer.setWallet(w);
             user = customer;

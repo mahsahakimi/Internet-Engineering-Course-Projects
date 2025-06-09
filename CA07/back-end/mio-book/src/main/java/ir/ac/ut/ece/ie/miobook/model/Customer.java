@@ -29,8 +29,8 @@ public class Customer extends User {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Wallet wallet;
 
-    public Customer(String username, String password, String email, Address address) {
-        super(Role.CUSTOMER.name(), username, password, email, address);
+    public Customer(String username, String password, String salt, String email, Address address) {
+        super(Role.CUSTOMER.name(), username, password, salt, email, address);
     }
     
     public void removeBookFromCart(Book book) {
