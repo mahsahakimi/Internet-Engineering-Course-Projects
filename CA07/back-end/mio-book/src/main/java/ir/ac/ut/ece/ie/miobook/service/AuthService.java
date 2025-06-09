@@ -5,14 +5,11 @@ import ir.ac.ut.ece.ie.miobook.exceptions.IncorrectPasswordException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.repository.UserRepository;
+import ir.ac.ut.ece.ie.miobook.utils.JwtUtil;
 import ir.ac.ut.ece.ie.miobook.utils.PasswordHasher;
-
-import org.springframework.data.redis.core.RedisTemplate;
-import java.time.Duration;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -21,14 +18,11 @@ public class AuthService {
 
     private final UserContext userContext;
     private final UserRepository userRepository;
-    private final RedisTemplate<String, String> redisTemplate;
 
     public AuthService(UserContext userContext,
-                       UserRepository userRepository,
-                       RedisTemplate<String, String> redisTemplate) {
+                       UserRepository userRepository ) {
         this.userContext = userContext;
         this.userRepository = userRepository;
-        this.redisTemplate = redisTemplate;
     }
 
     public Map<String, Object> loginAndCreateSession(String username, String password) {
@@ -37,17 +31,20 @@ public class AuthService {
 
         String expectedHash = PasswordHasher.hashPassword(password, user.getSalt());
         if (!expectedHash.equals(user.getPassword())) {
-                throw new IncorrectPasswordException();
+            throw new IncorrectPasswordException();
         }
 
-        String sessionId = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set(sessionId, user.getUsername(), Duration.ofMinutes(30));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", user.getUsername());
+        claims.put("email", user.getEmail());
+
+        String token = JwtUtil.generateToken(user.getUsername(), claims);
 
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("username", user.getUsername());
-        userInfo.put("role", user.getRole());
         userInfo.put("email", user.getEmail());
-        userInfo.put("sessionId", sessionId);
+        userInfo.put("role", user.getRole());
+        userInfo.put("token", token);
 
         return userInfo;
     }
