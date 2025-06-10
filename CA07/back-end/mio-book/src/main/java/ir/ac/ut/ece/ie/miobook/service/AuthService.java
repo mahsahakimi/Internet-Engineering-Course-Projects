@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.service;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.exceptions.IncorrectPasswordException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotFoundException;
 import ir.ac.ut.ece.ie.miobook.model.User;
@@ -16,12 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private final UserContext userContext;
     private final UserRepository userRepository;
 
-    public AuthService(UserContext userContext,
-                       UserRepository userRepository ) {
-        this.userContext = userContext;
+    public AuthService(UserRepository userRepository ) {
         this.userRepository = userRepository;
     }
 
@@ -49,7 +45,5 @@ public class AuthService {
         return userInfo;
     }
 
-    public void userLogout(String sessionToken) {
-        userContext.clear(sessionToken);
-    }
+
 }

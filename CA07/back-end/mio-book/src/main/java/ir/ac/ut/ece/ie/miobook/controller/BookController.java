@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddBookRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddReviewRequest;
 import ir.ac.ut.ece.ie.miobook.dto.BorrowBookRequest;
@@ -8,6 +7,8 @@ import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.BookService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,21 +24,17 @@ import java.util.Map;
 public class BookController {
 
     private final BookService bookService;
-    private final UserContext userContext;
 
     @Autowired
-    public BookController(BookService bookService, UserContext userContext) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
-        this.userContext = userContext;
     }
 
     @PostMapping("/add") // (add_book)
     public ResponseEntity<Response> addBook(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest requesth,
             @RequestBody AddBookRequest request) {
-
-        // Validate session
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) requesth.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -56,7 +53,7 @@ public class BookController {
         }
         int finalPrice;
         if (price instanceof Double) {
-            finalPrice = (int) Math.round((Double) price * 100); // converting to cents
+            finalPrice = (int) Math.round((Double) price * 100);
         } else {
             finalPrice = (Integer) price;
         }
@@ -71,13 +68,13 @@ public class BookController {
 
     @PostMapping("/borrow") // (borrow_book)
     public ResponseEntity<Response> borrowBook(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest requesth,
             @RequestBody BorrowBookRequest request) {
         // Allows a user to borrow a book.
         // Parameters: title, days (number of days to borrow).
         // Returns: success message or error if book is not available or user has insufficient credit.
         // Example: POST /books/borrow with JSON body containing username, title, and days.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) requesth.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -94,13 +91,13 @@ public class BookController {
 
     @PostMapping("/add_review") // (add_review)
     public ResponseEntity<Response> add_review(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest requesth,
             @RequestBody AddReviewRequest request) {
         // Adds a review for a book.
         // Parameters: title, rate (1-5), comment.
         // Returns: success message or error if book or user not found or rate is invalid.
         // Example: POST /books/add_review with JSON body containing review details.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) requesth.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -116,13 +113,13 @@ public class BookController {
 
     @GetMapping("/details") // (show_book_details)
     public ResponseEntity<Response> showBookDetails(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam("title") String title) {
         // Retrieves details of a specific book.
         // Parameters: title (book title).
         // Returns: book details in JSON format or error if book not found.
         // Example: GET /books/details?title=ExampleBookTitle.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -137,13 +134,13 @@ public class BookController {
 
     @GetMapping("/content") // (show_book_content)
     public ResponseEntity<Response> showBookContent(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam("title") String title) {
         // Retrieves the content of a book for a specific user (if they have borrowed it).
         // Parameters: title (book title).
         // Returns: book content in JSON format or error if book not found or user hasn't borrowed it.
         // Example: GET /books/content?title=ExampleBookTitle.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -159,7 +156,7 @@ public class BookController {
 
     @GetMapping("/reviews") // (show_book_reviews)
     public ResponseEntity<Response> showBookReviews(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam("title") String title,
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -167,7 +164,7 @@ public class BookController {
         // Parameters: title (book title), page (optional, default 1), pageSize (optional, default 10).
         // Returns: reviews in JSON format or error if book not found.
         // Example: GET /books/reviews?title=ExampleBookTitle&page=2&pageSize=20.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -183,7 +180,7 @@ public class BookController {
 
     @GetMapping("/search_by_title") // (search_books_by_title)
     public ResponseEntity<Response> searchByTitle(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam(value = "title") String title,
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -191,7 +188,7 @@ public class BookController {
         // Parameters: title (search term), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the title in JSON format.
         // Example: GET /books/search_by_title?title=ExampleTitle&page=1&pageSize=10.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -207,7 +204,7 @@ public class BookController {
 
     @GetMapping("/search_by_author") // (search_books_by_author)
     public ResponseEntity<Response> searchByAuthor(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam(value = "author") String authorName,
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -215,7 +212,7 @@ public class BookController {
         // Parameters: name (author name), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books by the author in JSON format.
         // Example: GET /books/search_by_author?name=ExampleAuthor&page=1&pageSize=10.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -231,7 +228,7 @@ public class BookController {
 
     @GetMapping("/search_by_genre") // (search_books_by_genre)
     public ResponseEntity<Response> searchByGenre(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam(value = "genre") String genre,
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -239,7 +236,7 @@ public class BookController {
         // Parameters: genre (book genre), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the genre in JSON format.
         // Example: GET /books/search_by_genre?genre=Fantasy&page=1&pageSize=10.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -255,7 +252,7 @@ public class BookController {
 
     @GetMapping("/search_by_year") // (search_books_by_year)
     public ResponseEntity<Response> searchByYear(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam(value = "from") Integer fromYear,
         @RequestParam(value = "to") Integer toYear,
         @RequestParam(value = "page", defaultValue = "1") int page,
@@ -264,7 +261,7 @@ public class BookController {
         // Parameters: from (start year), to (end year), page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books published within the year range in JSON format.
         // Example: GET /books/search_by_year?from=2020&to=2023&page=1&pageSize=10.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -283,7 +280,7 @@ public class BookController {
 
     @GetMapping("/searchBooks") // (search_books)
     public ResponseEntity<Response> searchBooks(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest request,
         @RequestParam(value = "title", required = false) String title,
         @RequestParam(value = "author", required = false) String authorName,
         @RequestParam(value = "genre", required = false) String genre,
@@ -299,7 +296,7 @@ public class BookController {
         //             page (optional, default 1), pageSize (optional, default 10).
         // Returns: list of books matching the search criteria in JSON format.
         // Example: GET /books/searchBooks?title=ExampleTitle&author=ExampleAuthor&genre=Fantasy&fromYear=2020&toYear=2023&sortBy=averageRating&sortOrder=desc&page=1&pageSize=10.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -318,7 +315,6 @@ public class BookController {
             throw new InvalidParameterException("Year must be a valid integer.");
         }
 
-        // Check for valid sortBy and sortOrder
         List<String> validSortBy = Arrays.asList("averageRating", "reviewCount", null);
         List<String> validSortOrder = Arrays.asList("asc", "desc", null);
 
@@ -336,8 +332,8 @@ public class BookController {
 
 
     @GetMapping("/newRelease")
-    public ResponseEntity<Response> newRelease(@RequestHeader("Session-ID") String sessionId) {
-        User user = userContext.getLoggedInUser(sessionId);
+    public ResponseEntity<Response> newRelease(HttpServletRequest request) {
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -347,8 +343,8 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/topRated")
-    public ResponseEntity<Response> topRated(@RequestHeader("Session-ID") String sessionId) {
-        User user = userContext.getLoggedInUser(sessionId);
+    public ResponseEntity<Response> topRated(HttpServletRequest request) {
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -358,8 +354,8 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/adminPageBooks")
-    public ResponseEntity<Response> adminPageBooks(@RequestHeader("Session-ID") String sessionId) {
-        User user = userContext.getLoggedInUser(sessionId);
+    public ResponseEntity<Response> adminPageBooks(HttpServletRequest request) {
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }

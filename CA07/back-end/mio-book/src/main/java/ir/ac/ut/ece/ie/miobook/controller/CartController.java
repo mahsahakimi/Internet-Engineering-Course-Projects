@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddToCartRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
@@ -8,6 +7,7 @@ import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequiredFieldsException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.CartService;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
@@ -21,23 +21,21 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 
     private final CartService cartService;
-    private final UserContext userContext;
 
     @Autowired
-    public CartController(CartService cartService, UserContext userContext) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.userContext = userContext;
     }
 
     @PostMapping("/add") // (add_cart)
     public ResponseEntity<Response> addToCart(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest httpRequest,
             @RequestBody AddToCartRequest request) {
         // Adds a book to a user's shopping cart.
         // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
         // Example: POST /carts/add with JSON body containing title.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -53,13 +51,13 @@ public class CartController {
 
     @DeleteMapping("/remove") // (remove_cart)
     public ResponseEntity<Response> removeFromCart(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest httpRequest,
             @RequestBody Map<String, String> payload) {
         // Removes a book from the user's shopping cart.
         // Parameters: title (of the book).
         // Returns: success message or error if the book or user is not found.
         // Example: DELETE /carts/remove?title=book_title.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -74,11 +72,11 @@ public class CartController {
     }
 
     @PostMapping("/purchase") // (purchase_cart)
-    public ResponseEntity<Response> purchaseCart(@RequestHeader("Session-ID") String sessionId) {
+    public ResponseEntity<Response> purchaseCart(HttpServletRequest httpRequest) {
         // Completes the purchase of all books in a user's shopping cart.
         // Returns: success message and purchase details, or error if the cart is empty or user has insufficient credit.
         // Example: POST /carts/purchase with a JSON empty body.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -89,11 +87,11 @@ public class CartController {
     }
 
     @GetMapping("/details") // (show_cart)
-    public ResponseEntity<Response> showCart(@RequestHeader("Session-ID") String sessionId){
+    public ResponseEntity<Response> showCart(HttpServletRequest httpRequest){
         // Retrieves the contents of the user's shopping cart.
         // Returns: cart details (list of books) in JSON format.
         // Example: GET /carts/details.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }

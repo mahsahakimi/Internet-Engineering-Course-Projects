@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.model.User;
@@ -19,18 +19,16 @@ public class GenreController {
     
     @Autowired
     private GenreService genreService;
-    private final UserContext userContext;
 
     @Autowired
-    public GenreController(GenreService genreService, UserContext userContext) {
+    public GenreController(GenreService genreService) {
         this.genreService = genreService;
-        this.userContext = userContext;
     }
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<Response> getAllGenres(@RequestHeader("Session-ID") String sessionId) {
-        User user = userContext.getLoggedInUser(sessionId);
+    public ResponseEntity<Response> getAllGenres(HttpServletRequest httpRequest) {
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }

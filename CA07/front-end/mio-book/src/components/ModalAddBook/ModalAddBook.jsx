@@ -50,7 +50,7 @@ import { UserContext } from '../../UserContex';
              const response = await fetch('/api/books/add', {
                  method: 'POST',
                  headers: { 
-                    'Session-ID' : user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                     'Content-Type': 'application/json'
                  },
                  body: JSON.stringify(formData),

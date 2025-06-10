@@ -40,7 +40,6 @@ public class JwtInterceptor implements HandlerInterceptor {
         try {
             Claims claims = JwtUtil.parseToken(token);
 
-            // Required claims
             String username = claims.get("username", String.class);
             String email = claims.get("email", String.class);
             Instant issuedAt = claims.getIssuedAt().toInstant();

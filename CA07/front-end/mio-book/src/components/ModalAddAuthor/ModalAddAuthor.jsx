@@ -30,7 +30,7 @@ const ModalAddAuthor = ({ show, onClose, onSubmit }) => {
       const response = await fetch('/api/authors/add', {
         method: 'POST',
         headers: { 
-          'Session-ID' : user.userInfo.sessionId,
+          'Authorization': `Bearer ${user.userInfo.token}`,
           'Content-Type': 'application/json'
          },
         body: JSON.stringify(formData),

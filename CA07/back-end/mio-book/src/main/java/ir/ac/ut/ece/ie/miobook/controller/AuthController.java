@@ -3,7 +3,10 @@ package ir.ac.ut.ece.ie.miobook.controller;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
+import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
+import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
@@ -11,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,12 +46,15 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Response> userLogout(@RequestHeader("Session-ID") String sessionId) {
+    public ResponseEntity<Response> userLogout(HttpServletRequest request) {
         // Logs out the currently logged-in user based on the session ID from the header.
         // Returns: Success message after successful logout.
         // Example: POST /logout with header: Session-ID: <sessionId>
 
-        authService.userLogout(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
         Response response = new Response("success", "User logged out successfully.", null);
         
         return new ResponseEntity<>(response, HttpStatus.OK);

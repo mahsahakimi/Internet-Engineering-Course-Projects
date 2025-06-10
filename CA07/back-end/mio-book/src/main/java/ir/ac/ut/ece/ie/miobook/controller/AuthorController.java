@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddAuthorRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
 import ir.ac.ut.ece.ie.miobook.exceptions.InvalidDateFormatException;
@@ -10,6 +9,8 @@ import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.model.MyLocalDate;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.AuthorService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,23 +25,21 @@ import java.util.Map;
 public class AuthorController {
 
     private final AuthorService authorService;
-    private final UserContext userContext;
 
     @Autowired
-    public AuthorController(AuthorService authorService, UserContext userContext) {
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
-        this.userContext = userContext;
     }
 
     @PostMapping("/add") // (add_author)
     public ResponseEntity<Response> addAuthor(
-        @RequestHeader("Session-Id") String sessionId,
+        HttpServletRequest httpRequest,
         @RequestBody AddAuthorRequest request) {
         // Adds a new author to the system.
         // Parameters: name, penName, nationality, born (date), died (date, optional).
         // Returns: success message or error if the author already exists or input is invalid.
         // Example: POST /authors/add with JSON body containing author details.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -67,14 +66,13 @@ public class AuthorController {
 
     @GetMapping("/details") // (show_author_details)
     public ResponseEntity<Response> getAuthorDetails(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest request,
             @RequestParam("username") String authorName) {
         // Retrieves the details of a specific author.
         // Parameters: username (author's name).
         // Returns: author details in JSON format or error if the author is not found.
         // Example: GET /authors/details?username=author_name.
-
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -89,10 +87,8 @@ public class AuthorController {
     }
 
     @GetMapping("/getAll") // (show_author_details)
-    public ResponseEntity<Response> getAuthors(
-        @RequestHeader("Session-ID") String sessionId) {
-
-        User user = userContext.getLoggedInUser(sessionId);
+    public ResponseEntity<Response> getAuthors(HttpServletRequest request) {
+        User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }

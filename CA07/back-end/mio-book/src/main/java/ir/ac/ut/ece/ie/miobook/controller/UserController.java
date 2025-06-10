@@ -1,6 +1,5 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
-import ir.ac.ut.ece.ie.miobook.context.UserContext;
 import ir.ac.ut.ece.ie.miobook.dto.AddCreditRequest;
 import ir.ac.ut.ece.ie.miobook.dto.AddUserRequest;
 import ir.ac.ut.ece.ie.miobook.dto.Response;
@@ -8,6 +7,7 @@ import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
 import ir.ac.ut.ece.ie.miobook.model.User;
 import ir.ac.ut.ece.ie.miobook.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final UserContext userContext;
 
     @Autowired
-    public UserController(UserService userService, UserContext userContext) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userContext = userContext;
     }
 
     @PostMapping("/add") // (add_user)
@@ -48,13 +46,13 @@ public class UserController {
 
     @PostMapping("/addcredit") // (add_credit)
     public ResponseEntity<Response> addCredit(
-            @RequestHeader("Session-ID") String sessionId,
+            HttpServletRequest httpRequest,
             @RequestBody AddCreditRequest request) {
         // Adds credit to a user's account.
         // Parameters: credit amount.
         // Returns: success message or error if the user is not found or input is invalid.
         // Example: POST /users/credit with JSON body containing credit.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -70,11 +68,11 @@ public class UserController {
     }
 
     @GetMapping("/details") // (show_user_details)
-    public ResponseEntity<Response> showUserDetails(@RequestHeader("Session-ID") String sessionId) {
+    public ResponseEntity<Response> showUserDetails(HttpServletRequest httpRequest) {
         // Retrieves the details of a specific user.
         // Returns: user details in JSON format or error if the user is not found.
         // Example: GET /users/details
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -85,11 +83,11 @@ public class UserController {
     }
 
     @GetMapping("/purchase_history") // (show_purchase_history)
-    public ResponseEntity<Response> showPurchaseHistory(@RequestHeader("Session-ID") String sessionId) {
+    public ResponseEntity<Response> showPurchaseHistory(HttpServletRequest httpRequest) {
         // Retrieves the purchase history of user.
         // Returns: purchase history in JSON format or error if the user is not found.
         // Example: GET /users/purchase_history
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -100,11 +98,11 @@ public class UserController {
     }
 
     @GetMapping("/purchased_books") // (show_purchased_books)
-    public ResponseEntity<Response> showPurchasedBooks(@RequestHeader("Session-ID") String sessionId) {
+    public ResponseEntity<Response> showPurchasedBooks(HttpServletRequest httpRequest) {
         // Retrieves the list of books purchased by a specific user.
         // Returns: list of purchased books in JSON format or error if the user is not found.
         // Example: GET /users/purchased_books.
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
@@ -116,10 +114,10 @@ public class UserController {
 
     @GetMapping("/book_status")
     public ResponseEntity<Response> bookStatus(
-        @RequestHeader("Session-ID") String sessionId,
+        HttpServletRequest httpRequest,
         @RequestParam("title") String title) {
         // in cart, buy, borrow, nothing!
-        User user = userContext.getLoggedInUser(sessionId);
+        User user = (User) httpRequest.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
