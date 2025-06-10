@@ -1,5 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.utils;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,7 +13,6 @@ import java.util.Map;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "thisisoursecretkeyfortesttheJWTutilclass";
-
     private static final long EXPIRATION_MILLIS = 24 * 60 * 60 * 1000;
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
@@ -27,5 +28,13 @@ public class JwtUtil {
                 .addClaims(claims)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+    
+    public static Claims parseToken(String token) throws JwtException {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
