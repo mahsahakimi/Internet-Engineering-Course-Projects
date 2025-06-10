@@ -27,7 +27,7 @@ function BuyCartPage() {
             const response = await fetch('/api/carts/details', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await response.json();
@@ -53,7 +53,7 @@ function BuyCartPage() {
             const response = await fetch('/api/carts/purchase', {
                 method: 'POST',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await response.json();

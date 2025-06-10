@@ -63,7 +63,7 @@ function FilterSidebar({ show, onClose, onResults, genres}) {
             const response = await fetch(`/api/books/searchBooks?${params.toString()}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 },
             });
             const responseData = await response.json();

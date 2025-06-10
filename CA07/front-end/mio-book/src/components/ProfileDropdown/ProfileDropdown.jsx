@@ -11,7 +11,7 @@ function ProfileDropdown({ name }) {
             const response = await fetch('/api/logout', {
                 method: 'POST',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 }
             });
 

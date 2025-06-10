@@ -21,7 +21,7 @@ const ModalAddReview = ({ show, onClose, onSubmit, bookTitle }) => {
           const response = await fetch('/api/books/add_review', {
               method: 'POST',
               headers: {
-                'Session-ID' : user.userInfo.sessionId,
+                'Authorization': `Bearer ${user.userInfo.token}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({

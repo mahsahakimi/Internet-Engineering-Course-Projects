@@ -43,7 +43,7 @@ function AuthorPage() {
         {
           method: 'GET',
           headers: {
-            'Session-ID': user.userInfo.sessionId
+            'Authorization': `Bearer ${user.userInfo.token}`
           }
         }
       );
@@ -74,7 +74,7 @@ function AuthorPage() {
         {
           method: 'GET',
           headers: {
-            'Session-ID': user.userInfo.sessionId
+            'Authorization': `Bearer ${user.userInfo.token}`
           }
         }
       );

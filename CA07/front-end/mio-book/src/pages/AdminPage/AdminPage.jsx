@@ -37,7 +37,7 @@ function AdminPage() {
             const response = await fetch('/api/logout', {
                 method: 'POST',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 }
             });
 
@@ -61,7 +61,7 @@ function AdminPage() {
             const response = await fetch('/api/books/adminPageBooks', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 },
             });
             const responseData = await response.json();
@@ -87,7 +87,7 @@ function AdminPage() {
             const response = await fetch('/api/authors/getAll', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 },
             });
             const responseData = await response.json();

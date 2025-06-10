@@ -27,7 +27,7 @@ function HomePage() {
             const response = await fetch('/api/books/newRelease', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 }
             });
             const responseData = await response.json();
@@ -49,7 +49,7 @@ function HomePage() {
             const response = await fetch('/api/books/topRated', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId
+                    'Authorization': `Bearer ${user.userInfo.token}`
                 }
             });
             const responseData = await response.json();

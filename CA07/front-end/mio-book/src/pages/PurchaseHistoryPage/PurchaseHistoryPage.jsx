@@ -17,7 +17,7 @@ function PurchaseHistoryPage() {
             const response = await fetch('/api/users/purchase_history', {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await response.json();

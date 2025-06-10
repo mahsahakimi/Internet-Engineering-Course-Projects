@@ -51,7 +51,7 @@ function SearchResult() {
             }))
             const result = await fetch(endpoint, {
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await result.json();
@@ -70,7 +70,7 @@ function SearchResult() {
         try {
             const response = await fetch('/api/genres/getAll', {
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await response.json();

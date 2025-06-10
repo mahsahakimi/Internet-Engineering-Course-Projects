@@ -32,7 +32,7 @@ function BookContentPage() {
         `/api/books/content?title=${encodeURIComponent(bookTitleFromURL)}`,
         {
           headers: {
-            'Session-ID': user.userInfo.sessionId,
+            'Authorization': `Bearer ${user.userInfo.token}`,
             'Content-Type': 'application/json',
           },
         }

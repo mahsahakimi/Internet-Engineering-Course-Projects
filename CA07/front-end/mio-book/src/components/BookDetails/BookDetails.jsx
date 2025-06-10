@@ -24,7 +24,7 @@ function BookDetails({book}) {
             const response = await fetch(`/api/users/book_status?title=${book?.title}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 }
             });
 

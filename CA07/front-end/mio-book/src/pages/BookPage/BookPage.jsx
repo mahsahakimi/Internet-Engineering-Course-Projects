@@ -35,7 +35,7 @@ function BookPage() {
             const response = await fetch(`/api/books/details?title=${title}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -62,7 +62,7 @@ function BookPage() {
             const response = await fetch(`/api/books/reviews?title=${title}`, {
                 method: 'GET',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                     'Content-Type': 'application/json',
                 },
             });

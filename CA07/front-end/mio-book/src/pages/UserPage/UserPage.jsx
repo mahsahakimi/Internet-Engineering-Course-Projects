@@ -26,7 +26,7 @@ function UserPage() {
         try {
             const response = await fetch('/api/users/purchased_books', {
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             const responseData = await response.json();
@@ -95,7 +95,7 @@ function UserPage() {
             const response = await fetch('/api/logout', {
                 method: 'POST',
                 headers: {
-                    'Session-ID': user.userInfo.sessionId,
+                    'Authorization': `Bearer ${user.userInfo.token}`,
                 },
             });
             
@@ -119,7 +119,7 @@ function UserPage() {
                 const response = await fetch('/api/users/addcredit', {
                     method: 'POST',
                     headers: {  
-                        'Session-ID': user.userInfo.sessionId,
+                        'Authorization': `Bearer ${user.userInfo.token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({

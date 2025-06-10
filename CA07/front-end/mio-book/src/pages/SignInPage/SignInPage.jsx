@@ -75,6 +75,7 @@ function SignInPage() {
             });
 
             const responseData = await response.json();
+
             if (response.ok) {
             const activeUser = { userInfo: responseData.data };
 
