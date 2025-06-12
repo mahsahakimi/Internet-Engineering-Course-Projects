@@ -49,7 +49,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeUsers() {
         try {
-            URL url = new URL("http://194.60.230.196:8000/users");
+            URL url = new URL("http://194.60.231.242:8000/users");
             List<User> users = fetchData(url, new TypeReference<List<User>>() {});
             if(users != null) {
                 for (User user : users) {
@@ -63,7 +63,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeAuthors() {
         try {
-            URL url = new URL("http://194.60.230.196:8000/authors");
+            URL url = new URL("http://194.60.231.242:8000/authors");
             List<Author> authors = fetchData(url, new TypeReference<List<Author>>() {});
             if(authors != null) {
                 for (Author author : authors) {
@@ -77,7 +77,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeBooks() {
         try {
-            URL url = new URL("http://194.60.230.196:8000/books");
+            URL url = new URL("http://194.60.231.242:8000/books");
             List<Map<String, Object>> bookMaps = fetchData(url, new TypeReference<List<Map<String, Object>>>() {});
 
             if (bookMaps != null) {
@@ -111,7 +111,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void initializeReviews() {
         try {
-            URL url = new URL("http://194.60.230.196:8000/reviews");
+            URL url = new URL("http://194.60.231.242:8000/reviews");
             List<Review> reviews = fetchData(url, new TypeReference<List<Review>>() {});
             if(reviews != null) {
                 for (Review review : reviews) {
