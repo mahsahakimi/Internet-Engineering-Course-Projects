@@ -48,10 +48,12 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     public void initializeData() {
+        System.out.println("\n --- Start fetching data from : 194.60.231.242:8000 ---\n");
         initializeUsers();
         initializeAuthors();
         initializeBooks();
         initializeReviews();
+        System.out.println("\n --- Server is on ---\n");
     }
 
     private void initializeUsers() {
@@ -93,18 +95,19 @@ public class DataInitializer implements ApplicationRunner {
                                     continue;
                                 }
                                 userRepository.save(user);
-                                System.out.println("User added: " + username);
+                                // System.out.println("User added: " + username);
                             } catch (IllegalArgumentException e) {
                                 System.err.println("Invalid role: " + roleStr + " for user: " + username);
                             }
                         } else{
-                            System.out.println("User already exists: " + username);
+                            // System.out.println("User already exists: " + username);
                         }
                     } else {
                         System.err.println("Address is null for user: " + username);
                     }
                 }
             }
+            System.out.println("=> Users aded successfully");
         } catch (IOException e) {
             System.err.println("Error initializing users: " + e.getMessage());
         }
@@ -137,15 +140,16 @@ public class DataInitializer implements ApplicationRunner {
                         if (existingAuthor.isEmpty()) {
                             Author author = new Author(name, penName, nationality, born, died, addingAdmin);
                             authorRepository.save(author);
-                            System.out.println("Author added: " + name + " (added by " + adminUsername + ")");
+                            // System.out.println("Author added: " + name + " (added by " + adminUsername + ")");
                         } else {
-                            System.out.println("Author already exists: " + name);
+                            // System.out.println("Author already exists: " + name);
                         }
                     } else {
                         System.err.println("Admin not found: " + adminUsername + " for author: " + name);
                     }
                 }
             }
+            System.out.println("=> Authors aded successfully");
         } catch (IOException e) {
             System.err.println("Error initializing authors: " + e.getMessage());
         }
@@ -170,7 +174,7 @@ public class DataInitializer implements ApplicationRunner {
                     String title = (String) bookMap.get("title");
 
                     if (bookRepository.existsByTitleAndAuthor(title, author)) {
-                        System.out.println("Book already exists: " + title + " by " + authorName);
+                        // System.out.println("Book already exists: " + title + " by " + authorName);
                         continue;
                     }
 
@@ -202,10 +206,10 @@ public class DataInitializer implements ApplicationRunner {
 
                     book.setGenres(genreEntities);
                     bookRepository.save(book);
-                    System.out.println("Book added: " + title + " by " + authorName);
+                    // System.out.println("Book added: " + title + " by " + authorName);
                 }
             }
-
+            System.out.println("=> Books aded successfully");
         } catch (IOException e) {
             System.err.println("Error initializing books: " + e.getMessage());
         }
@@ -235,9 +239,7 @@ public class DataInitializer implements ApplicationRunner {
                             Customer customer = customerOptional.get();
                             MyLocalDateTime createdAt = MyLocalDateTime.parse(dateStr);
 
-                            // Check if review already exists
                             boolean reviewExists = reviewRepository.existsByCustomerAndBook(customer, book);
-
                             if (!reviewExists) {
                                 Review review = new Review(
                                         customer,
@@ -247,9 +249,9 @@ public class DataInitializer implements ApplicationRunner {
                                         createdAt
                                 );
                                 reviewRepository.save(review);
-                                System.out.println("Review added for book: " + bookTitle + " by user: " + username);
+                                // System.out.println("Review added for book: " + bookTitle + " by user: " + username);
                             } else {
-                                System.out.println("Review already exists for book: " + bookTitle + " by user: " + username);
+                                // System.out.println("Review already exists for book: " + bookTitle + " by user: " + username);
                             }
                         } else {
                             String errorMsg = "Could not create review - ";
@@ -262,6 +264,7 @@ public class DataInitializer implements ApplicationRunner {
                     }
                 }
             }
+            System.out.println("=> Reviews aded successfully");
         } catch (IOException e) {
             System.err.println("Error initializing reviews: " + e.getMessage());
         }
