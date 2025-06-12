@@ -1,6 +1,7 @@
 package ir.ac.ut.ece.ie.miobook.controller;
 
 import ir.ac.ut.ece.ie.miobook.dto.Response;
+import ir.ac.ut.ece.ie.miobook.dto.GoogleAuthCodeRequest;
 import ir.ac.ut.ece.ie.miobook.dto.UserLoginRequest;
 import ir.ac.ut.ece.ie.miobook.exceptions.MissingRequestBodyException;
 import ir.ac.ut.ece.ie.miobook.exceptions.UserNotLoggedInException;
@@ -10,15 +11,19 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
+    @Autowired
     private final AuthService authService;
 
     public AuthController(AuthService authService) {
@@ -59,4 +64,23 @@ public class AuthController {
         
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/google-code")
+    public ResponseEntity<Response> handleGoogleCallback(@RequestBody GoogleAuthCodeRequest request) {
+        try {
+            System.out.println("\n=>Trying to login via Google account");
+
+            Map<String, Object> userInfo = authService.processGoogleLogin(request.getCode());
+            System.out.println("=>Logged in successfully by Google\n");
+            
+            Response response = new Response("success", "User logged in successfully.", userInfo);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(new Response("error", "Authentication failed", null));
+        }
+    }
+
+
 }

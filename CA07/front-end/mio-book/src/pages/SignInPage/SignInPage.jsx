@@ -18,7 +18,13 @@ function SignInPage() {
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
-    // Controller
+
+    const GOOGLE_CLIENT_ID = '629312827011-t2j6l6mlphrl6f0rhnvv6e7u6ttdp2kc.apps.googleusercontent.com';
+    const REDIRECT_URI = 'http://localhost:5173/google-callback';
+
+    const googleLoginUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=openid%20email%20profile`;
+    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -63,7 +69,7 @@ function SignInPage() {
         setErrors({});
         
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {  
                     'Content-Type': 'application/json',
@@ -77,19 +83,19 @@ function SignInPage() {
             const responseData = await response.json();
 
             if (response.ok) {
-            const activeUser = { userInfo: responseData.data };
+                const activeUser = { userInfo: responseData.data };
 
-            setUser(activeUser);
-            localStorage.setItem('activeUser', JSON.stringify(activeUser));
-            navigate('/');
-            console.log(responseData.message); // "User logged in successfully."
+                setUser(activeUser);
+                localStorage.setItem('activeUser', JSON.stringify(activeUser));
+                navigate('/');
+                console.log(responseData.message); // "User logged in successfully."
             } 
             else {
-            if (responseData && responseData.message) {
-                setErrors({ general: responseData.message });
-            } else {
-                setErrors({ general: 'Login failed. Please check your credentials.' });
-            }      
+                if (responseData && responseData.message) {
+                    setErrors({ general: responseData.message });
+                } else {
+                    setErrors({ general: 'Login failed. Please check your credentials.' });
+                }      
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -154,7 +160,7 @@ function SignInPage() {
                 {/* Login Button */}
                 <button
                     type="submit"
-                    className="btn gray-btn mb-3 col-12"
+                    className="btn gray-btn col-12"
                     disabled={!isFormFilled() || isSubmitting}
                 >
                     {isSubmitting ? 'Logging In...' : <strong>Log In</strong>}
@@ -162,8 +168,22 @@ function SignInPage() {
                 </form>
             </div>
 
+            <div className="row justify-content-center">
+                <div className="col-10 col-sm-8">
+                    <div className="d-flex align-items-center my-2">
+                        <hr className="flex-grow-1" />
+                        <span className="px-2 text-muted">OR</span>
+                        <hr className="flex-grow-1" />
+                    </div>
+                    <a href={googleLoginUrl} className="btn btn-outline-dark col-12">
+                        <img src="https://www.google.com/favicon.ico" alt="Google icon" style={{ marginRight: '8px', width: '20px' }} />
+                        <strong>Continue with Google</strong>
+                    </a>
+                </div>
+            </div>
+
             {/* Sign Up Link */}
-            <p className="signin-link text-center">
+            <p className="signin-link text-center mt-3">
                 Don't have an account?
                 <Link to="/signup">
                 <strong>Sign up</strong>

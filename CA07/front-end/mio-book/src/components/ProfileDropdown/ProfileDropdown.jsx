@@ -8,7 +8,7 @@ function ProfileDropdown({ name }) {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('/api/logout', {
+            const response = await fetch('/api/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${user.userInfo.token}`

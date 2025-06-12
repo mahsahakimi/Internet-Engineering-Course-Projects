@@ -93,11 +93,9 @@ public class AuthorController {
             throw new UserNotLoggedInException();
         }
 
-
         List<Map<String, Object>> authors = authorService.getAllAuthors(1,10);
         Response response = new Response("success", "Authors retrieved successfully.", authors);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
     
 }

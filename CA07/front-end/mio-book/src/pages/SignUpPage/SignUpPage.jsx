@@ -124,7 +124,7 @@ function SignUpPage() {
         const responseData = await response.json();
 
         if (response.ok && response.status === 201) {
-          const new_response = await fetch('/api/login', {
+          const new_response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

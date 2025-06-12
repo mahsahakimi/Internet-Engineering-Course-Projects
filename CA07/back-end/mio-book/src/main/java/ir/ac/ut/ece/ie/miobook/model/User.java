@@ -21,10 +21,10 @@ public class User {
     @Id
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String salt;
 
     @Column(columnDefinition = "TEXT", nullable = false, unique = true)
