@@ -1,0 +1,42 @@
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: flex-start;
+    z-index: 1050;
+}
+
+.smaller-vertical {
+  transform: scaleY(0.9);
+  transform-origin: center; /* scale from center vertically */
+}
+
+.sidebar-container {
+  background: #F7F9FB;
+  width: 60vw;        /* use 90% of the viewport width */
+  max-width: 480px;   /* but never exceed 480px */
+  min-width: 320px;   /* optional: don’t shrink below this */
+  height: 100%;
+  padding: 28px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+}
