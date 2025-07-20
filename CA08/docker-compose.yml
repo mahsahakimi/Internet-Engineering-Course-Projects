@@ -17,7 +17,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./back-end/mio-book
     image: mio-backend
     container_name: mio-backend
     depends_on:
@@ -33,7 +33,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./front-end/mio-book
     image: mio-frontend
     container_name: mio-frontend
     depends_on:

@@ -113,7 +113,7 @@ public class AuthService {
     private String getAccessTokenFromGoogle(String code) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        String redirectUri = "http://localhost:5173/google-callback";
+        String redirectUri = "http://localhost:5555/google-callback";
 
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
