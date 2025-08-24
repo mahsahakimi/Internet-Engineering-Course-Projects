@@ -31,7 +31,7 @@ public class AddBookCommand {
         String authorName = node.get("author").asText();
         String publisher = node.get("publisher").asText();
         int year = node.get("year").asInt();
-        double price = node.get("price").asDouble();
+        Object price = node.get("price");
         String synopsis = node.get("synopsis").asText();
         String content = node.get("content").asText();
 

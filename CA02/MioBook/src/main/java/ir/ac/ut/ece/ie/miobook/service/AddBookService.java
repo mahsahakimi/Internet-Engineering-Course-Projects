@@ -10,6 +10,8 @@ import ir.ac.ut.ece.ie.miobook.model.User;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class AddBookService {
 
     public static void addBook(String username, String title, String authorName, String publisher, int year, Object price, List<String> genres, String synopsis, String content) {
@@ -42,10 +44,15 @@ public class AddBookService {
         }
 
         int finalPrice;
-        if (price instanceof Double) {
-            finalPrice = (int) Math.round((Double) price * 100);
-        } else if (price instanceof Integer) {
-            finalPrice = (Integer) price;
+
+        JsonNode priceNode = (JsonNode) price;
+        if (priceNode.isInt()) {
+            finalPrice = priceNode.intValue();
+            System.out.println("int: " + finalPrice);
+        } else if (priceNode.isDouble() || priceNode.isFloat()) {
+            double priceValue = priceNode.doubleValue();
+            finalPrice = (int)(priceValue*100);
+            System.out.println("double: " + priceValue);
         } else {
             throw new IllegalArgumentException("Price must be a number.");
         }
