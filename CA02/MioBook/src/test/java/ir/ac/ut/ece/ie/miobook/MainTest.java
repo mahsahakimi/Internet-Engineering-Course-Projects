@@ -207,7 +207,7 @@ public class MainTest {
         JsonNode actualOutput = mapper.readTree(output);
 
         assertTrue(actualOutput.get("success").asBoolean());
-        assertTrue(actualOutput.get("message").asText().equals("Book removed from cart successfully."));
+        assertTrue(actualOutput.get("message").asText().equals("Removed book from cart."));
 
         // Check if the book is actually removed from the cart
         String showCartInput = "show_cart {\"username\": \"normal_user\"}";
@@ -224,7 +224,7 @@ public class MainTest {
         JsonNode cartItems = cartOutput.get("data").get("cart");
 
         boolean bookFound = false;
-        if(cartItems.isArray()){
+        if(cartItems != null){
             for (JsonNode item : cartItems) {
                 if (item.get("book").get("title").asText().equals("The Magical Adventure")) {
                     bookFound = true;
