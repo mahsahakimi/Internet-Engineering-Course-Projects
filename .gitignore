@@ -1,0 +1,31 @@
+# OS & IDEs
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Java / Maven (Back-end)
+target/
+!.mvn/wrapper/maven-wrapper.jar
+build/
+*.class
+*.jar
+*.war
+
+# Node / React / Vite (Front-end)
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+*.log
+
+# Secrets & Env
+.env
+.env.*
+!.env.example
+mysql_root_password.txt
