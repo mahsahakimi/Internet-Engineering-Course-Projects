@@ -1,0 +1,536 @@
+{
+  "users": [
+    {
+      "role": "CUSTOMER",
+      "username": "user1",
+      "password": "user1pass",
+      "email": "user1@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Tehran"
+      }
+    },
+    {
+      "role": "CUSTOMER",
+      "username": "user2",
+      "password": "user2pass",
+      "email": "user2@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Shiraz"
+      }
+    },
+    {
+      "role": "CUSTOMER",
+      "username": "user3",
+      "password": "user3pass",
+      "email": "user3@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Isfahan"
+      }
+    },
+    {
+      "role": "CUSTOMER",
+      "username": "user4",
+      "password": "user4pass",
+      "email": "user4@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Mashhad"
+      }
+    },
+    {
+      "role": "CUSTOMER",
+      "username": "user5",
+      "password": "user5pass",
+      "email": "user5@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Tabriz"
+      }
+    },
+    {
+      "role": "CUSTOMER",
+      "username": "user6",
+      "password": "user6pass",
+      "email": "user6@miobook.ir",
+      "address": {
+        "country": "Iran",
+        "city": "Rasht"
+      }
+    }
+  ],
+  "authors": [
+    {
+      "name": "George Orwell",
+      "penName": "George Orwell",
+      "nationality": "British",
+      "born": "1903-06-25",
+      "died": "1950-01-21",
+      "username": "admin1"
+    },
+    {
+      "name": "J.K. Rowling",
+      "penName": "Robert Galbraith",
+      "nationality": "British",
+      "born": "1965-07-31",
+      "died": "",
+      "username": "admin1"
+    },
+    {
+      "name": "F. Scott Fitzgerald",
+      "penName": "F. Scott Fitzgerald",
+      "nationality": "American",
+      "born": "1896-09-24",
+      "died": "1940-12-21",
+      "username": "admin2"
+    },
+    {
+      "name": "Agatha Christie",
+      "penName": "Mary Westmacott",
+      "nationality": "British",
+      "born": "1890-09-15",
+      "died": "1976-01-12",
+      "username": "admin2"
+    },
+    {
+      "name": "Fyodor Dostoevsky",
+      "penName": "Fyodor Dostoevsky",
+      "nationality": "Russian",
+      "born": "1821-11-11",
+      "died": "1881-02-09",
+      "username": "admin1"
+    },
+    {
+      "name": "Haruki Murakami",
+      "penName": "Haruki Murakami",
+      "nationality": "Japanese",
+      "born": "1949-01-12",
+      "died": "",
+      "username": "admin2"
+    },
+    {
+      "name": "Jane Austen",
+      "penName": "A Lady",
+      "nationality": "British",
+      "born": "1775-12-16",
+      "died": "1817-07-18",
+      "username": "admin1"
+    }
+  ],
+  "books": [
+    {
+      "title": "1984",
+      "author": "George Orwell",
+      "publisher": "Secker & Warburg",
+      "year": 1949,
+      "price": 1500,
+      "synopsis": "A dystopian novel set in a totalitarian society under constant surveillance.",
+      "content": "It was a bright cold day in April, and the clocks were striking thirteen.",
+      "genres": ["Dystopian", "Political Fiction", "Classic"]
+    },
+    {
+      "title": "Animal Farm",
+      "author": "George Orwell",
+      "publisher": "Secker & Warburg",
+      "year": 1945,
+      "price": 1100,
+      "synopsis": "An allegorical novella about farm animals who rebel against their human farmer.",
+      "content": "Mr. Jones, of the Manor Farm, had locked the hen-houses for the night.",
+      "genres": ["Satire", "Political Fiction", "Classic"]
+    },
+    {
+      "title": "Homage to Catalonia",
+      "author": "George Orwell",
+      "publisher": "Secker & Warburg",
+      "year": 1938,
+      "price": 1300,
+      "synopsis": "George Orwell's personal account of his experiences in the Spanish Civil War.",
+      "content": "In the Lenin Barracks in Barcelona, the day before I joined the militia.",
+      "genres": ["History", "Memoir"]
+    },
+    {
+      "title": "Keep the Aspidistra Flying",
+      "author": "George Orwell",
+      "publisher": "Victor Gollancz",
+      "year": 1936,
+      "price": 1200,
+      "synopsis": "A socially critical novel about Gordon Comstock's struggle against commercialism.",
+      "content": "The clock struck half-past two. In the little office behind the bookshop.",
+      "genres": ["Fiction", "Classic"]
+    },
+    {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J.K. Rowling",
+      "publisher": "Bloomsbury",
+      "year": 1997,
+      "price": 1800,
+      "synopsis": "A young boy discovers he is a wizard and attends Hogwarts School of Witchcraft and Wizardry.",
+      "content": "Mr. and Mrs. Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal.",
+      "genres": ["Fantasy", "Adventure"]
+    },
+    {
+      "title": "Harry Potter and the Chamber of Secrets",
+      "author": "J.K. Rowling",
+      "publisher": "Bloomsbury",
+      "year": 1998,
+      "price": 1900,
+      "synopsis": "Harry returns to Hogwarts for his second year and uncovers the mystery of the Chamber of Secrets.",
+      "content": "Not for the first time, an argument had broken out over breakfast at number four, Privet Drive.",
+      "genres": ["Fantasy", "Adventure"]
+    },
+    {
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "author": "J.K. Rowling",
+      "publisher": "Bloomsbury",
+      "year": 1999,
+      "price": 2000,
+      "synopsis": "Harry learns about Sirius Black, an escaped prisoner believed to be after him.",
+      "content": "Harry Potter was a highly unusual boy in many ways.",
+      "genres": ["Fantasy", "Mystery"]
+    },
+    {
+      "title": "The Casual Vacancy",
+      "author": "J.K. Rowling",
+      "publisher": "Little, Brown",
+      "year": 2012,
+      "price": 1600,
+      "synopsis": "A small English town erupts in conflict after the sudden death of a parish councillor.",
+      "content": "Barry Fairbrother did not want to go out to dinner.",
+      "genres": ["Drama", "Fiction"]
+    },
+    {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "publisher": "Charles Scribner's Sons",
+      "year": 1925,
+      "price": 1400,
+      "synopsis": "A portrait of the Jazz Age through the story of millionaire Jay Gatsby and Daisy Buchanan.",
+      "content": "In my younger and more vulnerable years my father gave me some advice.",
+      "genres": ["Classic", "Drama"]
+    },
+    {
+      "title": "Tender Is the Night",
+      "author": "F. Scott Fitzgerald",
+      "publisher": "Charles Scribner's Sons",
+      "year": 1934,
+      "price": 1450,
+      "synopsis": "The rise and fall of Dick Diver, a promising young psychiatrist, and his wife Nicole.",
+      "content": "On the pleasant shore of the French Riviera, about half way between Marseilles and the Italian border.",
+      "genres": ["Classic", "Drama"]
+    },
+    {
+      "title": "This Side of Paradise",
+      "author": "F. Scott Fitzgerald",
+      "publisher": "Charles Scribner's Sons",
+      "year": 1920,
+      "price": 1350,
+      "synopsis": "The coming-of-age story of Amory Blaine, an ambitious Princeton student.",
+      "content": "Amory Blaine inherited from his mother every trait, except the stray ineffectual.",
+      "genres": ["Classic", "Fiction"]
+    },
+    {
+      "title": "Murder on the Orient Express",
+      "author": "Agatha Christie",
+      "publisher": "Collins Crime Club",
+      "year": 1934,
+      "price": 1550,
+      "synopsis": "Detective Hercule Poirot investigates a murder aboard a snowbound luxury train.",
+      "content": "It was five o'clock on a winter's morning in Syria.",
+      "genres": ["Mystery", "Crime"]
+    },
+    {
+      "title": "And Then There Were None",
+      "author": "Agatha Christie",
+      "publisher": "Collins Crime Club",
+      "year": 1939,
+      "price": 1650,
+      "synopsis": "Ten strangers are invited to an isolated island where they are eliminated one by one.",
+      "content": "In the corner of a first-class smoking carriage, Mr. Justice Wargrave puffed at a cigar.",
+      "genres": ["Mystery", "Thriller"]
+    },
+    {
+      "title": "The Murder of Roger Ackroyd",
+      "author": "Agatha Christie",
+      "publisher": "William Collins",
+      "year": 1926,
+      "price": 1500,
+      "synopsis": "Hercule Poirot comes out of retirement to solve the murder of a wealthy widower.",
+      "content": "Mrs. Ferrars died on the night of the 16th-17th September.",
+      "genres": ["Mystery", "Crime"]
+    },
+    {
+      "title": "Crime and Punishment",
+      "author": "Fyodor Dostoevsky",
+      "publisher": "The Russian Messenger",
+      "year": 1866,
+      "price": 2100,
+      "synopsis": "The moral and psychological torment of Rodion Raskolnikov after committing murder.",
+      "content": "On an exceptionally hot evening early in July a young man came out of the garret.",
+      "genres": ["Classic", "Psychological Fiction"]
+    },
+    {
+      "title": "The Brothers Karamazov",
+      "author": "Fyodor Dostoevsky",
+      "publisher": "The Russian Messenger",
+      "year": 1880,
+      "price": 2400,
+      "synopsis": "A philosophical drama exploring faith, doubt, and family conflict in 19th-century Russia.",
+      "content": "Alexey Fyodorovitch Karamazov was the third son of Fyodor Pavlovitch Karamazov.",
+      "genres": ["Classic", "Philosophy"]
+    },
+    {
+      "title": "The Idiot",
+      "author": "Fyodor Dostoevsky",
+      "publisher": "The Russian Messenger",
+      "year": 1869,
+      "price": 1950,
+      "synopsis": "Prince Myshkin, a man of pure goodness, navigates a corrupt Saint Petersburg society.",
+      "content": "Towards the end of November, during a thaw, at nine o'clock one morning.",
+      "genres": ["Classic", "Drama"]
+    },
+    {
+      "title": "Kafka on the Shore",
+      "author": "Haruki Murakami",
+      "publisher": "Shinchosha",
+      "year": 2002,
+      "price": 1850,
+      "synopsis": "Two intertwined stories of a runaway teenager and an elderly man who talks to cats.",
+      "content": "So you're all set for money, then? the boy named Crow asks in his characteristic sluggish voice.",
+      "genres": ["Magical Realism", "Fiction"]
+    },
+    {
+      "title": "Norwegian Wood",
+      "author": "Haruki Murakami",
+      "publisher": "Kodansha",
+      "year": 1987,
+      "price": 1700,
+      "synopsis": "A nostalgic story of loss and burgeoning sexuality in late 1960s Tokyo.",
+      "content": "I was thirty-seven then, strapped in my seat as the huge 747 plunged through dense cloudbanks.",
+      "genres": ["Drama", "Romance"]
+    },
+    {
+      "title": "1Q84",
+      "author": "Haruki Murakami",
+      "publisher": "Shinchosha",
+      "year": 2009,
+      "price": 2300,
+      "synopsis": "A woman enters a parallel existence in 1984 Tokyo with two moons in the sky.",
+      "content": "The taxi's radio was playing a Janacek sinfonietta.",
+      "genres": ["Magical Realism", "Mystery"]
+    }
+  ],
+  "reviews": [
+    {
+      "username": "user1",
+      "title": "1984",
+      "rate": 5,
+      "comment": "A chilling and timeless masterpiece.",
+      "date": "2025-05-10 14:30:00"
+    },
+    {
+      "username": "user2",
+      "title": "1984",
+      "rate": 5,
+      "comment": "Still feels remarkably relevant today.",
+      "date": "2025-05-12 09:15:00"
+    },
+    {
+      "username": "user1",
+      "title": "Animal Farm",
+      "rate": 4,
+      "comment": "Short, sharp, and unforgettable.",
+      "date": "2025-05-15 18:45:00"
+    },
+    {
+      "username": "user3",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "rate": 5,
+      "comment": "Magical beginning to an iconic series.",
+      "date": "2025-05-18 11:20:00"
+    },
+    {
+      "username": "user2",
+      "title": "The Great Gatsby",
+      "rate": 4,
+      "comment": "Beautiful prose and tragic characters.",
+      "date": "2025-05-20 16:05:00"
+    },
+    {
+      "username": "user3",
+      "title": "Murder on the Orient Express",
+      "rate": 5,
+      "comment": "One of the cleverest endings in mystery fiction.",
+      "date": "2025-05-22 20:10:00"
+    },
+    {
+      "username": "user1",
+      "title": "And Then There Were None",
+      "rate": 5,
+      "comment": "Kept me guessing until the very last page.",
+      "date": "2025-05-24 13:50:00"
+    },
+    {
+      "username": "user2",
+      "title": "Crime and Punishment",
+      "rate": 5,
+      "comment": "Deep psychological exploration of guilt.",
+      "date": "2025-05-26 10:00:00"
+    },
+    {
+      "username": "user3",
+      "title": "Kafka on the Shore",
+      "rate": 4,
+      "comment": "Surreal and captivating atmosphere.",
+      "date": "2025-05-28 19:30:00"
+    },
+    {
+      "username": "user1",
+      "title": "Norwegian Wood",
+      "rate": 4,
+      "comment": "Melancholic and deeply moving.",
+      "date": "2025-05-30 21:15:00"
+    },
+    {
+      "username": "user3",
+      "title": "1984",
+      "rate": 5,
+      "comment": "Terrifyingly prophetic and impossible to put down.",
+      "date": "2025-06-01 10:15:00"
+    },
+    {
+      "username": "user2",
+      "title": "Animal Farm",
+      "rate": 5,
+      "comment": "Every line carries sharp political irony.",
+      "date": "2025-06-02 12:40:00"
+    },
+    {
+      "username": "user3",
+      "title": "Animal Farm",
+      "rate": 4,
+      "comment": "Concise, clever, and thought-provoking.",
+      "date": "2025-06-03 15:20:00"
+    },
+    {
+      "username": "user4",
+      "title": "Homage to Catalonia",
+      "rate": 4,
+      "comment": "Honest and vivid firsthand war reporting.",
+      "date": "2025-06-04 17:05:00"
+    },
+    {
+      "username": "user5",
+      "title": "Homage to Catalonia",
+      "rate": 3,
+      "comment": "Informative, though dense in historical details.",
+      "date": "2025-06-05 09:50:00"
+    },
+    {
+      "username": "user4",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "rate": 5,
+      "comment": "Pure nostalgia and wonderful world-building.",
+      "date": "2025-06-06 14:10:00"
+    },
+    {
+      "username": "user6",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "rate": 4,
+      "comment": "Charming characters and an engaging mystery.",
+      "date": "2025-06-07 18:30:00"
+    },
+    {
+      "username": "user5",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "rate": 4,
+      "comment": "Darker than the first book with great pacing.",
+      "date": "2025-06-08 11:45:00"
+    },
+    {
+      "username": "user6",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "rate": 5,
+      "comment": "Loved the mystery around the Basilisk.",
+      "date": "2025-06-09 20:00:00"
+    },
+    {
+      "username": "user4",
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "rate": 5,
+      "comment": "Easily my favorite entry in the series.",
+      "date": "2025-06-10 16:25:00"
+    },
+    {
+      "username": "user5",
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "rate": 5,
+      "comment": "The time-turner twist was brilliant.",
+      "date": "2025-06-11 19:10:00"
+    },
+    {
+      "username": "user6",
+      "title": "The Great Gatsby",
+      "rate": 5,
+      "comment": "Every sentence feels like poetry.",
+      "date": "2025-06-12 13:00:00"
+    },
+    {
+      "username": "user4",
+      "title": "The Great Gatsby",
+      "rate": 3,
+      "comment": "Great writing, though the characters are hard to like.",
+      "date": "2025-06-13 21:40:00"
+    },
+    {
+      "username": "user5",
+      "title": "Tender Is the Night",
+      "rate": 4,
+      "comment": "Rich atmosphere and bittersweet tragedy.",
+      "date": "2025-06-14 15:55:00"
+    },
+    {
+      "username": "user6",
+      "title": "Murder on the Orient Express",
+      "rate": 5,
+      "comment": "Classic Poirot at his absolute sharpest.",
+      "date": "2025-06-15 17:30:00"
+    },
+    {
+      "username": "user2",
+      "title": "And Then There Were None",
+      "rate": 5,
+      "comment": "Unmatched suspense from start to finish.",
+      "date": "2025-06-16 22:15:00"
+    },
+    {
+      "username": "user3",
+      "title": "The Murder of Roger Ackroyd",
+      "rate": 5,
+      "comment": "A legendary twist that still surprises.",
+      "date": "2025-06-17 12:20:00"
+    },
+    {
+      "username": "user1",
+      "title": "Crime and Punishment",
+      "rate": 5,
+      "comment": "Intense, philosophical, and unforgettable.",
+      "date": "2025-06-18 14:45:00"
+    },
+    {
+      "username": "user3",
+      "title": "The Brothers Karamazov",
+      "rate": 5,
+      "comment": "Monumental novel with profound moral questions.",
+      "date": "2025-06-19 19:05:00"
+    },
+    {
+      "username": "user2",
+      "title": "Norwegian Wood",
+      "rate": 4,
+      "comment": "Quiet, emotional, and beautifully written.",
+      "date": "2025-06-20 16:35:00"
+    }
+  ]
+}
