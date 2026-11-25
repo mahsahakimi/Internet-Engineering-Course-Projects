@@ -2,6 +2,7 @@ package ir.ac.ut.ece.ie.miobook.data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ir.ac.ut.ece.ie.miobook.configuration.DefaultAdminsProperties;
 import ir.ac.ut.ece.ie.miobook.repository.AuthorRepository;
 import ir.ac.ut.ece.ie.miobook.repository.GenreRepository;
 import ir.ac.ut.ece.ie.miobook.repository.BookRepository;
@@ -36,24 +37,55 @@ public class DataInitializer implements ApplicationRunner {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
+    private final DefaultAdminsProperties defaultAdminsProperties;
 
     public DataInitializer(UserRepository userRepository, AuthorRepository authorRepository,
                            BookRepository bookRepository, GenreRepository genreRepository,
-                            ReviewRepository  reviewRepository) {
+                           ReviewRepository reviewRepository,
+                           DefaultAdminsProperties defaultAdminsProperties) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
+        this.defaultAdminsProperties = defaultAdminsProperties;
     }
 
     public void initializeData() {
+        initializeDefaultAdmins();
         System.out.println("\n --- Start fetching data from : 194.60.231.242:8000 ---\n");
         initializeUsers();
         initializeAuthors();
         initializeBooks();
         initializeReviews();
         System.out.println("\n --- Server is on ---\n");
+    }
+
+    private void initializeDefaultAdmins() {
+        for (DefaultAdminsProperties.AdminConfig adminConfig : defaultAdminsProperties.getDefaultAdmins()) {
+            createAdminIfNotExists(
+                    adminConfig.getUsername(),
+                    adminConfig.getPassword(),
+                    adminConfig.getEmail()
+            );
+        }
+    }
+
+    private void createAdminIfNotExists(String username, String rawPassword, String email) {
+        if (username == null || username.isBlank()
+                || rawPassword == null || rawPassword.isBlank()
+                || email == null || email.isBlank()) {
+            return;
+        }
+        if (userRepository.existsByUsername(username) || userRepository.existsByEmail(email)) {
+            return;
+        }
+
+        String salt = PasswordHasher.generateSalt();
+        String hashedPassword = PasswordHasher.hashPassword(rawPassword, salt);
+        Address address = new Address("Iran", "Tehran");
+        Admin admin = new Admin(username, hashedPassword, salt, email, address);
+        userRepository.save(admin);
     }
 
     private void initializeUsers() {
