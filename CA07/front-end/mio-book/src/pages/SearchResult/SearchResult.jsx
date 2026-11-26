@@ -15,7 +15,7 @@ function SearchResult() {
     const searchTerm = location.state?.term || '';
     const [results, setResults] = useState([]);
     const [genres, setGenres] = useState([]);
-    const [filters, setFilters] = useState([]);
+    const [filters, setFilters] = useState(new URLSearchParams());
     const [loading, setLoading] = useState(true);
     const [showSidebar, setShowSidebar] = useState(false);
 
@@ -29,9 +29,30 @@ function SearchResult() {
         if (!user) return;
         if (filterType && searchTerm) {
             quickSerach();
+        } else {
+            fetchAllBooks();
         }
         fetchGenres();
     }, [filterType, searchTerm, user]);
+
+    const fetchAllBooks = async () => {
+        setLoading(true);
+        setFilters(new URLSearchParams());
+        try {
+            const result = await fetch('/api/books/all', {
+                headers: {
+                    'Authorization': `Bearer ${user.userInfo.token}`,
+                },
+            });
+            const responseData = await result.json();
+            setResults(Array.isArray(responseData?.data) ? responseData.data : []);
+        } catch (error) {
+            console.error('Failed to fetch all books:', error);
+            setResults([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     const quickSerach = async () => {
@@ -92,7 +113,7 @@ function SearchResult() {
             <section className="container mb-5 mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h4 className="mb-0">
-                        Results for [{filters.toString()}]
+                        {filters.toString() ? `Results for [${filters.toString()}]` : 'All Books'}
                     </h4>
                     <button onClick={() => setShowSidebar(true)} className="btn green-btn">
                         <i class="bi bi-filter"></i> Filter

@@ -451,6 +451,11 @@ public class BookService {
         return shortFormatBooks(bookPage.getContent());
     }
     
+    public List<Map<String, Object>> getAllBooks() {
+        List<Book> books = bookRepository.findAll();
+        return shortFormatBooks(books);
+    }
+
     public List<Map<String, Object>> adminPageBooks(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Book> bookPage = bookRepository.findAll(pageable);

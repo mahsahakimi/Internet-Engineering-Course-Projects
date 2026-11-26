@@ -353,6 +353,18 @@ public class BookController {
         Response response = new Response("success", "Books retrieved successfully.", topBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/all")
+    public ResponseEntity<Response> getAllBooks(HttpServletRequest request) {
+        User user = (User) request.getAttribute("loggedInUser");
+        if (user == null) {
+            throw new UserNotLoggedInException();
+        }
+
+        List<Map<String, Object>> allBooks = bookService.getAllBooks();
+        Response response = new Response("success", "Books retrieved successfully.", allBooks);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/adminPageBooks")
     public ResponseEntity<Response> adminPageBooks(HttpServletRequest request) {
         User user = (User) request.getAttribute("loggedInUser");
