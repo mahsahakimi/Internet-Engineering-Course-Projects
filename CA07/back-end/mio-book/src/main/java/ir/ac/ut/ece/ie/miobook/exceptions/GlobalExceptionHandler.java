@@ -256,6 +256,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public ResponseEntity<Response> handleReviewAlreadyExistsException(ReviewAlreadyExistsException ex) {
+        Response response = new Response("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(InvalidYearRangeException.class)
     public ResponseEntity<Response> handleInvalidYearRange(InvalidYearRangeException ex) {
         Response response = new Response("error", ex.getMessage(), null);
