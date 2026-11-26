@@ -138,22 +138,24 @@ public class BookService {
 
         boolean flag = false;
         for (UserBook borrowedBook : userBookRepository.findBorrowedBooksByCustomer(customer)) {
-            if (borrowedBook.getBook().getTitle() == title){
+            if (borrowedBook.getBook().getTitle().equals(title)) {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            for (UserBook userBook : userBookRepository.findOwnedBooksByCustomer(customer)) {
+                if (userBook.getBook().getTitle().equals(title)) {
                     flag = true;
                     break;
-            } 
-        }
-        if(!flag){
-            for (UserBook userBook : userBookRepository.findOwnedBooksByCustomer(customer)) {
-                if (userBook.getBook().getTitle() == title){
-                    flag = true;
-                        break;
                 }
             }
-        
         }
-        if(!flag){
+        if (!flag) {
             throw new BookNotOwnedException();
+        }
+        if (reviewRepository.existsByCustomerAndBook(customer, book)) {
+            throw new ReviewAlreadyExistsException(title);
         }
         if (rate < 1 || rate > 5) {
             throw new InvalidRatingException();

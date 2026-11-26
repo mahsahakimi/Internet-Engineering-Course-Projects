@@ -78,7 +78,7 @@ function HomePage() {
                         <div className="col-sm-1"> </div>
                         <div className="col-sm-5">
                             <h2 className="mb-3">Welcome to MioBook – the online bookstore where you can buy or borrow books with ease.</h2>
-                            <p>Whether you're looking for the latest bestseller, a classNameic novel, or a niche title, MioBook has you covered.</p>
+                            <p>Whether you're looking for the latest bestseller, a classic novel, or a niche title, MioBook has you covered.</p>
                             <p>Here, you can quickly find books by title, author, and genre. And if you're not sure to buy? Try borrowing instead! Rent a book for just a fraction of the price and enjoy full access for a set period.</p>
                             <p>Your next great read is just a click away. Visit MioBook today and let the perfect book find you! 📚✨</p>
                         </div>
