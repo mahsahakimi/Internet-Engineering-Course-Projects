@@ -325,7 +325,7 @@ public class BookController {
         if (sortOrder != null && !validSortOrder.contains(sortOrder)) {
             throw new SortOrderException(sortOrder);
         }
-        List<Map<String,Object>> responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
+        Map<String, Object> responseJson = bookService.searchBooks(title, authorName, genre, fromYear, toYear, sortBy, sortOrder, page, pageSize);
         Response response = new Response("success", "Books retrieved successfully.", responseJson);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -354,13 +354,16 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/all")
-    public ResponseEntity<Response> getAllBooks(HttpServletRequest request) {
+    public ResponseEntity<Response> getAllBooks(
+        HttpServletRequest request,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();
         }
 
-        List<Map<String, Object>> allBooks = bookService.getAllBooks();
+        Map<String, Object> allBooks = bookService.getAllBooks(page, pageSize);
         Response response = new Response("success", "Books retrieved successfully.", allBooks);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
