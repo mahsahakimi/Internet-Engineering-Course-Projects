@@ -385,7 +385,17 @@ public class BookService {
         }
     }
 
-    public List<Map<String, Object>> searchBooks(String title, String authorName, String genre,
+    private Map<String, Object> buildPaginatedBooksResponse(Page<Book> bookPage, int page, int pageSize) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("books", shortFormatBooks(bookPage.getContent()));
+        data.put("totalPages", bookPage.getTotalPages());
+        data.put("currentPage", page);
+        data.put("pageSize", pageSize);
+        data.put("totalElements", bookPage.getTotalElements());
+        return data;
+    }
+
+    public Map<String, Object> searchBooks(String title, String authorName, String genre,
                             Integer fromYear, Integer toYear,
                             String sortBy, String sortOrder,
                             int page, int pageSize) {
@@ -412,7 +422,7 @@ public class BookService {
             title, authorName, genre, fromYear, toYear, pageable
         );
 
-        return shortFormatBooks(bookPage.getContent());
+        return buildPaginatedBooksResponse(bookPage, page, pageSize);
     }
 
     private static String buildSearchString(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder) {
@@ -451,6 +461,12 @@ public class BookService {
         return shortFormatBooks(bookPage.getContent());
     }
     
+    public Map<String, Object> getAllBooks(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+        return buildPaginatedBooksResponse(bookPage, page, pageSize);
+    }
+
     public List<Map<String, Object>> adminPageBooks(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Book> bookPage = bookRepository.findAll(pageable);
