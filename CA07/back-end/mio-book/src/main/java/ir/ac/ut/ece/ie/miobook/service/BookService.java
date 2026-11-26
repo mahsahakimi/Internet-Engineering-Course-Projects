@@ -3,12 +3,13 @@ package ir.ac.ut.ece.ie.miobook.service;
 import ir.ac.ut.ece.ie.miobook.exceptions.*;
 import ir.ac.ut.ece.ie.miobook.model.*;
 import ir.ac.ut.ece.ie.miobook.repository.*;
-import ir.ac.ut.ece.ie.miobook.utils.PaginationUtils;
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -246,7 +247,10 @@ public class BookService {
         if (averageRating == null) averageRating = 0.0;
 
         Map<String, Object> data = new HashMap<>();
-        data.put("length", reviewRepository.countByBook(book));
+        data.put("length", reviewPage.getTotalElements());
+        data.put("totalPages", reviewPage.getTotalPages());
+        data.put("currentPage", page);
+        data.put("pageSize", pageSize);
         data.put("reviews", outputReviews);
         data.put("averageRating", averageRating);
 
@@ -392,26 +396,23 @@ public class BookService {
         if (fromYear != null && toYear != null && fromYear > toYear) {
             throw new InvalidYearRangeException();
         }
-        List<Book> books = bookRepository.searchBooksWithFilters(
-            title, authorName, genre, fromYear, toYear
-        );
 
+        Sort sort = Sort.unsorted();
         if (sortBy != null && !sortBy.isEmpty()) {
+            Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
             if (sortBy.equalsIgnoreCase("averageRating")) {
-                books = sortBooksByAverageRating(books, sortOrder);
+                sort = JpaSort.unsafe(direction, "COALESCE(AVG(r.rate), 0.0)");
             } else if (sortBy.equalsIgnoreCase("reviewCount")) {
-                books = sortBooksByReviewCount(books, sortOrder);
+                sort = JpaSort.unsafe(direction, "COUNT(DISTINCT r.id)");
             }
         }
 
-        List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
-        List<Map<String, Object>> formattedBooks = shortFormatBooks(paginatedBooks);
+        Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
+        Page<Book> bookPage = bookRepository.searchBooksWithFilters(
+            title, authorName, genre, fromYear, toYear, pageable
+        );
 
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("books", formattedBooks);
-        responseData.put("search", buildSearchString(title, authorName, genre, fromYear, toYear, sortBy, sortOrder));
-
-        return formattedBooks;
+        return shortFormatBooks(bookPage.getContent());
     }
 
     private static String buildSearchString(String title, String authorName, String genre, Integer fromYear, Integer toYear, String sortBy, String sortOrder) {
@@ -439,50 +440,15 @@ public class BookService {
         return String.join(", ", parts);
     }
 
-    private List<Book> sortBooksByAverageRating(List<Book> books, String sortOrder) {
-        Map<Book, Double> ratingMap = books.stream()
-            .collect(Collectors.toMap(
-                book -> book,
-                book -> {
-                    Double avg = reviewRepository.calculateAverageRatingByBook(book);
-                    return avg != null ? avg : 0.0;
-                }
-            ));
-
-        Comparator<Book> comparator = Comparator.comparing(ratingMap::get);
-        if ("desc".equalsIgnoreCase(sortOrder)) {
-            comparator = comparator.reversed();
-        }
-
-        return books.stream()
-            .sorted(comparator)
-            .collect(Collectors.toList());
-    }
-
-    private List<Book> sortBooksByReviewCount(List<Book> books, String sortOrder) {
-        Map<Book, Long> countMap = books.stream()
-            .collect(Collectors.toMap(book -> book, book -> reviewRepository.countByBook(book)));
-
-        Comparator<Book> comparator = Comparator.comparing(countMap::get);
-        if ("desc".equalsIgnoreCase(sortOrder)) {
-            comparator = comparator.reversed();
-        }
-
-        return books.stream()
-            .sorted(comparator)
-            .collect(Collectors.toList());
-    }
-
     public List<Map<String, Object>> newRelease() {
         List<Book> books = bookRepository.findTop5ByOrderByYearDesc();
         return shortFormatBooks(books);
     }
 
     public List<Map<String, Object>> topRated(int page, int pageSize){
-        List<Book> books = bookRepository.findAll();
-        books = sortBooksByAverageRating(books, "desc");
-        List<Book> paginatedBooks = PaginationUtils.paginate(books, page, pageSize);
-        return shortFormatBooks(paginatedBooks);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<Book> bookPage = bookRepository.findTopRatedBooks(pageable);
+        return shortFormatBooks(bookPage.getContent());
     }
     
     public List<Map<String, Object>> adminPageBooks(int page, int pageSize) {

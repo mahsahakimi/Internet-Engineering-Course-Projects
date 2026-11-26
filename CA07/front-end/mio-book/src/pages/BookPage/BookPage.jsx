@@ -17,6 +17,7 @@ function BookPage() {
     const navigate = useNavigate();
     const [bookDetails, setBookDetails] = useState(null);
     const [bookreviews, setBookreviews] = useState(null);
+    const [reviewPage, setReviewPage] = useState(1);
 
     const getQueryParam = (key) => {
         const params = new URLSearchParams(location.search);
@@ -53,13 +54,13 @@ function BookPage() {
         }
     };
 
-    const fetchReviews = async () => {
+    const fetchReviews = async (page = reviewPage) => {
         if (!title) {
             console.error('No book title provided in the URL.');
             return;
         }
         try {
-            const response = await fetch(`/api/books/reviews?title=${title}`, {
+            const response = await fetch(`/api/books/reviews?title=${encodeURIComponent(title)}&page=${page}&pageSize=3`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${user.userInfo.token}`,
@@ -84,14 +85,23 @@ function BookPage() {
     const handleCloseModal = () => setshowRevModal(false);
 
     const handleReviewSubmit = async () => {
-        fetchReviews();
+        setReviewPage(1);
+        fetchReviews(1);
     };
 
     useEffect(() => {
+        setReviewPage(1);
+    }, [title]);
+
+    useEffect(() => {
         if (!user) return;
-        fetchReviews();
         fetchBookDetails();
     }, [title, navigate, user]);
+
+    useEffect(() => {
+        if (!user) return;
+        fetchReviews(reviewPage);
+    }, [title, user, reviewPage]);
 
     return (
         <div>
@@ -126,12 +136,51 @@ function BookPage() {
                         </div>
                     </div>
                     {bookreviews?.reviews?.length > 0 ? (
-                        bookreviews.reviews.map((review, index) => (
-                            <React.Fragment key={index}>
-                            <Review br={review} />
-                            <hr />
-                            </React.Fragment>
-                        ))
+                        <>
+                            {bookreviews.reviews.map((review, index) => (
+                                <React.Fragment key={index}>
+                                    <Review br={review} />
+                                    <hr />
+                                </React.Fragment>
+                            ))}
+                            {bookreviews.totalPages > 1 && (
+                                <nav aria-label="Reviews pagination" className="d-flex justify-content-center mt-3">
+                                    <ul className="pagination mb-0">
+                                        <li className={`page-item ${reviewPage <= 1 ? 'disabled' : ''}`}>
+                                            <button
+                                                type="button"
+                                                className="page-link"
+                                                onClick={() => setReviewPage((prev) => Math.max(1, prev - 1))}
+                                                disabled={reviewPage <= 1}
+                                            >
+                                                &laquo;
+                                            </button>
+                                        </li>
+                                        {Array.from({ length: bookreviews.totalPages }, (_, i) => i + 1).map((pageNum) => (
+                                            <li key={pageNum} className={`page-item ${reviewPage === pageNum ? 'active' : ''}`}>
+                                                <button
+                                                    type="button"
+                                                    className="page-link"
+                                                    onClick={() => setReviewPage(pageNum)}
+                                                >
+                                                    {pageNum}
+                                                </button>
+                                            </li>
+                                        ))}
+                                        <li className={`page-item ${reviewPage >= bookreviews.totalPages ? 'disabled' : ''}`}>
+                                            <button
+                                                type="button"
+                                                className="page-link"
+                                                onClick={() => setReviewPage((prev) => Math.min(bookreviews.totalPages, prev + 1))}
+                                                disabled={reviewPage >= bookreviews.totalPages}
+                                            >
+                                                &raquo;
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            )}
+                        </>
                     ) : (
                         <div className="empty-state">
                             <SVGNoComments />
