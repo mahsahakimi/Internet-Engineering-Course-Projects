@@ -47,7 +47,7 @@ function SearchResult() {
             fetchAllBooks(1);
         }
         fetchGenres();
-    }, [filterType, searchTerm, user]);
+    }, [filterType, searchTerm, location.key, user]);
 
     const fetchAllBooks = async (page = 1) => {
         setLoading(true);

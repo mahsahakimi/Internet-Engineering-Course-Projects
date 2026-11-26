@@ -18,7 +18,10 @@ function Nav() {
     };
 
     const handleSearch = async () => {
-        if (!searchTerm.trim()) return;
+        if (!searchTerm.trim()) {
+            navigate('/results');
+            return;
+        }
         navigate('/results', { state: { type: filterType, term : searchTerm } })
     };
 
