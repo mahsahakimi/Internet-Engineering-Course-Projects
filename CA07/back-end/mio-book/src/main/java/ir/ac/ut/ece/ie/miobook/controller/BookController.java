@@ -159,11 +159,11 @@ public class BookController {
         HttpServletRequest request,
         @RequestParam("title") String title,
         @RequestParam(value = "page", defaultValue = "1") int page,
-        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "3") int pageSize) {
         // Retrieves reviews for a specific book with pagination.
-        // Parameters: title (book title), page (optional, default 1), pageSize (optional, default 10).
+        // Parameters: title (book title), page (optional, default 1), pageSize (optional, default 3).
         // Returns: reviews in JSON format or error if book not found.
-        // Example: GET /books/reviews?title=ExampleBookTitle&page=2&pageSize=20.
+        // Example: GET /books/reviews?title=ExampleBookTitle&page=2&pageSize=3.
         User user = (User) request.getAttribute("loggedInUser");
         if (user == null) {
             throw new UserNotLoggedInException();

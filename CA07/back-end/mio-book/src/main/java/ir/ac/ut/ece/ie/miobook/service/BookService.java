@@ -247,7 +247,10 @@ public class BookService {
         if (averageRating == null) averageRating = 0.0;
 
         Map<String, Object> data = new HashMap<>();
-        data.put("length", reviewRepository.countByBook(book));
+        data.put("length", reviewPage.getTotalElements());
+        data.put("totalPages", reviewPage.getTotalPages());
+        data.put("currentPage", page);
+        data.put("pageSize", pageSize);
         data.put("reviews", outputReviews);
         data.put("averageRating", averageRating);
 
